@@ -11,7 +11,7 @@
 <meta name="theme-color" content="#1b1410">
 <link rel="apple-touch-icon" id="icon" href="icon.png">
 <style>
-:root{--bg:#1b1410;--panel:#2a1f18;--line:#4a3828;--ink:#f1e8d6;--mute:#a8957c;--brass:#d4a94f;--ok:#8fbf7a;--bad:#d9705a;
+:root{--bg:#231913;--panel:#33261d;--line:#54402f;--ink:#fbf1df;--mute:#c2ad92;--brass:#f0b84a;--ok:#8fd17a;--bad:#ff8d72;
 --serif:Georgia,"Times New Roman",serif;--sans:-apple-system,system-ui,"Helvetica Neue",sans-serif}
 @media(prefers-color-scheme:light){:root{--bg:#f3ebdb;--panel:#e7dcc4;--line:#c5b38f;--ink:#2a1f18;--mute:#6f5d45;--brass:#8a6412;--ok:#3f7a2d;--bad:#b0432e}}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -63,24 +63,50 @@ details.card summary b{flex:1;font-weight:600}
 .bar{height:6px;background:var(--line);border-radius:3px;margin:6px 0 10px}.bar i{display:block;height:100%;background:var(--brass);border-radius:3px}
 .lbl{color:var(--mute);font-size:13px;margin:10px 0 2px}
 .res a{color:var(--brass)}.res li{margin-bottom:8px}.res ul{padding-left:18px;margin:0}
+.row input{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px;min-height:48px;min-width:0}
+.vbox iframe{width:100%;aspect-ratio:16/9;border:0;border-radius:10px;margin-top:10px}
+[hidden]{display:none!important}
+.card{border-radius:18px;padding:16px}.card:empty{display:none}
+button{border-radius:14px;font-weight:500}
+button.go{font-size:17px;padding:15px;box-shadow:0 4px 0 rgba(0,0,0,.28)}
+button.go:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,.28)}
+h1{font-size:30px}
+nav button{font-size:11px;padding:6px 0 4px;line-height:1.25}nav button span{display:block;font-size:22px}
+.hello{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.hello h1{margin:0}
+.flame{background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:8px 14px;font-weight:600;white-space:nowrap}
+.goal{display:grid;gap:8px;margin-top:10px}.goal button{text-align:left;font-size:17px}
+.block .ic{font-size:26px;width:34px;text-align:center}
+.min small{display:block;font-size:11px;color:var(--mute);font-family:var(--sans);margin-top:-4px}
+.ring{position:relative;width:200px;margin:8px auto}.ring .big{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:42px}
+#run{display:none}.running #run{display:block}
+.running #plan,.running #lens,.running #start,.running #why,.running #next,.running #goalbox,.running #fin,.running #lh{display:none}
+#pill{position:fixed;left:12px;right:12px;bottom:calc(68px + env(safe-area-inset-bottom));background:var(--brass);color:#1b1410;border-radius:999px;padding:12px 16px;font-weight:600;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+.badge{font-style:normal;font-size:12px;color:var(--brass);border:1px solid var(--brass);border-radius:999px;padding:2px 9px;white-space:nowrap}.badge.dim{color:var(--mute);border-color:var(--line)}
+details.opt{opacity:.65}
+.pn{font-family:var(--serif);font-size:72px;text-align:center;line-height:1.1}
+.track{position:relative;height:10px;background:var(--line);border-radius:5px;margin:14px 8px}
+.track .mid{position:absolute;left:calc(50% - 1px);top:-6px;bottom:-6px;width:2px;background:var(--ok)}
+#needle{position:absolute;top:-6px;width:8px;height:22px;border-radius:4px;background:var(--brass);left:50%;transform:translateX(-50%)}
 </style>
 </head>
 <body>
 <main>
 
 <section id="coach" class="on">
-  <h1>Today's session</h1>
-  <p class="mute">Built from what you've marked as hard. Tap a skill if it felt tough.</p>
+  <div class="hello"><h1 id="hi">Hello</h1><div class="flame" id="flame"></div></div>
+  <div class="card" id="fin"></div>
+  <div class="card" id="goalbox"></div>
   <div class="card" id="next"></div>
+  <h2 id="lh">How long today?</h2>
   <div class="row" id="lens"></div>
   <div class="card" id="plan" style="margin-top:12px"></div>
-  <button class="go" id="finish" style="width:100%">Finish and log session</button>
-  <h2 style="margin-top:22px">Skills</h2>
-  <div class="card" id="skills"></div>
+  <button class="go" id="start" style="width:100%">Start session</button>
+  <div class="card" id="why" style="margin-top:12px"></div>
+  <div class="card" id="run"></div>
 </section>
 
 <section id="learn">
-  <h1>Learn</h1>
+  <h1>📚 Learn</h1>
   <p class="mute">From solid open chords to advanced playing, in order. Open a lesson, watch a video, do the drill, and tick it off once you pass the "move on" test.</p>
   <div id="lessons"></div>
   <h2 style="margin-top:22px">Where to watch and what to use</h2>
@@ -97,7 +123,7 @@ details.card summary b{flex:1;font-weight:600}
 </section>
 
 <section id="rhythm">
-  <h1>Rhythm trainer</h1>
+  <h1>🥁 Rhythm gym</h1>
   <div class="card">
     <select id="pat" style="width:100%"></select>
     <div class="steps" id="steps"></div>
@@ -110,7 +136,7 @@ details.card summary b{flex:1;font-weight:600}
 </section>
 
 <section id="fret">
-  <h1>Fretboard</h1>
+  <h1>🎼 Fretboard</h1>
   <div class="row"><select id="root"></select><select id="scale"></select></div>
   <div class="card fb" style="margin-top:12px" id="board"></div>
   <p class="mute">Red dots are the root. Low E string is at the bottom.</p>
@@ -118,8 +144,29 @@ details.card summary b{flex:1;font-weight:600}
   <div class="card"><div class="q" id="qq"></div><div class="opts" id="qo"></div><p class="mute" id="qs" style="margin:10px 0 0"></p></div>
 </section>
 
+<section id="voice">
+  <h1>🎤 Voice coach</h1>
+  <div class="card">
+    <div class="pn" id="pnote">–</div>
+    <div class="track"><i class="mid"></i><b id="needle"></b></div>
+    <p class="mute" id="phint" style="text-align:center;margin:10px 0 12px">Tap Start, then sing or play one note. Headphones help.</p>
+    <button class="go" id="mic" style="width:100%">Start listening</button>
+    <div class="row" style="margin-top:8px"><button id="lo">Save as my lowest</button><button id="hi">Save as my highest</button></div>
+    <p class="mute" id="rng" style="margin:10px 0 0"></p>
+  </div>
+  <div class="card"><b>Hear a note</b><div class="row" style="margin-top:8px"><select id="pnotes"></select><button id="pplay">Play</button></div></div>
+  <div class="card"><b>5-minute warm-up</b>
+    <ol class="mute" style="padding-left:20px;margin:8px 0 0">
+      <li>1 min: breathe in for 4, out on a steady 'sss' for 10.</li>
+      <li>1 min: lip trills, sliding gently up and down.</li>
+      <li>1 min: hum a five-note scale, up a semitone each time.</li>
+      <li>1 min: sing 'ah' on the same scale, then come back down.</li>
+      <li>1 min: sing a verse of a song quietly.</li>
+    </ol></div>
+</section>
+
 <section id="prog">
-  <h1>Progress</h1>
+  <h1>📈 Your progress</h1>
   <div class="stats" id="stats"></div>
   <h2 style="margin-top:22px">Milestones</h2>
   <div class="card" id="achs"></div>
@@ -127,6 +174,7 @@ details.card summary b{flex:1;font-weight:600}
 </section>
 
 </main>
+<div id="pill" hidden></div>
 <nav id="nav"></nav>
 
 <script>
@@ -134,63 +182,97 @@ const $=s=>document.querySelector(s);
 const KEY="guitarcoach.v1";
 let S;
 try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
-S=S||{hard:{},log:[],quiz:{ok:0,n:0},pats:0,done:{}};
-S.done=S.done||{};
+S=S||{hard:{},log:[],quiz:{ok:0,n:0},pats:0,done:{},vid:{},shaky:{},goal:null};
+S.done=S.done||{};S.vid=S.vid||{};S.shaky=S.shaky||{};
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 const day=(d=new Date())=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 
 /* ---------- tabs ---------- */
-const tabs=[["coach","Coach"],["learn","Learn"],["rhythm","Rhythm"],["fret","Fretboard"],["prog","Progress"]];
-$("#nav").innerHTML=tabs.map(t=>`<button data-t="${t[0]}">${t[1]}</button>`).join("");
+const tabs=[["coach","🏠","Today"],["learn","📚","Learn"],["rhythm","🥁","Rhythm"],["fret","🎼","Notes"],["voice","🎤","Voice"],["prog","📈","Progress"]];
+$("#nav").innerHTML=tabs.map(t=>`<button data-t="${t[0]}"><span>${t[1]}</span>${t[2]}</button>`).join("");
+let tab="coach";
 function show(id){
   document.querySelectorAll("section").forEach(s=>s.classList.toggle("on",s.id===id));
   document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.t===id));
-  if(id==="prog")renderProg(); if(id==="learn")renderLearn(); if(id==="coach")renderNext(); if(id!=="rhythm")stop(); scrollTo(0,0);
+  if(id==="prog")renderProg(); if(id==="learn")renderLearn(); tab=id;if(id!=="voice")stopMic();if(id==="voice")rangeTxt();if(id==="coach")renderToday();pillUpdate(); if(id!=="rhythm")stop(); scrollTo(0,0);
 }
-$("#nav").onclick=e=>{if(e.target.dataset.t)show(e.target.dataset.t)};
+$("#nav").onclick=e=>{const b=e.target.closest("button");if(b)show(b.dataset.t)};
 
-/* ---------- coach ---------- */
-const SKILLS=[
- ["warm","Warm-up and chord changes","Play C, G, Am, F, slowly, four strums each. Switch on the beat, not after it."],
- ["barre","Barre chords","E-shape barre at frets 1 to 5. Roll the index finger slightly onto its bony side and pull the guitar in to your body."],
- ["rhy","16th-note strumming","Keep the hand moving down-up-down-up at all times. Miss strings on the beats you don't want."],
- ["pent","Minor pentatonic","A minor pentatonic, position 1 at fret 5. Up and down, then pick a note and bend it."],
- ["fing","Fingerstyle and Travis picking","Thumb alternates two bass strings. Fingers take the top three. Start with C, then G."],
- ["tech","Hammer-ons, pull-offs, slides","Fret firmly, then snap. Loudness of the hammered note should match the picked one."],
- ["sus","Sus, add9 and 7th chords","Play Asus2, Asus4, Dsus2, Cadd9. Hear how each one wants to move."],
- ["song","Song application","Pick one song. Loop the hardest four bars at 70% speed, then the whole verse."]
-];
-let lenMin=25;
+/* ---------- today ---------- */
+let lenMin=25,rows=[],run=null,wl=null;
 $("#lens").innerHTML=[15,25,40,60].map(m=>`<button data-m="${m}">${m} min</button>`).join("");
-$("#lens").onclick=e=>{if(e.target.dataset.m){lenMin=+e.target.dataset.m;plan()}};
-function plan(){
+$("#lens").onclick=e=>{if(e.target.dataset.m){lenMin=+e.target.dataset.m;build();drawPlan()}};
+$("#goalbox").onclick=e=>{const g=e.target.dataset.g;if(g==null)return;S.goal=g||null;save();renderToday()};
+const fmt=t=>Math.floor(t/60)+":"+String(t%60).padStart(2,"0");
+function build(){
+  const L=nextL(),sh=FLAT.filter(l=>S.shaky[l.id]&&(!L||l.id!==L.id)).pop();
+  const rv=!sh&&FLAT.filter(l=>S.done[l.id]).pop(),fix=sh||rv,m=lenMin;
+  const w=Math.max(2,Math.round(m*.1)),sg=Math.round(m*.25),fx=fix?Math.round(m*.25):0,fo=m-w-sg-fx;
+  const V=S.goal==="voice";
+  rows=[{n:V?"Voice warm-up":"Warm-up",d:V?"Breathe, do lip trills, then hum a five-note scale. Keep it easy.":"Play chords you already know. Clean changes, no rushing.",m:w,ic:V?"🎤":"🔥"}];
+  rows.push(L?{n:L[0],d:L[3],m:fo,ic:"🎯",l:L,tool:TOOL[L.id]}:{n:"Free practice",d:"Your path is finished. Polish your weakest song.",m:fo,ic:"🎯"});
+  if(fix)rows.push({n:(sh?"Fix: ":"Review: ")+fix[0],d:fix[3],m:fx,ic:sh?"🔧":"🔁",l:fix,tool:TOOL[fix.id]});
+  rows.push({n:V?"Sing a real song":"Play a real song",d:V?"Sing a song you love from start to finish. Record it once a week and listen back.":"Use what you practised on a song you like. Play it start to finish, even if it is messy.",m:sg,ic:"🎶"});
+}
+function drawPlan(){
   document.querySelectorAll("#lens button").forEach(b=>b.classList.toggle("sel",+b.dataset.m===lenMin));
-  const n=lenMin<=15?3:lenMin<=25?4:lenMin<=40?5:6;
-  const w=SKILLS.map(s=>({s,w:1+(S.hard[s[0]]||0)+Math.random()*1.2}));
-  const pick=w.filter(x=>x.s[0]!=="warm").sort((a,b)=>b.w-a.w).slice(0,n-1);
-  const warm=Math.max(3,Math.round(lenMin*.15));
-  const rest=lenMin-warm,tot=pick.reduce((a,x)=>a+x.w,0);
-  let rows=[{s:SKILLS[0],m:warm}].concat(pick.map(x=>({s:x.s,m:Math.max(3,Math.round(rest*x.w/tot))})));
-  $("#plan").innerHTML=rows.map(r=>`<div class="block"><div class="t"><b>${r.s[1]}</b><span class="mute">${r.s[2]}</span></div><div class="min">${r.m}</div><button data-h="${r.s[0]}" aria-label="Mark hard">Hard</button></div>`).join("");
-  $("#plan").dataset.total=rows.reduce((a,r)=>a+r.m,0);
+  $("#plan").innerHTML=rows.map(r=>`<div class="block"><div class="ic">${r.ic}</div><div class="t"><b>${r.n}</b><span class="mute">${r.d}</span></div><div class="min">${r.m}<small>min</small></div></div>`).join("");
+  $("#why").innerHTML=`<b>Why these minutes?</b><p class="mute" style="margin:6px 0 0">Warm-up 10%: get loose. Focus 40%: your next lesson, the one thing that moves you forward. Fix 25%: a lesson you marked "needs more work", or a quick review of the last one you finished. Song 25%: using it in real music is what makes it stick. Nothing to fix yet? That time goes to your focus lesson. Short daily sessions beat long rare ones.</p>`;
 }
-$("#plan").onclick=e=>{const k=e.target.dataset.h;if(!k)return;
-  S.hard[k]=Math.min(3,(S.hard[k]||0)+1);e.target.classList.add("sel");e.target.textContent="Noted";save();renderSkills()};
-function renderSkills(){
-  $("#skills").innerHTML=SKILLS.map(s=>{const h=S.hard[s[0]]||0;
-   return `<div class="block"><div class="t"><b>${s[1]}</b><span class="mute">${h>1?"Getting extra time":h?"Slightly extra time":"Comfortable"}</span></div>${h?`<button data-e="${s[0]}">Got it</button>`:""}</div>`}).join("");
+function renderToday(){
+  if(run){drawRun();return}
+  const h=new Date().getHours(),st=streak();
+  $("#hi").textContent=(h<12?"Good morning":h<18?"Good afternoon":"Good evening")+" 👋";
+  $("#flame").textContent=st?`🔥 ${st} day${st>1?"s":""}`:"🎸 Let's go";
+  $("#fin").innerHTML="";
+  $("#goalbox").innerHTML=S.goal?`<span class="mute">Your goal: <b style="color:var(--ink)">${GOALS[S.goal][0]} ${GOALS[S.goal][1]}</b></span><button data-g="" style="min-height:36px;padding:6px 14px;float:right">Change</button>`
+   :`<b style="font-size:18px">What do you most want to play?</b><p class="mute" style="margin:4px 0 0">Pick one. Lessons that do not help your goal get marked Optional, so you never waste time on them.</p><div class="goal">`+Object.keys(GOALS).map(k=>`<button data-g="${k}">${GOALS[k][0]} ${GOALS[k][1]}</button>`).join("")+`</div>`;
+  renderNext();build();drawPlan();
 }
-$("#skills").onclick=e=>{const k=e.target.dataset.e;if(!k)return;S.hard[k]=Math.max(0,(S.hard[k]||0)-1);save();renderSkills()};
-$("#finish").onclick=()=>{const m=+$("#plan").dataset.total||lenMin;
-  S.log.push({d:day(),m});save();$("#finish").textContent="Logged "+m+" min. Nice work.";
-  setTimeout(()=>{$("#finish").textContent="Finish and log session";plan()},2200)};
+function beep(){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();ac.resume();tone(ac.currentTime,880,.35,.3,"sine");tone(ac.currentTime+.18,1175,.35,.3,"sine")}catch(e){}}
+async function lock(){try{wl=await navigator.wakeLock.request("screen")}catch(e){}}
+function pillUpdate(){const p=$("#pill");if(!run||tab==="coach"){p.hidden=true;return}p.hidden=false;p.textContent="⏱ "+fmt(run.t)+"  "+rows[run.i].n+"  (tap to return)"}
+$("#pill").onclick=()=>show("coach");
+function updTimer(){const b=document.querySelector("#run .big"),c=document.querySelector("#run circle+circle");if(!b)return;b.textContent=fmt(run.t);c.setAttribute("stroke-dashoffset",339.3*(1-run.t/run.tot))}
+function drawRun(){const r=rows[run.i];
+  $("#run").innerHTML=`<div class="mute">Step ${run.i+1} of ${rows.length}</div><h2>${r.ic} ${r.n}</h2>
+  <div class="ring"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="54" fill="none" stroke="var(--line)" stroke-width="10"/><circle cx="60" cy="60" r="54" fill="none" stroke="var(--brass)" stroke-width="10" stroke-linecap="round" stroke-dasharray="339.3" stroke-dashoffset="${339.3*(1-run.t/run.tot)}" transform="rotate(-90 60 60)"/></svg><div class="big">${fmt(run.t)}</div></div>
+  <p>${r.d}</p>
+  ${r.l?`<div class="row"><button data-r="open">Open lesson</button>${r.tool?`<button data-r="tool">${TL[r.tool][1]}</button>`:""}</div>`:""}
+  <div class="row" style="margin-top:8px"><button data-r="pause">${run.paused?"Resume":"Pause"}</button><button data-r="skip">Next step</button></div>
+  ${r.l&&r.ic==="🎯"?`<div class="row" style="margin-top:8px"><button data-r="shaky" class="${S.shaky[r.l.id]?"sel":""}">Needs more work</button><button data-r="done">I can do this</button></div>`:""}
+  <button data-r="end" style="width:100%;margin-top:8px">Finish session</button>`;
+}
+function tick(){if(!run)return;const n=Date.now(),dt=Math.floor((n-run.last)/1000);if(dt<1)return;run.last+=dt*1000;if(run.paused)return;
+  run.t-=dt;run.el+=dt;if(run.t<=0){run.el+=run.t;beep();next();return}updTimer();pillUpdate()}
+function next(){run.i++;if(run.i>=rows.length){endRun();return}run.t=run.tot=rows[run.i].m*60;drawRun();pillUpdate()}
+function endRun(){clearInterval(run.id);try{wl&&wl.release()}catch(e){}
+  const m=Math.round(run.el/60);run=null;$("#coach").classList.remove("running");
+  if(m>=1){S.log.push({d:day(),m});save()}
+  renderToday();pillUpdate();const st=streak();
+  $("#fin").innerHTML=m>=1?`<b>🎉 Nice work! ${m} minute${m>1?"s":""} logged.</b><p class="mute" style="margin:4px 0 0">${st>1?st+" days in a row. ":""}Come back tomorrow. Even 10 minutes counts.</p>`:`<b>Session ended.</b><p class="mute" style="margin:4px 0 0">Nothing logged this time. Even 10 minutes counts.</p>`;
+  scrollTo(0,0)}
+$("#start").onclick=()=>{if(run)return;
+  try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();ac.resume()}catch(e){}
+  run={i:0,el:0,paused:false,t:rows[0].m*60,tot:rows[0].m*60,last:Date.now()};
+  run.id=setInterval(tick,1000);lock();$("#fin").innerHTML="";$("#coach").classList.add("running");drawRun();scrollTo(0,0)};
+$("#run").onclick=e=>{const a=e.target.dataset.r;if(!a||!run)return;const r=rows[run.i];
+  if(a==="skip"){next();return}
+  if(a==="end"){endRun();return}
+  if(a==="open"){openLesson(r.l.id);return}
+  if(a==="tool"){if(!r.tool)return;show(TL[r.tool][0]);return}
+  if((a==="shaky"||a==="done")&&!r.l)return;
+  if(a==="pause")run.paused=!run.paused;
+  if(a==="shaky"){if(S.shaky[r.l.id])delete S.shaky[r.l.id];else S.shaky[r.l.id]=1;save()}
+  if(a==="done"){S.done[r.l.id]=1;delete S.shaky[r.l.id];save()}
+  drawRun()};
 
 /* ---------- learn ---------- */
 const LESSONS=[
 ["Solid foundations","Turn open chords you know into music you can play.",[
 ["Clean open chords","Every string rings clearly in C, G, D, A, E, Am, Em and Dm.","Pluck each string one at a time and fix any that buzz or die. Arch your fingers and press just behind the fret.","One-minute changes: G to C, then Em to D. Count clean switches in 60 seconds.","You reach 15 clean changes for each pair.","one minute chord changes"],
 ["Folk strumming","Keep a steady down-up hand and play the classic pattern.","Your hand keeps moving down-up on every eighth note. Play D - D U - U D U and miss the strings on the rests.","Loop Em, C, G, D at 70 BPM with Rhythm tab pattern 3.","You play 4 bars without stopping at 80 BPM.","folk strumming pattern"],
-["7th, sus and add9 chords","Add colour with A7, D7, E7, G7, Asus2, Dsus2, Em7 and Cadd9.","Learn each as a small change from a chord you know: lift the B-string finger of A to get Asus2, lift one finger of Em to get Em7.","Loop G, Em7, Cadd9, D at 70 BPM.","You switch between them without looking.","open 7th sus2 add9 chords"],
+["7th, sus and add9 chords","Add colour with A7, D7, E7, G7, Asus2, Dsus2, Em7 and Cadd9.","Learn each as a small change from a chord you know. Lift a finger from E to get E7 (020100), from A to get A7 (x02020) and from Em to get Em7 (020000). Lift the B-string finger of A to get Asus2.","Loop G, Em7, Cadd9, D at 70 BPM.","You switch between them without looking.","open 7th sus2 add9 chords"],
 ["Capo and transposing","Play in any key using shapes you already know.","Clamp the capo just behind the fret. Each fret raises every chord by one semitone. G shapes with the capo at fret 2 sound as A.","Play one song with the capo at 0, 2 and 4 and name the sounding key each time.","You can choose a capo position that suits your voice.","how to use a capo"]]],
 ["Barre chords and rhythm","The stage where you can play any chord anywhere.",[
 ["F chord and mini barre","Play a clear F major.","Start with the four-string version: index finger flat across the top two strings at fret 1, then add the other fingers. Use the bony side of the index finger.","Hold 10 seconds, relax, repeat 5 times. Then change C to F.","F rings on at least 4 strings after switching from C.","F chord mini barre"],
@@ -212,28 +294,63 @@ const LESSONS=[
 ["Inversions and voice leading","Move between chords with the fewest finger movements.","Play the same chord on the top three strings in root position, first and second inversion. Choose the voicing closest to the previous chord.","Play I, IV and V in G using triads within two frets of each other.","You connect three chords with no big jumps in the top note.","guitar chord inversions voice leading"],
 ["Maj7, m7 and 9th chords","Add jazz, soul and pop colour.","Learn Cmaj7, Am7, Dm7, G7 and Cmaj9. The seventh gives a softer, more open sound.","Loop Cmaj7, Am7, Dm7, G7 at 70 BPM.","You can build a short song using only these chords.","maj7 min7 9th chords guitar"],
 ["Alternate tunings","Open new sounds with Drop D, DADGAD and Open D.","Tune one string at a time with a tuner. Drop D lowers the low E to D. DADGAD tunes the strings D A D G A D. Open D is D A D F# A D.","Play one simple open-string piece in each tuning.","You tune each one accurately in under two minutes.","DADGAD open D drop D tuning"],
-["Improvising over changes","Solo over a chord progression.","Choose the pentatonic scale of the key and land on chord tones as the chords change. Use call and response: a short phrase, a rest, then an answer.","A minor backing track at 80 BPM: 2 minutes using only three notes, then the full scale.","You play 8 bars that sound intentional.","improvise over chords backing track acoustic"],
-["Arrange and perform a song","Turn a full song into your own arrangement.","Pick a song. Choose a strum or picking pattern per section. Add an intro, dynamics and an ending.","Record three takes on your phone. Listen back and fix the weakest 8 bars.","You perform it start to finish without stopping.","acoustic guitar song arrangement"]]]
+["Improvising over changes","Solo over a chord progression.","Choose the pentatonic scale of the key and land on chord tones as the chords change. Use call and response: a short phrase, a rest, then an answer.","Play along with an A minor backing track (search YouTube for A minor backing track 80 bpm): 2 minutes using only three notes, then the full scale.","You play 8 bars that sound intentional.","improvise over chords backing track acoustic"],
+["Arrange and perform a song","Turn a full song into your own arrangement.","Pick a song. Choose a strum or picking pattern per section. Add an intro, dynamics and an ending.","Record three takes on your phone. Listen back and fix the weakest 8 bars.","You perform it start to finish without stopping.","acoustic guitar song arrangement"]]],
+["Voice","Sing better, and sing with your guitar.",[
+["Look after your voice","Sing for years without strain or hoarseness.","Sip water through the day, not just before singing. Sing at a comfortable volume, because loud is not the same as strong. If your throat feels scratchy or sore, stop and rest. Never sing through pain. Hoarseness that lasts more than two weeks is worth a doctor visit.","Before each session check three things: relaxed jaw, loose shoulders, water nearby. Afterwards, note how your throat feels.","You can tell tired from strained, and you stop when it is strain.","vocal health for singers basics"],
+["Breath and posture","Support your voice with steady, relaxed breath.","Sit on the front edge of the chair or stand tall, with shoulders loose and feet flat. Breathe low: your belly and lower ribs widen while your shoulders stay still. Let the air out slowly and evenly.","Breathe in for 4 counts, then out on a steady 'sss' for 10 to 15 counts. Repeat 5 times. Then sing one line of a song on a single breath.","You hold a steady 'sss' for 15 seconds without your shoulders lifting.","breathing exercises for singers"],
+["Vocal warm-up routine","Warm up safely in five minutes.","Start low and gentle, then go higher. Lip trills and sirens loosen the voice without strain. Hum before you open up to vowels.","Use the warm-up card in the Voice tab: breathing, lip trills, a hummed five-note scale, the same scale on 'ah', then a quiet verse.","Your voice feels easy, not tired, after the warm-up, and you do it before every session.","vocal warm up routine beginner"],
+["Match pitch by ear","Sing the note you hear, then the note you want.","Play a note in the Voice tab, listen, hum it quietly, then sing it on 'ah'. The pitch coach shows the note you sang and whether it is sharp or flat. Use headphones so the tone does not feed back into the mic.","Pick 5 notes in your comfortable range. Play each, sing it, and hold it steady for 4 seconds with the needle near the middle. Then sing it from memory before playing it.","You hit the right note on 8 of 10 tries and hold it steady for 4 seconds.","how to match pitch singing exercise"],
+["Find your range and key","Choose songs and keys that fit your voice.","Sing from your lowest comfortable note to your highest comfortable note, with no strain, and save them in the Voice tab. A capo raises a song one semitone per fret. To go lower, transpose the chords down instead.","Sing one song with the capo at 0, 2 and 4 and mark where it feels easiest. If it is still too high at 0, play it in a lower key. Write the best key next to the song.","You know your comfortable range and the best key for three songs.","find your vocal range and best key capo"],
+["Sing while you strum","Keep the guitar steady while you sing.","Build it in layers. First, strum the pattern until your hand runs on its own. Then speak the lyrics in rhythm while you strum. Then hum the tune. Then sing. Only add chord changes when the layer before is easy.","Pick a four-chord song. Strum at 60 BPM with the Rhythm gym and speak the first verse, then sing it. Add 5 BPM only when it is clean.","You sing a full verse and chorus and the strumming never stops or rushes.","sing and play guitar at the same time"],
+["Tone, vowels and dynamics","Sound fuller and more expressive.","Shape tall, open vowels: drop your jaw gently, keep your tongue relaxed, and lift the back of the mouth as if starting a yawn. Change volume with your breath, not by squeezing your throat.","Sing a long 'ah' softly, then medium, then loud on one comfortable note, keeping the pitch steady. Then sing a verse quietly and the chorus louder.","Quiet and loud singing both stay in tune and feel relaxed.","singing tone vowel shape dynamics tips"],
+["Phrasing and performance","Sing with feeling and finish songs with confidence.","Know what the song is about and sing it like you are telling someone. Mark your breaths in the lyrics at the ends of phrases. End each phrase clearly and leave small gaps so the guitar can breathe.","Record a verse and chorus on your phone. Listen three times: once for pitch, once for timing, once for feeling. Fix the weakest one and record again.","You perform one full song, voice and guitar, start to finish, and like the recording.","how to sing with emotion phrasing tips"]]]
 ];
+const TAGS=["c","c","c","c","c","c","c","s","s","l","l","l","l","l","f","f","f","x","sf","x","l","c","v","v","v","v","sv","sv","v","v"];
 const FLAT=[];
-LESSONS.forEach(st=>st[2].forEach(l=>{l.id=FLAT.length;FLAT.push(l)}));
+LESSONS.forEach(st=>st[2].forEach(l=>{l.id=FLAT.length;l.t=TAGS[l.id];FLAT.push(l)}));
+const GOALS={songs:["🎶","Play and sing songs","s"],voice:["🎤","Sing better","v"],finger:["🤲","Fingerstyle","f"],lead:["🔥","Lead and solos","l"]};
+const TOOL={1:"rhythm",7:"rhythm",8:"rhythm",9:"fret",10:"fret",13:"fret",24:"voice",25:"voice",26:"voice",27:"rhythm"};
+const TL={rhythm:["rhythm","Rhythm gym"],fret:["fret","Fretboard"],voice:["voice","Voice coach"]};
+const STG=[["🎵","#f0b84a"],["💪","#ff8d72"],["🎯","#59c2b5"],["🤲","#a994e6"],["🚀","#f08fb0"],["🎤","#7cc6f0"]];
+const rel=l=>S.goal?(l.t.includes("c")||l.t.includes(GOALS[S.goal][2])):!l.t.includes("x");
+const FIRST={voice:[22,23,24,25,3,26,27,28,29],songs:[0,1,2,3,26,27]};
+const nextL=()=>[...(FIRST[S.goal]||[]).map(i=>FLAT[i]),...FLAT].find(l=>!S.done[l.id]&&rel(l));
 const TOTAL=FLAT.length,nDone=()=>Object.keys(S.done).length;
+const VIDEOS={ // built-in videos: lesson number : "YouTubeVideoID"
+ 1:"CjM5fyXoV8w", // JustinGuitar: learn any strumming pattern
+ 5:"IxXG5S8vSd8", // JustinGuitar: E shape barre chords
+ 10:"eEJpypexUDg" // JustinGuitar: minor pentatonic scale
+};
+function videoHtml(l){const v=S.vid[l.id]||VIDEOS[l.id];
+  return `<div class="vbox" data-i="${l.id}">${v?`<button class="go" data-play="${l.id}" style="width:100%;margin-top:10px">Play video here</button>`:""}</div>
+  <div class="row" style="margin:8px 0"><input id="v${l.id}" placeholder="Paste a YouTube link" inputmode="url" autocapitalize="off"><button data-save="${l.id}" style="flex:none">${v?"Replace":"Add video"}</button>${S.vid[l.id]?`<button data-clr="${l.id}" style="flex:none">Remove</button>`:""}</div>`}
+function lessonHtml(l,open){const r=rel(l),core=l.t.includes("c"),
+  badge=S.goal?(core?"Core":r?"Your goal":"Optional"):(l.t.includes("x")?"Optional":core?"Core":"Goal lesson");
+  return `<details class="card ${S.done[l.id]?"done":""} ${r?"":"opt"}" data-i="${l.id}" ${open.has(""+l.id)?"open":""}><summary><span class="tick"></span><b>${l[0]}${S.shaky[l.id]?" 🔧":""}</b><em class="badge${r?"":" dim"}">${badge}</em></summary>
+  <p style="margin-top:10px">${l[1]}</p><div class="lbl">How</div><p>${l[2]}</p><div class="lbl">Drill</div><p>${l[3]}</p><div class="lbl">Move on when</div><p>${l[4]}</p>
+  ${videoHtml(l)}<a class="lk" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=${encodeURIComponent(l[5]+" acoustic guitar lesson")}">Find lessons on YouTube</a>
+  <div class="row"><button data-sh="${l.id}" class="${S.shaky[l.id]?"sel":""}">Needs more work</button><button class="go" data-d="${l.id}">${S.done[l.id]?"Undo done":"Mark as done"}</button></div></details>`}
 function renderLearn(){
   const open=new Set([...document.querySelectorAll("#lessons details[open]")].map(d=>d.dataset.i));
-  $("#lessons").innerHTML=LESSONS.map(st=>{const d=st[2].filter(l=>S.done[l.id]).length;
-   return `<h2 style="margin-top:20px">${st[0]} (${d}/${st[2].length})</h2><div class="mute">${st[1]}</div><div class="bar"><i style="width:${100*d/st[2].length}%"></i></div>`+
-   st[2].map(l=>`<details class="card ${S.done[l.id]?"done":""}" data-i="${l.id}" ${open.has(""+l.id)?"open":""}><summary><span class="tick"></span><b>${l[0]}</b></summary>
-   <p style="margin-top:10px">${l[1]}</p><div class="lbl">How</div><p>${l[2]}</p><div class="lbl">Drill</div><p>${l[3]}</p><div class="lbl">Move on when</div><p>${l[4]}</p>
-   <a class="lk" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=${encodeURIComponent(l[5]+" acoustic guitar lesson")}">Watch lessons on YouTube</a>
-   <button data-d="${l.id}" style="width:100%">${S.done[l.id]?"Mark as not done":"Mark as done"}</button></details>`).join("")}).join("");
+  const path=FLAT.filter(rel),pd=path.filter(l=>S.done[l.id]).length;
+  $("#lessons").innerHTML=`<div class="card"><b>Your path: ${pd} of ${path.length} lessons</b><div class="bar"><i style="width:${100*pd/(path.length||1)}%"></i></div><p class="mute" style="margin:0">Lessons marked Optional do not help your goal right now. Skip them and come back only if you need them.</p></div>`+
+  LESSONS.map((st,si)=>{const c=STG[si][1],ls=st[2],p=ls.filter(rel),d=p.filter(l=>S.done[l.id]).length;
+   return `<h2 style="margin-top:20px;border-left:5px solid ${c};padding-left:10px">${STG[si][0]} ${st[0]}</h2><div class="mute">${st[1]} ${d} of ${p.length} on your path.</div><div class="bar"><i style="width:${100*d/(p.length||1)}%;background:${c}"></i></div>`+ls.map(l=>lessonHtml(l,open)).join("")}).join("");
 }
-$("#lessons").onclick=e=>{const k=e.target.dataset.d;if(k==null)return;
-  if(S.done[k])delete S.done[k];else S.done[k]=1;save();renderLearn()};
-function renderNext(){const l=FLAT.find(l=>!S.done[l.id]);
-  $("#next").innerHTML=l?`<div class="lbl" style="margin:0">Next lesson (${nDone()} of ${TOTAL} done)</div><b style="font-size:19px;font-family:var(--serif)">${l[0]}</b><p class="mute" style="margin:4px 0 10px">${l[1]}</p><button class="go" style="width:100%" id="gol">Open lesson</button>`:"<b>Every lesson is done. Keep performing songs and recording yourself.</b>";
+function openLesson(id){show("learn");const d=document.querySelector('#lessons details[data-i="'+id+'"]');if(d){d.open=true;d.scrollIntoView()}}
+$("#lessons").onclick=e=>{const d=e.target.dataset,k=d.d;
+  if(d.play!=null){document.querySelector('.vbox[data-i="'+d.play+'"]').innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${S.vid[d.play]||VIDEOS[d.play]}?playsinline=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`;return}
+  if(d.save!=null){const i=$("#v"+d.save),m=i.value.match(/(?:v=|youtu\.be\/|embed\/|shorts\/|live\/)([\w-]{11})/);
+    if(!m){i.value="";i.placeholder="That is not a YouTube link";return}S.vid[d.save]=m[1];save();renderLearn();return}
+  if(d.clr!=null){delete S.vid[d.clr];save();renderLearn();return}
+  if(d.sh!=null){if(S.shaky[d.sh])delete S.shaky[d.sh];else S.shaky[d.sh]=1;save();renderLearn();return}
+  if(k==null)return;
+  if(S.done[k])delete S.done[k];else{S.done[k]=1;delete S.shaky[k]}save();renderLearn()};
+function renderNext(){const l=nextL(),path=FLAT.filter(rel);
+  $("#next").innerHTML=l?`<div class="lbl" style="margin:0">Your next lesson · ${path.filter(x=>S.done[x.id]).length} of ${path.length} done</div><b style="font-size:20px;font-family:var(--serif)">${l[0]}</b><p class="mute" style="margin:4px 0 10px">${l[1]}</p><button id="gol" style="width:100%">See the lesson</button>`:`<b>🎉 You finished your path.</b><p class="mute" style="margin:4px 0 0">Keep playing songs and record yourself. Change your goal to go further.</p>`;
 }
-$("#next").onclick=e=>{if(e.target.id!=="gol")return;const l=FLAT.find(l=>!S.done[l.id]);show("learn");
-  const d=document.querySelector('#lessons details[data-i="'+l.id+'"]');if(d){d.open=true;d.scrollIntoView()}};
+$("#next").onclick=e=>{if(e.target.id!=="gol")return;const l=nextL();if(l)openLesson(l.id)};
 
 /* ---------- rhythm ---------- */
 const PATS=[
@@ -312,6 +429,43 @@ $("#qo").onclick=e=>{if(e.target.tagName!=="BUTTON"||e.target.disabled)return;
   document.querySelectorAll("#qo button").forEach(b=>{b.disabled=true;if(b.textContent===ans)b.classList.add("good")});
   if(!ok)e.target.classList.add("badc");setTimeout(quiz,ok?500:1300)};
 
+/* ---------- voice ---------- */
+let mic=null,lastMidi=null,lastSeen=0;
+const mname=m=>N[((m%12)+12)%12]+(Math.floor(m/12)-1);
+$("#pnotes").innerHTML=[...Array(25).keys()].map(i=>{const m=48+i;return `<option value="${m}" ${m===57?"selected":""}>${mname(m)}</option>`}).join("");
+function detect(b,sr){let e=0;for(let i=0;i<b.length;i++)e+=b[i]*b[i];if(Math.sqrt(e/b.length)<.012)return 0;
+  const min=Math.floor(sr/1000),max=Math.min(Math.floor(sr/70),b.length>>1),c=new Float32Array(max+2);
+  for(let l=min;l<=max+1;l++){let s=0;for(let i=0;i<b.length-l;i++)s+=b[i]*b[i+l];c[l]=s}
+  let mx=0;for(let l=min+1;l<=max;l++)if(c[l]>mx)mx=c[l];
+  if(mx<.3*e)return 0;
+  for(let l=min+1;l<=max;l++)if(c[l]>c[l-1]&&c[l]>=c[l+1]&&c[l]>.9*mx){
+    const a=c[l-1],m=c[l],d=c[l+1],sh=(a-d)/(2*(a-2*m+d));return sr/(l+(isFinite(sh)?sh:0))}
+  return 0}
+function pitchTick(){
+  mic.an.getFloatTimeDomainData(mic.buf);const f=detect(mic.buf,ac.sampleRate),now=Date.now();
+  if(f>0){const x=69+12*Math.log2(f/440),m=Math.round(x),c=Math.round((x-m)*100);lastMidi=m;lastSeen=now;
+    $("#pnote").textContent=mname(m);$("#needle").style.left=(50+c)+"%";
+    $("#phint").textContent=Math.abs(c)<=10?"In tune":c>0?"A little sharp (too high)":"A little flat (too low)";
+  }else if(now-lastSeen>600){$("#pnote").textContent="–";$("#needle").style.left="50%";$("#phint").textContent="Listening..."}
+}
+async function listen(){if(mic){stopMic();return}
+  try{const st=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});
+    ac=ac||new (window.AudioContext||window.webkitAudioContext)();await ac.resume();
+    const an=ac.createAnalyser();an.fftSize=4096;ac.createMediaStreamSource(st).connect(an);
+    mic={st,an,buf:new Float32Array(4096),t:setInterval(pitchTick,70)};$("#mic").textContent="Stop listening";$("#phint").textContent="Listening..."}
+  catch(e){$("#phint").textContent="The microphone is blocked. Allow it in your browser settings for this site, then try again."}}
+function stopMic(){if(!mic)return;clearInterval(mic.t);mic.st.getTracks().forEach(t=>t.stop());mic=null;$("#mic").textContent="Start listening";$("#pnote").textContent="–";$("#needle").style.left="50%"}
+$("#mic").onclick=listen;
+$("#pplay").onclick=()=>{ac=ac||new (window.AudioContext||window.webkitAudioContext)();ac.resume();const m=+$("#pnotes").value;tone(ac.currentTime,440*Math.pow(2,(m-69)/12),1.8,.35,"triangle")};
+function rangeTxt(){const r=S.range||{};let t="Sing your lowest comfortable note and tap Save, then your highest.";
+  if(r.lo!=null&&r.hi!=null)t=r.hi>r.lo?`Your comfortable range: ${mname(r.lo)} to ${mname(r.hi)} (${r.hi-r.lo} semitones). Choose songs whose melody sits inside it, or move the key with a capo.`:"Your highest note must be above your lowest. Save them again.";
+  else if(r.lo!=null)t="Lowest saved: "+mname(r.lo)+". Now sing your highest comfortable note.";
+  else if(r.hi!=null)t="Highest saved: "+mname(r.hi)+". Now sing your lowest comfortable note.";
+  $("#rng").textContent=t}
+function saveNote(k){if(lastMidi==null||Date.now()-lastSeen>2000){$("#phint").textContent="Sing a note first, then tap Save.";return}
+  S.range=S.range||{};S.range[k]=lastMidi;save();rangeTxt()}
+$("#lo").onclick=()=>saveNote("lo");$("#hi").onclick=()=>saveNote("hi");
+
 /* ---------- progress ---------- */
 function streak(){const ds=new Set(S.log.map(l=>l.d));let c=0,d=new Date();
   if(!ds.has(day(d)))d.setDate(d.getDate()-1);
@@ -321,12 +475,12 @@ function renderProg(){
   const week=S.log.filter(l=>l.d>=day(wk)).reduce((a,l)=>a+l.m,0),st=streak(),q=S.quiz;
   const f=m=>m>=60?Math.floor(m/60)+"h "+(m%60)+"m":m+"m";
   $("#stats").innerHTML=[["Total time",f(tot)],["Last 7 days",f(week)],["Sessions",S.log.length],["Day streak",st],
-    ["Fretboard quiz",q.n?Math.round(100*q.ok/q.n)+"%":"–"],["Lessons done",nDone()+"/"+TOTAL]].map(x=>`<div class="card"><b>${x[1]}</b><span class="mute">${x[0]}</span></div>`).join("");
+    ["Fretboard quiz",q.n?Math.round(100*q.ok/q.n)+"%":"–"],["Lessons on your path",FLAT.filter(rel).filter(l=>S.done[l.id]).length+"/"+FLAT.filter(rel).length]].map(x=>`<div class="card"><b>${x[1]}</b><span class="mute">${x[0]}</span></div>`).join("");
   const A=[["First session",S.log.length>=1],["30-minute session",S.log.some(l=>l.m>=30)],["3-day streak",st>=3],["7-day streak",st>=7],
-    ["100 minutes practised",tot>=100],["50 fretboard answers",q.n>=50],["Fretboard 90% (20+ answers)",q.n>=20&&q.ok/q.n>=.9],["Ran rhythm drills 10 times",S.pats>=10],["5 lessons done",nDone()>=5],["Finished a stage",LESSONS.some(st=>st[2].every(l=>S.done[l.id]))],["Every lesson done",nDone()>=TOTAL]];
+    ["100 minutes practised",tot>=100],["50 fretboard answers",q.n>=50],["Fretboard 90% (20+ answers)",q.n>=20&&q.ok/q.n>=.9],["Ran rhythm drills 10 times",S.pats>=10],["5 lessons done",nDone()>=5],["Finished a stage",LESSONS.some(st=>st[2].filter(rel).length&&st[2].filter(rel).every(l=>S.done[l.id]))],["Finished your path",FLAT.filter(rel).every(l=>S.done[l.id])]];
   $("#achs").innerHTML=A.map(a=>`<div class="block ach ${a[1]?"got":""}"><div class="t">${a[0]}</div>${a[1]?"Done":""}</div>`).join("");
 }
-$("#reset").onclick=()=>{if(confirm("Erase all progress on this device?")){S={hard:{},log:[],quiz:{ok:0,n:0},pats:0,done:{}};save();renderProg();renderSkills();plan()}};
+$("#reset").onclick=()=>{if(confirm("Erase all progress on this device?")){S={hard:{},log:[],quiz:{ok:0,n:0},pats:0,done:{},vid:{},shaky:{},goal:null};save();renderProg();renderToday()}};
 
 /* ---------- icon + offline ---------- */
 (function(){try{const c=document.createElement("canvas");c.width=c.height=180;const x=c.getContext("2d");
@@ -336,7 +490,7 @@ $("#reset").onclick=()=>{if(confirm("Erase all progress on this device?")){S={ha
   $("#icon").href=c.toDataURL("image/png")}catch(e){}
   if("serviceWorker" in navigator&&location.protocol.startsWith("http"))navigator.serviceWorker.register("sw.js").catch(()=>{});})();
 
-drawSteps();board();quiz();renderSkills();plan();show("coach");
+drawSteps();board();quiz();rangeTxt();show("coach");
 </script>
 </body>
 </html>
