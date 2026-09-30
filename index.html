@@ -54,6 +54,15 @@ input[type=range]{width:100%;accent-color:var(--brass);height:40px}
 .stats b{display:block;font-family:var(--serif);font-size:28px;font-weight:normal}
 .ach{opacity:.4}.ach.got{opacity:1;color:var(--brass)}
 @media(prefers-reduced-motion:no-preference){.step{transition:background .05s}}
+details.card summary{cursor:pointer;list-style:none;display:flex;gap:10px;align-items:center;min-height:32px}
+details.card summary::-webkit-details-marker{display:none}
+details.card summary b{flex:1;font-weight:600}
+.tick{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);flex:none}
+.done .tick{background:var(--ok);border-color:var(--ok)}
+.lk{display:block;text-align:center;text-decoration:none;color:#1b1410;background:var(--brass);border-radius:10px;padding:13px;font-weight:600;margin:10px 0 8px}
+.bar{height:6px;background:var(--line);border-radius:3px;margin:6px 0 10px}.bar i{display:block;height:100%;background:var(--brass);border-radius:3px}
+.lbl{color:var(--mute);font-size:13px;margin:10px 0 2px}
+.res a{color:var(--brass)}.res li{margin-bottom:8px}.res ul{padding-left:18px;margin:0}
 </style>
 </head>
 <body>
@@ -62,11 +71,29 @@ input[type=range]{width:100%;accent-color:var(--brass);height:40px}
 <section id="coach" class="on">
   <h1>Today's session</h1>
   <p class="mute">Built from what you've marked as hard. Tap a skill if it felt tough.</p>
+  <div class="card" id="next"></div>
   <div class="row" id="lens"></div>
   <div class="card" id="plan" style="margin-top:12px"></div>
   <button class="go" id="finish" style="width:100%">Finish and log session</button>
   <h2 style="margin-top:22px">Skills</h2>
   <div class="card" id="skills"></div>
+</section>
+
+<section id="learn">
+  <h1>Learn</h1>
+  <p class="mute">From solid open chords to advanced playing, in order. Open a lesson, watch a video, do the drill, and tick it off once you pass the "move on" test.</p>
+  <div id="lessons"></div>
+  <h2 style="margin-top:22px">Where to watch and what to use</h2>
+  <div class="card res"><ul>
+    <li><b>JustinGuitar</b>: free, structured course. Follow it alongside this order. <a target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=JustinGuitar">Find on YouTube</a></li>
+    <li><b>Marty Music</b>: song tutorials, good for applying each stage. <a target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=Marty+Music+acoustic">Find on YouTube</a></li>
+    <li><b>Andy Guitar</b>: short, clear technique lessons. <a target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=Andy+Guitar+acoustic">Find on YouTube</a></li>
+    <li><b>Tommy Emmanuel</b>: watch live fingerstyle performances for inspiration at stages 4 and 5. <a target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=Tommy+Emmanuel+live">Find on YouTube</a></li>
+    <li><b>Songsterr</b> plays tabs back at slow speed. <a target="_blank" rel="noopener" href="https://www.songsterr.com">songsterr.com</a></li>
+    <li><b>Ultimate Guitar</b> has chord sheets for almost any song. <a target="_blank" rel="noopener" href="https://www.ultimate-guitar.com">ultimate-guitar.com</a></li>
+  </ul></div>
+  <div class="card"><b>Habits that work</b>
+    <p class="mute" style="margin-top:6px">Practise 20 to 30 minutes daily rather than one long session a week. Play new things slowly with the metronome and raise the tempo by 5 BPM only when it is clean. Record yourself once a week and listen back. Tune before every session, and keep a capo and a clip-on tuner in the case.</p></div>
 </section>
 
 <section id="rhythm">
@@ -107,17 +134,18 @@ const $=s=>document.querySelector(s);
 const KEY="guitarcoach.v1";
 let S;
 try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
-S=S||{hard:{},log:[],quiz:{ok:0,n:0},pats:0};
+S=S||{hard:{},log:[],quiz:{ok:0,n:0},pats:0,done:{}};
+S.done=S.done||{};
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 const day=(d=new Date())=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 
 /* ---------- tabs ---------- */
-const tabs=[["coach","Coach"],["rhythm","Rhythm"],["fret","Fretboard"],["prog","Progress"]];
+const tabs=[["coach","Coach"],["learn","Learn"],["rhythm","Rhythm"],["fret","Fretboard"],["prog","Progress"]];
 $("#nav").innerHTML=tabs.map(t=>`<button data-t="${t[0]}">${t[1]}</button>`).join("");
 function show(id){
   document.querySelectorAll("section").forEach(s=>s.classList.toggle("on",s.id===id));
   document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.t===id));
-  if(id==="prog")renderProg(); if(id!=="rhythm")stop(); scrollTo(0,0);
+  if(id==="prog")renderProg(); if(id==="learn")renderLearn(); if(id==="coach")renderNext(); if(id!=="rhythm")stop(); scrollTo(0,0);
 }
 $("#nav").onclick=e=>{if(e.target.dataset.t)show(e.target.dataset.t)};
 
@@ -156,6 +184,56 @@ $("#skills").onclick=e=>{const k=e.target.dataset.e;if(!k)return;S.hard[k]=Math.
 $("#finish").onclick=()=>{const m=+$("#plan").dataset.total||lenMin;
   S.log.push({d:day(),m});save();$("#finish").textContent="Logged "+m+" min. Nice work.";
   setTimeout(()=>{$("#finish").textContent="Finish and log session";plan()},2200)};
+
+/* ---------- learn ---------- */
+const LESSONS=[
+["Solid foundations","Turn open chords you know into music you can play.",[
+["Clean open chords","Every string rings clearly in C, G, D, A, E, Am, Em and Dm.","Pluck each string one at a time and fix any that buzz or die. Arch your fingers and press just behind the fret.","One-minute changes: G to C, then Em to D. Count clean switches in 60 seconds.","You reach 15 clean changes for each pair.","one minute chord changes"],
+["Folk strumming","Keep a steady down-up hand and play the classic pattern.","Your hand keeps moving down-up on every eighth note. Play D - D U - U D U and miss the strings on the rests.","Loop Em, C, G, D at 70 BPM with Rhythm tab pattern 3.","You play 4 bars without stopping at 80 BPM.","folk strumming pattern"],
+["7th, sus and add9 chords","Add colour with A7, D7, E7, G7, Asus2, Dsus2, Em7 and Cadd9.","Learn each as a small change from a chord you know: lift the B-string finger of A to get Asus2, lift one finger of Em to get Em7.","Loop G, Em7, Cadd9, D at 70 BPM.","You switch between them without looking.","open 7th sus2 add9 chords"],
+["Capo and transposing","Play in any key using shapes you already know.","Clamp the capo just behind the fret. Each fret raises every chord by one semitone. G shapes with the capo at fret 2 sound as A.","Play one song with the capo at 0, 2 and 4 and name the sounding key each time.","You can choose a capo position that suits your voice.","how to use a capo"]]],
+["Barre chords and rhythm","The stage where you can play any chord anywhere.",[
+["F chord and mini barre","Play a clear F major.","Start with the four-string version: index finger flat across the top two strings at fret 1, then add the other fingers. Use the bony side of the index finger.","Hold 10 seconds, relax, repeat 5 times. Then change C to F.","F rings on at least 4 strings after switching from C.","F chord mini barre"],
+["E-shape barre chords","Move the E-major shape up the neck.","Barre with the index finger and play the E shape with the other three. Fret 1 is F, fret 3 is G, fret 5 is A. Keep the thumb behind the neck and pull gently.","Slide one shape through F, G, A, Bb, four beats each.","Every string rings on frets 1 to 5.","E shape barre chords"],
+["A-shape barre chords","Play barre chords rooted on the A string.","The root is on the A string. Barre the top five strings: the minor shape at fret 2 is Bm, and the major shape at fret 3 is C.","Loop Bm (A-shape, fret 2), G (E-shape, fret 3), D, A.","You switch between shapes in time at 70 BPM.","A shape barre chords"],
+["Muted strums and 16th notes","Add the percussive chop and play sixteenth-note rhythms.","Lay the fretting hand lightly across the strings to mute and strum: that is the X. Keep the strumming hand moving constantly and accent beats 2 and 4.","Rhythm tab patterns 5, 7 and 8 at 60 BPM, then add 5 BPM.","Pattern 8 at 70 BPM without stopping.","16th note strumming acoustic"],
+["Palm muting and power chords","Play tight, rhythmic chugging sounds.","Rest the side of your picking palm on the strings by the bridge. Move toward the neck for a longer sound. Power chords use the root and fifth on two strings.","Mute eighth notes on an E5, A5, D5 riff at 80 BPM, then open the last bar.","You switch between muted and open within a bar.","palm muting acoustic guitar"]]],
+["Fretboard and lead","Learn where the notes are and play melodies and solos.",[
+["Notes on the E and A strings","Name any note on the low two strings.","Low E string: F at 1, G at 3, A at 5, B at 7, C at 8, D at 10. A string: B at 2, C at 3, D at 5, E at 7, F at 8, G at 10.","Use the quiz on the Fretboard tab for 5 minutes a day.","90% accuracy over 50 answers.","learn notes on guitar fretboard"],
+["Minor pentatonic","Play A minor pentatonic in position 1 and solo with it.","At fret 5: low E frets 5 and 8, A 5 and 7, D 5 and 7, G 5 and 7, B 5 and 8, high e 5 and 8.","Pick A, Minor pentatonic in the Fretboard tab. Play it in eighths at 60 BPM, then invent a four-note phrase.","You play the box without looking and end phrases on A.","minor pentatonic position 1"],
+["Hammer-ons, pull-offs, slides","Play smooth, connected notes.","Hammer with a firm finger drop from above the fret. Pull off with a small sideways flick. Slide along a single string to land on the target fret on time.","On the G string repeat 5 hammer to 7, then pull back. Then use them inside the pentatonic box.","The hammered note is as loud as the picked one.","hammer ons pull offs slides"],
+["Bends and vibrato","Bend to pitch and add vibrato.","Put three fingers on the string and push up a whole step. Check the pitch against the target fret. Vibrato is a small wrist rotation.","Bend G string fret 7 to match fret 9. Hold it, then add vibrato.","Your bend is in tune 8 times out of 10.","guitar string bending vibrato"],
+["Major scale and CAGED","See one key across the whole neck.","The open shapes C, A, G, E, D are movable and interlock along the neck. The same chord appears in five places.","Play a C chord as C, A, G, E and D shapes going up the neck. Then play the C major scale in each.","You find C major in all five shapes.","CAGED system explained"]]],
+["Fingerstyle","Play bass, chords and melody together.",[
+["Arpeggio patterns","Pick a chord string by string with a steady pattern.","Thumb plays the bass string. Fingers i, m and a play the G, B and high e strings. Try thumb, i, m, a, m, i.","Am, C, G, D with that pattern at 60 BPM.","Even volume and no missed strings at 80 BPM.","fingerstyle arpeggio pattern"],
+["Travis picking","Keep an alternating thumb going under a melody.","The thumb alternates two bass strings on every beat. Then add fingers on the top strings between the thumb notes.","C, G, Am, F: thumb alone for 4 bars, then add fingers.","The thumb stays steady while the fingers vary.","travis picking tutorial"],
+["Percussion and harmonics","Use the body as drums and play chimey harmonics.","Tap the top of the guitar for kick and slap the strings for snare. For harmonics, touch the string lightly over fret 12, 7 or 5 and pick.","Loop kick, slap, kick, slap over a muted Em. Then play the 12th-fret harmonic on all six strings.","Harmonics ring clearly on every string.","percussive acoustic guitar harmonics"]]],
+["Advanced","Think like an arranger and improviser.",[
+["Inversions and voice leading","Move between chords with the fewest finger movements.","Play the same chord on the top three strings in root position, first and second inversion. Choose the voicing closest to the previous chord.","Play I, IV and V in G using triads within two frets of each other.","You connect three chords with no big jumps in the top note.","guitar chord inversions voice leading"],
+["Maj7, m7 and 9th chords","Add jazz, soul and pop colour.","Learn Cmaj7, Am7, Dm7, G7 and Cmaj9. The seventh gives a softer, more open sound.","Loop Cmaj7, Am7, Dm7, G7 at 70 BPM.","You can build a short song using only these chords.","maj7 min7 9th chords guitar"],
+["Alternate tunings","Open new sounds with Drop D, DADGAD and Open D.","Tune one string at a time with a tuner. Drop D lowers the low E to D. DADGAD tunes the strings D A D G A D. Open D is D A D F# A D.","Play one simple open-string piece in each tuning.","You tune each one accurately in under two minutes.","DADGAD open D drop D tuning"],
+["Improvising over changes","Solo over a chord progression.","Choose the pentatonic scale of the key and land on chord tones as the chords change. Use call and response: a short phrase, a rest, then an answer.","A minor backing track at 80 BPM: 2 minutes using only three notes, then the full scale.","You play 8 bars that sound intentional.","improvise over chords backing track acoustic"],
+["Arrange and perform a song","Turn a full song into your own arrangement.","Pick a song. Choose a strum or picking pattern per section. Add an intro, dynamics and an ending.","Record three takes on your phone. Listen back and fix the weakest 8 bars.","You perform it start to finish without stopping.","acoustic guitar song arrangement"]]]
+];
+const FLAT=[];
+LESSONS.forEach(st=>st[2].forEach(l=>{l.id=FLAT.length;FLAT.push(l)}));
+const TOTAL=FLAT.length,nDone=()=>Object.keys(S.done).length;
+function renderLearn(){
+  const open=new Set([...document.querySelectorAll("#lessons details[open]")].map(d=>d.dataset.i));
+  $("#lessons").innerHTML=LESSONS.map(st=>{const d=st[2].filter(l=>S.done[l.id]).length;
+   return `<h2 style="margin-top:20px">${st[0]} (${d}/${st[2].length})</h2><div class="mute">${st[1]}</div><div class="bar"><i style="width:${100*d/st[2].length}%"></i></div>`+
+   st[2].map(l=>`<details class="card ${S.done[l.id]?"done":""}" data-i="${l.id}" ${open.has(""+l.id)?"open":""}><summary><span class="tick"></span><b>${l[0]}</b></summary>
+   <p style="margin-top:10px">${l[1]}</p><div class="lbl">How</div><p>${l[2]}</p><div class="lbl">Drill</div><p>${l[3]}</p><div class="lbl">Move on when</div><p>${l[4]}</p>
+   <a class="lk" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=${encodeURIComponent(l[5]+" acoustic guitar lesson")}">Watch lessons on YouTube</a>
+   <button data-d="${l.id}" style="width:100%">${S.done[l.id]?"Mark as not done":"Mark as done"}</button></details>`).join("")}).join("");
+}
+$("#lessons").onclick=e=>{const k=e.target.dataset.d;if(k==null)return;
+  if(S.done[k])delete S.done[k];else S.done[k]=1;save();renderLearn()};
+function renderNext(){const l=FLAT.find(l=>!S.done[l.id]);
+  $("#next").innerHTML=l?`<div class="lbl" style="margin:0">Next lesson (${nDone()} of ${TOTAL} done)</div><b style="font-size:19px;font-family:var(--serif)">${l[0]}</b><p class="mute" style="margin:4px 0 10px">${l[1]}</p><button class="go" style="width:100%" id="gol">Open lesson</button>`:"<b>Every lesson is done. Keep performing songs and recording yourself.</b>";
+}
+$("#next").onclick=e=>{if(e.target.id!=="gol")return;const l=FLAT.find(l=>!S.done[l.id]);show("learn");
+  const d=document.querySelector('#lessons details[data-i="'+l.id+'"]');if(d){d.open=true;d.scrollIntoView()}};
 
 /* ---------- rhythm ---------- */
 const PATS=[
@@ -243,12 +321,12 @@ function renderProg(){
   const week=S.log.filter(l=>l.d>=day(wk)).reduce((a,l)=>a+l.m,0),st=streak(),q=S.quiz;
   const f=m=>m>=60?Math.floor(m/60)+"h "+(m%60)+"m":m+"m";
   $("#stats").innerHTML=[["Total time",f(tot)],["Last 7 days",f(week)],["Sessions",S.log.length],["Day streak",st],
-    ["Fretboard quiz",q.n?Math.round(100*q.ok/q.n)+"%":"–"],["Rhythm runs",S.pats]].map(x=>`<div class="card"><b>${x[1]}</b><span class="mute">${x[0]}</span></div>`).join("");
+    ["Fretboard quiz",q.n?Math.round(100*q.ok/q.n)+"%":"–"],["Lessons done",nDone()+"/"+TOTAL]].map(x=>`<div class="card"><b>${x[1]}</b><span class="mute">${x[0]}</span></div>`).join("");
   const A=[["First session",S.log.length>=1],["30-minute session",S.log.some(l=>l.m>=30)],["3-day streak",st>=3],["7-day streak",st>=7],
-    ["100 minutes practised",tot>=100],["50 fretboard answers",q.n>=50],["Fretboard 90% (20+ answers)",q.n>=20&&q.ok/q.n>=.9],["Ran all rhythm drills 10 times",S.pats>=10]];
+    ["100 minutes practised",tot>=100],["50 fretboard answers",q.n>=50],["Fretboard 90% (20+ answers)",q.n>=20&&q.ok/q.n>=.9],["Ran rhythm drills 10 times",S.pats>=10],["5 lessons done",nDone()>=5],["Finished a stage",LESSONS.some(st=>st[2].every(l=>S.done[l.id]))],["Every lesson done",nDone()>=TOTAL]];
   $("#achs").innerHTML=A.map(a=>`<div class="block ach ${a[1]?"got":""}"><div class="t">${a[0]}</div>${a[1]?"Done":""}</div>`).join("");
 }
-$("#reset").onclick=()=>{if(confirm("Erase all progress on this device?")){S={hard:{},log:[],quiz:{ok:0,n:0},pats:0};save();renderProg();renderSkills();plan()}};
+$("#reset").onclick=()=>{if(confirm("Erase all progress on this device?")){S={hard:{},log:[],quiz:{ok:0,n:0},pats:0,done:{}};save();renderProg();renderSkills();plan()}};
 
 /* ---------- icon + offline ---------- */
 (function(){try{const c=document.createElement("canvas");c.width=c.height=180;const x=c.getContext("2d");
