@@ -8,12 +8,14 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Guitar Coach">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#1d1611">
+<meta name="theme-color" content="#fbf8f1">
+<meta name="color-scheme" content="light">
+<script>try{var s=JSON.parse(localStorage.getItem("guitarcoach.v1")||"{}"),t=s.theme||"light";if(t==="auto")t=(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)?"dark":"light";document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
 <link rel="apple-touch-icon" id="icon" href="icon.png">
 <style>
-:root{--bg:#1d1611;--s1:#2a1f17;--s2:#37291e;--line:#4a392c;--ink:#f7ecd9;--mute:#b9a58a;--ok:#8fd17a;--bad:#ff8d72;--brass:#f0b84a;--go:#f0b84a;
+:root{--bg:#1d1611;--s1:#2a1f17;--s2:#37291e;--line:#4a392c;--ink:#f7ecd9;--mute:#b9a58a;--ok:#8fd17a;--bad:#ff8d72;--brass:#f0b84a;--go:#f0b84a;--hi:#f0b84a;--sh:none;--bar:#1d1611;
 --rd:ui-rounded,"SF Pro Rounded","Avenir Next Rounded",Nunito,system-ui,sans-serif;--tx:-apple-system,system-ui,"Helvetica Neue",Arial,sans-serif}
-@media(prefers-color-scheme:light){:root{--bg:#f7f0e2;--s1:#fffaf0;--s2:#efe4cc;--line:#dccfb4;--ink:#2b2017;--mute:#75634c;--ok:#3f7a2d;--bad:#b0432e;--brass:#94650a}}
+:root[data-theme="light"]{--bg:#fbf8f1;--s1:#ffffff;--s2:#f2ead8;--line:#e2d7bd;--ink:#221a12;--mute:#695842;--ok:#2f7a1f;--bad:#c0432b;--brass:#8a5a00;--sh:0 1px 3px rgba(70,45,10,.14)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 var(--tx);-webkit-text-size-adjust:100%}
 body{padding:env(safe-area-inset-top) 0 calc(86px + env(safe-area-inset-bottom))}
@@ -99,7 +101,7 @@ nav button.on{background:var(--s2);color:var(--ink)}nav button.on .ti{filter:non
 /* rhythm, notes, voice */
 .steps{display:grid;gap:8px;margin:16px 0 8px}
 .step{background:var(--s2);border-radius:12px;text-align:center;padding:14px 0;font:700 20px var(--rd)}
-.step.beat{background:var(--line)}.step.now{background:var(--brass);color:#1d1611}
+.step.beat{background:var(--line)}.step.now{background:var(--hi);color:#1d1611}
 .bpm{display:flex;align-items:center;justify-content:space-between;margin:14px 0 6px}.bpm button{width:60px;font-size:26px}
 .bigb{font:700 56px/1 var(--rd);text-align:center}.bpm small{display:block;text-align:center}
 input[type=range]{width:100%;accent-color:var(--brass);height:40px;padding:0;background:none}
@@ -148,7 +150,7 @@ details.card summary span{color:var(--mute);font-size:20px}
 .les.proj{border:2px dashed var(--c)}.les.proj .tick{border-radius:8px;font-size:15px}
 .ckr{display:flex;gap:6px;margin-bottom:6px}.ck{display:flex;gap:10px;align-items:center;flex:1;text-align:left;background:var(--s1);font-weight:500;min-height:46px}
 .ck span{flex:none;width:24px;height:24px;border-radius:8px;border:2px solid var(--ok);display:grid;place-items:center;color:#1d1611;font-weight:800}.ck.on span{background:var(--ok)}
-.chb{flex:none;min-height:46px;padding:8px 12px;background:var(--brass);color:#1d1611;font-size:14px}
+.chb{flex:none;min-height:46px;padding:8px 12px;background:var(--hi);color:#1d1611;font-size:14px}
 .lad{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:8px;margin-bottom:6px}.lvl{background:var(--s1);border-radius:14px;padding:10px}.lvl b{display:block;font:700 13px var(--rd)}.lvl .pbar{margin:6px 0 0;--c:var(--brass)}
 #chk{display:none;position:fixed;inset:0;z-index:20;background:var(--bg);overflow-y:auto;padding:calc(16px + env(safe-area-inset-top)) 16px calc(24px + env(safe-area-inset-bottom))}#chk.on{display:block}
 #chk .ct{display:flex;gap:12px;align-items:center;margin-bottom:14px}#chk .ct button{width:48px;flex:none}
@@ -156,16 +158,16 @@ details.card summary span{color:var(--mute);font-size:20px}
 .seq{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}.seq i{font:700 18px var(--rd);font-style:normal;background:var(--s2);border-radius:10px;padding:8px 12px}
 .live{text-align:center}.lb2{font:700 56px/1.1 var(--rd);margin:10px 0}
 .res{background:var(--s1);border-radius:20px;padding:16px;margin-bottom:12px;border-left:6px solid var(--bad)}.res.pass{border-color:var(--ok)}.rb{font:700 22px var(--rd);margin-bottom:8px}.res ul{margin:0 0 8px;padding-left:18px}
-.str .now{background:var(--brass);border-radius:8px;color:#1d1611}.str .now small{color:#1d1611}
-#tbar{display:flex;gap:6px;overflow-x:auto;margin-bottom:14px;padding-bottom:2px}#tbar button{flex:none;min-height:40px;padding:8px 14px;font-size:14px}#tbar button.on{background:var(--brass);color:#1d1611}
+.str .now{background:var(--hi);border-radius:8px;color:#1d1611}.str .now small{color:#1d1611}
+#tbar{display:flex;gap:6px;overflow-x:auto;margin-bottom:14px;padding-bottom:2px}#tbar button{flex:none;min-height:40px;padding:8px 14px;font-size:14px}#tbar button.on{background:var(--hi);color:#1d1611}
 .sgc{background:var(--s1);border-radius:18px;padding:14px;margin-bottom:10px}.sgc summary b{font:700 17px var(--rd)}
 .chs{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.chs i{font:700 14px var(--rd);font-style:normal;background:var(--s2);border-radius:8px;padding:4px 10px}
 .stt{font-size:12px;font-weight:700;border-radius:999px;padding:3px 10px;background:var(--s2);margin-left:6px}.stt.ready{background:var(--ok);color:#1d1611}
 .sgq{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}.sgq button{min-height:38px;padding:6px 12px;font-size:13px}
 .field{display:block;margin-bottom:10px}.field small{display:block;margin-bottom:4px}
 .rec{background:var(--s2);border-radius:14px;padding:10px 12px;margin-bottom:8px}.rec audio{width:100%;margin-top:6px}
-.tstr i.on{background:var(--brass);color:#1d1611}.tstr i.ok{background:var(--ok);color:#1d1611}
-.bch{display:flex;gap:6px;overflow-x:auto;margin:12px 0}.bch i{flex:none;font:700 16px var(--rd);font-style:normal;background:var(--s2);border-radius:10px;padding:10px 14px}.bch i.on{background:var(--brass);color:#1d1611}
+.tstr i.on{background:var(--hi);color:#1d1611}.tstr i.ok{background:var(--ok);color:#1d1611}
+.bch{display:flex;gap:6px;overflow-x:auto;margin:12px 0}.bch i{flex:none;font:700 16px var(--rd);font-style:normal;background:var(--s2);border-radius:10px;padding:10px 14px}.bch i.on{background:var(--hi);color:#1d1611}
 .bfig{display:flex;justify-content:center;--c:var(--brass);color:var(--ink);min-height:90px}
 .cpr{background:var(--s1);border-radius:14px;padding:12px;margin-bottom:8px}.cpr b{font-family:var(--rd)}.cpr.best{border-left:5px solid var(--ok)}
 .tg2{display:flex;gap:10px;align-items:center;margin-top:10px}.tg2 input{width:24px;height:24px;min-height:0}
@@ -173,7 +175,7 @@ input[type=number]{width:100%}
 .tc{text-align:center;font:700 22px var(--rd);color:var(--mute);min-height:30px}
 .tt{background:linear-gradient(90deg,var(--line) 0 45%,var(--ok) 45% 55%,var(--line) 55% 100%)}
 .tstr{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-top:6px}
-.chp{min-height:52px;padding:6px 0;font:700 17px var(--rd);background:var(--s2)}.chp.on{background:var(--brass);color:#1d1611}.chp.ok{outline:2px solid var(--ok)}.chp.lock{outline:2px solid var(--brass)}
+.chp{min-height:52px;padding:6px 0;font:700 17px var(--rd);background:var(--s2)}.chp.on{background:var(--hi);color:#1d1611}.chp.ok{outline:2px solid var(--ok)}.chp.lock{outline:2px solid var(--brass)}
 .tg.bn{background:var(--s2);color:var(--mute)}
 
 #pg{display:none;position:fixed;left:0;right:0;top:0;bottom:calc(70px + env(safe-area-inset-bottom));z-index:8;background:var(--bg);flex-direction:column}
@@ -213,15 +215,25 @@ section.on{animation:fade .2s ease}
 .wcard{background:var(--s1);border-radius:18px;padding:14px;margin-bottom:12px}.wh{display:flex;justify-content:space-between;margin-bottom:10px}
 .wdots{display:flex;justify-content:space-between;margin-bottom:10px}.wd{text-align:center}
 .wd i{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;border:2px solid var(--line);font-style:normal;font-weight:800;color:#1d1611;margin:0 auto 4px}
-.wd.on i{background:var(--brass);border-color:var(--brass)}.wd.rest i{border-style:dashed;color:var(--mute)}.wd.now i{box-shadow:0 0 0 3px rgba(255,255,255,.22)}
+.wd.on i{background:var(--hi);border-color:var(--hi)}.wd.rest i{border-style:dashed;color:var(--mute)}.wd.now i{box-shadow:0 0 0 3px rgba(255,255,255,.22)}
 .wcard .pbar{margin:0 0 8px}
+body{transition:background-color .25s,color .25s}
+#sb{position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top);background:var(--bar);z-index:40}
+.tops{display:flex;gap:8px;align-items:center}.tops button.flame{border:0;min-height:0;padding:8px 12px;font-size:16px}
+:root[data-theme="light"] .hk,:root[data-theme="light"] .up small,:root[data-theme="light"] .ty,:root[data-theme="light"] .cnt,:root[data-theme="light"] .tick,:root[data-theme="light"] .badge,:root[data-theme="light"] .pm,:root[data-theme="light"] .rn h2{color:color-mix(in srgb,var(--c) 52%,#000)}
+:root[data-theme="light"] .lr.done .tick,:root[data-theme="light"] .les.done>summary .tick{color:#1d1611}
+:root[data-theme="light"] .card,:root[data-theme="light"] .hero,:root[data-theme="light"] .pc,:root[data-theme="light"] .lr,:root[data-theme="light"] .lrow,:root[data-theme="light"] .fold,:root[data-theme="light"] .vd,:root[data-theme="light"] .wcard,:root[data-theme="light"] .up,:root[data-theme="light"] .res,:root[data-theme="light"] .tile,:root[data-theme="light"] .rec2,:root[data-theme="light"] .sgc,:root[data-theme="light"] .cpr,:root[data-theme="light"] .ach,:root[data-theme="light"] .lvl,:root[data-theme="light"] .pr,:root[data-theme="light"] .tp,:root[data-theme="light"] .flame,:root[data-theme="light"] .rd,:root[data-theme="light"] .fin{box-shadow:var(--sh)}
+:root[data-theme="light"] .d.cur{box-shadow:0 0 0 4px rgba(0,0,0,.14)}:root[data-theme="light"] .wd.now i{box-shadow:0 0 0 3px rgba(0,0,0,.14)}
+:root[data-theme="light"] nav{box-shadow:0 -1px 6px rgba(70,45,10,.08)}
+@media(prefers-reduced-motion:reduce){body{transition:none}}
 </style>
 </head>
 <body>
+<div id="sb"></div>
 <main>
 <div id="tbar" hidden></div>
 <section id="coach" class="on">
-  <header class="top"><h1 id="hi">Hello</h1><div class="flame" id="flame"></div></header>
+  <header class="top"><h1 id="hi">Hello</h1><div class="tops"><button class="flame" id="themeb" aria-label="Switch between light and dark">🌙</button><div class="flame" id="flame"></div></div></header>
   <div id="fin"></div>
   <div class="rec2" id="rec"></div>
   <div id="hero"></div>
@@ -330,7 +342,7 @@ section.on{animation:fade .2s ease}
 <script>
 const $=s=>document.querySelector(s);
 const KEY="guitarcoach.v1";
-const DEF=()=>({len:25,log:[],quiz:{ok:0,n:0},pats:0,done:{},vid:{},shaky:{},chk:{},cs:{},cdone:{},wgoal:4,snd:"nylon",sing:true,songs:[],rest:[],tempo:{},lefty:false,goal:null,range:null});
+const DEF=()=>({len:25,log:[],quiz:{ok:0,n:0},pats:0,done:{},vid:{},shaky:{},chk:{},cs:{},cdone:{},wgoal:4,snd:"nylon",theme:"light",sing:true,songs:[],rest:[],tempo:{},lefty:false,goal:null,range:null});
 let S;
 try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
 S=Object.assign(DEF(),S||{});
@@ -341,6 +353,15 @@ const flash=m=>{const t=$("#toast");t.textContent=m;t.classList.add("on");clearT
 const save=quiet=>{let m=null;try{m=typeof chalCheck==="function"?chalCheck():null}catch(e){}try{localStorage.setItem(KEY,JSON.stringify(S));if(m)flash(m);else if(!quiet)flash("Saved ✓")}catch(e){flash("⚠ Could not save")}};
 const day=(d=new Date())=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 
+/* ---------- theme ---------- */
+const effTheme=()=>{const t=S.theme||"light";return t==="auto"?(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"):t};
+function applyTheme(){const e=effTheme(),h=document.documentElement;if(h)h.setAttribute("data-theme",e);
+  const m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute("content",e==="light"?"#fbf8f1":"#1d1611");
+  const cs=document.querySelector('meta[name="color-scheme"]');if(cs)cs.setAttribute("content",e);
+  $("#themeb").textContent=e==="light"?"🌙":"☀️"}
+try{if(window.matchMedia)matchMedia("(prefers-color-scheme: dark)").addEventListener("change",()=>{if(S.theme==="auto")applyTheme()})}catch(e){}
+$("#themeb").onclick=()=>{S.theme=effTheme()==="light"?"dark":"light";save();applyTheme();flash(S.theme==="light"?"Light mode":"Dark mode")};
+applyTheme();
 /* ---------- tabs ---------- */
 const tabs=[["coach","🏠","Overview"],["learn","🏆","Learn"],["songs","🎵","Songs"],["tools","🧰","Tools"],["prog","📈","Progress"]];
 const TOOLS=[["rhythm","🥁","Rhythm"],["fret","🎼","Notes"],["voice","🎤","Voice"],["tuner","🎚","Tuner"],["backing","🎶","Backing"],["capo","🧮","Capo"]];
@@ -813,7 +834,7 @@ function pgClick(e){const b=e.target.closest("button");if(!b)return;const d=b.da
     if(a.every(Boolean)){S.done[l.id]=1;delete S.shaky[l.id];save(true);flash("Lesson complete 🎉")}else{delete S.done[l.id];save()}refreshLearn();return}
   if(d.know){const l=LB[d.know];if(S.done[l.id]){S.chk[l.id]=l.c.map(()=>0);delete S.done[l.id];save()}else{completeLesson(l);flash("Lesson complete 🎉")}refreshLearn()}}
 $("#lessons").onclick=pgClick;$("#pg").onclick=pgClick;
-$("#pg").onchange=e=>{const t=e.target;if(t.id==="sing"){S.sing=t.checked;save();flash(S.sing?"Singing lessons included":"Singing lessons hidden")}else if(t.id==="snd"){S.snd=t.value;gbC={};save();flash(S.snd==="steel"?"Steel-string sound":"Nylon-string sound")}else if(t.id==="wg"){S.wgoal=+t.value;save();flash("Weekly goal updated")}else if(t.id==="lefty"){S.lefty=t.checked;save();flash("Chord diagrams updated")}};
+$("#pg").onchange=e=>{const t=e.target;if(t.id==="sing"){S.sing=t.checked;save();flash(S.sing?"Singing lessons included":"Singing lessons hidden")}else if(t.id==="theme"){S.theme=t.value;save();applyTheme();flash(t.value==="auto"?"Matches your iPhone":t.value==="dark"?"Dark mode":"Light mode")}else if(t.id==="snd"){S.snd=t.value;gbC={};save();flash(S.snd==="steel"?"Steel-string sound":"Nylon-string sound")}else if(t.id==="wg"){S.wgoal=+t.value;save();flash("Weekly goal updated")}else if(t.id==="lefty"){S.lefty=t.checked;save();flash("Chord diagrams updated")}};
 /* ---------- rhythm ---------- */
 const PATS=[
  ["1. Quarter notes",2,"D - D - D - D -"],
@@ -1232,7 +1253,7 @@ function progPage(k){
   if(k==="week"){const w=weekData();return `<div class="lp"><h2>${fT(w.wk)}</h2><p class="mute">practised in the last 7 days</p><div class="card wk" style="margin-top:14px">${w.days.map(x=>`<div class="wb"><small>${x.m||""}</small><i class="${x.m?"on":""}" style="height:${Math.round(70*x.m/w.mx)+6}px"></i><small>${x.l}</small></div>`).join("")}</div></div>`}
   if(k==="ms"){return `<div class="lp"><div class="ach-g">${achList().map(a=>`<div class="ach${a[2]?" got":""}"><span>${a[2]?a[0]:"🔒"}</span>${a[1]}</div>`).join("")}</div></div>`}
   if(k==="tempo"){const t=tempoGains();return `<div class="lp">${t.length?t.map(id=>{const h=S.tempo[id];return `<div class="cpr"><b>${LB[id].t}</b> · ${h[0].b} → ${Math.max(...h.map(x=>x.b))} BPM</div>`}).join(""):`<p class="mute">Log your best clean tempo inside a lesson (Tempo log) and your gains appear here.</p>`}</div>`}
-  if(k==="set"){return `<div class="lp"><label class="field" style="margin-top:4px"><small>Weekly practice goal</small><select id="wg" style="width:100%">${[2,3,4,5,6,7].map(n=>`<option value="${n}" ${n===(S.wgoal||4)?"selected":""}>${n} days a week</option>`).join("")}</select></label><label class="field"><small>Practice sound</small><select id="snd" style="width:100%"><option value="nylon" ${S.snd!=="steel"?"selected":""}>Nylon-string guitar</option><option value="steel" ${S.snd==="steel"?"selected":""}>Steel-string guitar</option></select></label><div class="row2" style="margin-bottom:12px"><button data-hear="strum">▶ Strum G</button><button data-hear="pick">▶ Pick C</button></div><label class="tg2"><input type="checkbox" id="sing" ${singOn()?"checked":""}> Include singing challenges</label><label class="tg2"><input type="checkbox" id="lefty" ${S.lefty?"checked":""}> Left-handed chord diagrams</label><p class="mute" style="margin-top:14px">Reminders: iPhone web apps cannot send timed notifications. Set a daily alarm or Reminders item, or use a Shortcuts Time of Day automation with the Open URLs action and this app's link.</p></div>`}
+  if(k==="set"){return `<div class="lp"><label class="field" style="margin-top:4px"><small>Weekly practice goal</small><select id="wg" style="width:100%">${[2,3,4,5,6,7].map(n=>`<option value="${n}" ${n===(S.wgoal||4)?"selected":""}>${n} days a week</option>`).join("")}</select></label><label class="field" style="margin-top:4px"><small>Appearance</small><select id="theme" style="width:100%"><option value="light" ${(S.theme||"light")==="light"?"selected":""}>Light (bright)</option><option value="dark" ${S.theme==="dark"?"selected":""}>Dark</option><option value="auto" ${S.theme==="auto"?"selected":""}>Match my iPhone</option></select></label><label class="field"><small>Practice sound</small><select id="snd" style="width:100%"><option value="nylon" ${S.snd!=="steel"?"selected":""}>Nylon-string guitar</option><option value="steel" ${S.snd==="steel"?"selected":""}>Steel-string guitar</option></select></label><div class="row2" style="margin-bottom:12px"><button data-hear="strum">▶ Strum G</button><button data-hear="pick">▶ Pick C</button></div><label class="tg2"><input type="checkbox" id="sing" ${singOn()?"checked":""}> Include singing challenges</label><label class="tg2"><input type="checkbox" id="lefty" ${S.lefty?"checked":""}> Left-handed chord diagrams</label><p class="mute" style="margin-top:14px">Reminders: iPhone web apps cannot send timed notifications. Set a daily alarm or Reminders item, or use a Shortcuts Time of Day automation with the Open URLs action and this app's link.</p></div>`}
   return `<div class="lp"><p class="mute">Everything saves automatically on this device. To move it to another phone, copy a backup and restore it there.</p><div class="row2 sm2"><button id="bcopy">Copy backup</button><button id="brest">Restore</button></div><textarea id="bk" placeholder="Paste a backup here to restore"></textarea><button class="lnk" id="reset">Reset all progress</button></div>`}
 function openProgPage(k){pgOpen({week:"This week",ms:"Badges and milestones",tempo:"Tempo gains",set:"Settings",bk:"Backup and reset"}[k],()=>progPage(k))}
 $("#prog").onclick=pgClick;
