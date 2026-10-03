@@ -226,6 +226,9 @@ body{transition:background-color .25s,color .25s}
 :root[data-theme="light"] .d.cur{box-shadow:0 0 0 4px rgba(0,0,0,.14)}:root[data-theme="light"] .wd.now i{box-shadow:0 0 0 3px rgba(0,0,0,.14)}
 :root[data-theme="light"] nav{box-shadow:0 -1px 6px rgba(70,45,10,.08)}
 @media(prefers-reduced-motion:reduce){body{transition:none}}
+main,.pbody,#chk{zoom:var(--z,1)}
+.rl{margin:0;padding-left:20px}.rl li{margin-bottom:4px}
+.running #rev{display:none}
 </style>
 </head>
 <body>
@@ -236,6 +239,7 @@ body{transition:background-color .25s,color .25s}
   <header class="top"><h1 id="hi">Hello</h1><div class="tops"><button class="flame" id="themeb" aria-label="Switch between light and dark">🌙</button><div class="flame" id="flame"></div></div></header>
   <div id="fin"></div>
   <div class="rec2" id="rec"></div>
+  <div id="rev"></div>
   <div id="hero"></div>
   <div id="week"></div>
   <div class="quick" id="quick"></div>
@@ -263,6 +267,8 @@ body{transition:background-color .25s,color .25s}
   <small>Red dot is the root. Low E string is at the bottom.</small>
   <div class="sec" style="margin-top:22px"><h2>Note quiz</h2></div>
   <div class="card"><div class="q" id="qq"></div><div class="opts" id="qo"></div><small id="qs" style="display:block;margin-top:10px"></small></div>
+<div class="sec" style="margin-top:22px"><h2>Fretboard hunt</h2></div>
+  <div class="card"><div class="q" id="hq">The app names a note and a string. Find it on your guitar and the mic checks you.</div><div class="mute" id="hh" style="min-height:20px"></div><div class="pn" id="hn" style="font-size:44px">–</div><small id="hs" class="lgd"></small><button class="go" id="hbtn" style="width:100%">Start hunt</button></div>
 </section>
 
 <section id="voice">
@@ -332,6 +338,15 @@ body{transition:background-color .25s,color .25s}
   <div id="cpout"></div>
 </section>
 
+<section id="ear">
+  <h1>👂 Chord finder</h1>
+  <div class="card"><div class="pn" id="ename">–</div><p class="mute" id="ealt" style="text-align:center;min-height:20px"></p><div class="bfig" id="efig"></div>
+    <p class="mute" id="ehint" style="text-align:center;margin:10px 0">Tap Start, play a chord and let it ring.</p>
+    <button class="go" id="emic" style="width:100%">Start listening</button></div>
+  <div class="card"><div class="wh"><b>Chords heard</b><button class="lnk" id="eclear" style="width:auto;margin:0;min-height:0;padding:0">Clear</button></div><div class="chs" id="elog"></div>
+    <button id="esave" style="width:100%;margin-top:8px">Save as a song</button></div>
+</section>
+
 </main>
 <div id="pg"><div class="pbar2"><button data-pb="1">‹ Back</button><b id="pgt"></b></div><div class="pbody" id="pgb"></div></div>
 <div id="toast"></div>
@@ -342,15 +357,17 @@ body{transition:background-color .25s,color .25s}
 <script>
 const $=s=>document.querySelector(s);
 const KEY="guitarcoach.v1";
-const DEF=()=>({len:25,log:[],quiz:{ok:0,n:0},pats:0,done:{},vid:{},shaky:{},chk:{},cs:{},cdone:{},wgoal:4,snd:"nylon",theme:"light",sing:true,songs:[],rest:[],tempo:{},lefty:false,goal:null,range:null});
+const DEF=()=>({len:25,log:[],quiz:{ok:0,n:0},pats:0,done:{},vid:{},shaky:{},chk:{},cs:{},cdone:{},wgoal:4,snd:"nylon",theme:"light",rm:{t:"18:00",days:[1,2,3,4,5]},fs:"n",earlog:[],hunt:null,sing:true,songs:[],rest:[],tempo:{},lefty:false,goal:null,range:null});
 let S;
 try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
 S=Object.assign(DEF(),S||{});
 S.log=S.log.filter(l=>l.m>0);
 const MIG={0:"clean",1:"strum",2:"color",3:"capo",4:"fmaj",5:"eshape",6:"ashape",7:"rhythm16",8:"palm",9:"notes",10:"pent",11:"legato",12:"bends",13:"caged",14:"arp",15:"travis",16:"perc",17:"invert",18:"ext",19:"tunings",20:"improv",21:"arrange",22:"vcare",23:"breath",24:"warmup",25:"pitch",26:"range",27:"singstrum",28:"tone",29:"phrasing"};
 ["done","shaky","vid"].forEach(k=>{const o=S[k]||{},n={};for(const i in o)n[MIG[i]||i]=o[i];S[k]=n});
+if(!S.dd){S.dd={};for(const k in S.done)S.dd[k]="0000-00-00"}
 const flash=m=>{const t=$("#toast");t.textContent=m;t.classList.add("on");clearTimeout(flash.t);flash.t=setTimeout(()=>t.classList.remove("on"),1300)};
-const save=quiet=>{let m=null;try{m=typeof chalCheck==="function"?chalCheck():null}catch(e){}try{localStorage.setItem(KEY,JSON.stringify(S));if(m)flash(m);else if(!quiet)flash("Saved ✓")}catch(e){flash("⚠ Could not save")}};
+function stampDone(){S.dd=S.dd||{};for(const k in S.done)if(!S.dd[k])S.dd[k]=day();for(const k in S.dd)if(!S.done[k])delete S.dd[k]}
+const save=quiet=>{try{stampDone()}catch(e){}let m=null;try{m=typeof chalCheck==="function"?chalCheck():null}catch(e){}try{localStorage.setItem(KEY,JSON.stringify(S));if(m)flash(m);else if(!quiet)flash("Saved ✓")}catch(e){flash("⚠ Could not save")}};
 const day=(d=new Date())=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 
 /* ---------- theme ---------- */
@@ -364,7 +381,7 @@ $("#themeb").onclick=()=>{S.theme=effTheme()==="light"?"dark":"light";save();app
 applyTheme();
 /* ---------- tabs ---------- */
 const tabs=[["coach","🏠","Overview"],["learn","🏆","Learn"],["songs","🎵","Songs"],["tools","🧰","Tools"],["prog","📈","Progress"]];
-const TOOLS=[["rhythm","🥁","Rhythm"],["fret","🎼","Notes"],["voice","🎤","Voice"],["tuner","🎚","Tuner"],["backing","🎶","Backing"],["capo","🧮","Capo"]];
+const TOOLS=[["rhythm","🥁","Rhythm"],["fret","🎼","Notes"],["voice","🎤","Voice"],["tuner","🎚","Tuner"],["backing","🎶","Backing"],["capo","🧮","Capo"],["ear","👂","Chords"]];
 const isTool=id=>TOOLS.some(t=>t[0]===id);
 $("#nav").innerHTML=tabs.map(t=>`<button data-t="${t[0]}"><span class="ti">${t[1]}</span>${t[2]}</button>`).join("");
 let tab="coach",lastTool="rhythm";
@@ -372,9 +389,9 @@ function show(id){pgClear();if(id==="tools")id=lastTool;if(isTool(id))lastTool=i
   document.querySelectorAll("section").forEach(s=>s.classList.toggle("on",s.id===id));
   const nb=isTool(id)?"tools":id;document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.t===nb));
   $("#tbar").hidden=!isTool(id);if(isTool(id))$("#tbar").innerHTML=TOOLS.map(t=>`<button data-t="${t[0]}" class="${t[0]===id?"on":""}">${t[1]} ${t[2]}</button>`).join("");
-  if(id!=="rhythm")stop(); if(id!=="voice")stopMic(); if(id!=="tuner")stopTuner(); if(id!=="backing")stopBacking();
+  if(id!=="rhythm")stop(); if(id!=="voice")stopMic(); if(id!=="tuner")stopTuner(); if(id!=="backing")stopBacking(); if(id!=="fret")stopHunt(); if(id!=="ear")stopEar();
   if(id==="voice")rangeTxt(); if(id==="prog")renderProg(); if(id==="learn")renderLearn(true); if(id==="coach")renderToday();
-  if(id==="songs")renderSongs(); if(id==="backing")renderBacking(); if(id==="tuner")renderTuner();
+  if(id==="songs")renderSongs(); if(id==="backing")renderBacking(); if(id==="tuner")renderTuner(); if(id==="ear")renderEar();
   pillUpdate(); scrollTo(0,0)}
 $("#nav").onclick=e=>{const b=e.target.closest("button");if(b)show(b.dataset.t)};
 $("#tbar").onclick=e=>{const b=e.target.closest("button");if(b)show(b.dataset.t)};
@@ -414,7 +431,7 @@ function renderToday(){
   $("#flame").textContent=st?`🔥 ${st}`:"🎸 0";
   $("#fin").innerHTML="";build();
   const L=nextL(),cpi=L?phaseOf(L.id):-1,p=cpi>=0?PATH[cpi]:null,core=p?p[3].filter(i=>enabled(i)&&!BONUS.has(i)):[],cd=core.filter(i=>S.done[i]).length,c=L?phColor(L.id):"#8fd17a",tm=todayMin(),wg=S.wgoal||4,w=weekData(),wk=w.days.filter(x=>x.m>0).length;
-  $("#rec").innerHTML=recText();
+  $("#rec").innerHTML=recText();renderRev();
   $("#hero").innerHTML=`<div class="hero" style="--c:${c}"><div class="hk">${p?p[4]+" Current challenge":"All challenges complete"}</div><h2>${p?p[0]:"Roadmap complete 🎉"}</h2><p>${p?p[1]:"Keep playing songs and recording yourself."}</p>`+
    (p?`<div class="pbar" style="margin:0 0 6px"><i style="width:${100*cd/core.length}%"></i></div><small>${cd} of ${core.length} missions · next: ${L.t}</small>`:"")+
    `<div class="seg" style="margin-top:14px">${[5,15,25,40,60].map(m=>`<button data-m="${m}" class="${m===lenMin?"on":""}">${m}</button>`).join("")}<span>min</span></div>
@@ -720,7 +737,7 @@ const tickN=l=>S.done[l.id]?l.c.length:(S.chk[l.id]||[]).filter(Boolean).length;
 const lvlOf=l=>Math.min(l.d.length-1,tickN(l));
 const focusText=l=>"Level "+(lvlOf(l)+1)+" · "+l.d[lvlOf(l)][0]+" min. "+l.d[lvlOf(l)][1];
 function completeLesson(l){S.chk[l.id]=l.c.map(()=>1);S.done[l.id]=1;delete S.shaky[l.id];save()}
-const VIDEOS={strum:"CjM5fyXoV8w",capo:"Y22MT3etzwM",fmaj:"4cR1sa1_d_8",eshape:"IxXG5S8vSd8",pent:"eEJpypexUDg",warmup:"rYsuVwyGe-4"};
+const VIDEOS={clean:"qXK_If0QzDM",strum:"CjM5fyXoV8w",capo:"Y22MT3etzwM",fmaj:"4cR1sa1_d_8",eshape:"IxXG5S8vSd8",palm:"5H7Q6dSxuQc",notes:"nXN7hYNMfhA",pent:"eEJpypexUDg",legato:"dYaeIXXyy1Y",travis:"K2Z3RZc5t-A",warmup:"rYsuVwyGe-4",breath:"98Gk-OsMblM"};
 /* ---------- pictures ---------- */
 const CH={"C":"x32010","G":"320003","D":"xx0232","A":"x02220","E":"022100","Am":"x02210","Em":"022000","Dm":"xx0231","A7":"x02020","D7":"xx0212","E7":"020100","G7":"320001","Asus2":"x02200","Dsus2":"xx0230","Em7":"020000","Cadd9":"x32030","F easy":"xx3211","F full":"133211","F (fret 1)":"133211","G (fret 3)":"355433","A (fret 5)":"577655","Bm (fret 2)":"x24432","C (fret 3)":"x35553","Cmaj7":"x32000","Am7":"x02010","Dm7":"xx0211","Cmaj9":"x32430","E5":"022xxx","A5":"x022xx","D5":"xx023x","F":"xx3211","Bm":"x24432","F#m":"244222","Bb":"x13331","B":"x24442","Cm":"x35543","Gm":"355333","Fm":"133111","C7":"x32310","B7":"x21202","Asus4":"x02230","Dsus4":"xx0233","Esus4":"022200","Fmaj7":"xx3210"};
 const PICS={clean:["C","G","D","A","E","Am","Em","Dm"],color:["E7","A7","Em7","Asus2","Cadd9","G7","D7","Dsus2"],fmaj:["F easy","F full"],eshape:["F (fret 1)","G (fret 3)","A (fret 5)"],ashape:["Bm (fret 2)","C (fret 3)"],ext:["Cmaj7","Am7","Dm7","G7","Cmaj9"],palm:["E5","A5","D5"]};
@@ -822,6 +839,8 @@ function pgClick(e){const b=e.target.closest("button");if(!b)return;const d=b.da
   if(b.id==="brest"){restoreBackup();return}
   if(b.id==="reset"){resetAll();return}
   if(d.hear){needAc();const t0=ac.currentTime+.05;if(d.hear==="strum")strumC("G",t0,"D",.5);else [48,52,55,60,64,60,55,52].forEach((m,k)=>pluck(m,t0+k*.24,.5));return}
+  if(d.rd!=null){S.rm=S.rm||{t:"18:00",days:[1,2,3,4,5]};const i=+d.rd,a=S.rm.days;S.rm.days=a.includes(i)?a.filter(x=>x!==i):a.concat(i).sort();save(true);pgRefresh();return}
+  if(d.rmadd){addToCalendar();return}
   if(d.go){show(d.go);return}
   if(d.chk){const p=d.chk.split("|");openCheck(p[0],+p[1]);return}
   if(d.play!=null){document.querySelector('.vbox[data-i="'+d.play+'"]').innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${S.vid[d.play]||VIDEOS[d.play]}?playsinline=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`;return}
@@ -834,7 +853,7 @@ function pgClick(e){const b=e.target.closest("button");if(!b)return;const d=b.da
     if(a.every(Boolean)){S.done[l.id]=1;delete S.shaky[l.id];save(true);flash("Lesson complete 🎉")}else{delete S.done[l.id];save()}refreshLearn();return}
   if(d.know){const l=LB[d.know];if(S.done[l.id]){S.chk[l.id]=l.c.map(()=>0);delete S.done[l.id];save()}else{completeLesson(l);flash("Lesson complete 🎉")}refreshLearn()}}
 $("#lessons").onclick=pgClick;$("#pg").onclick=pgClick;
-$("#pg").onchange=e=>{const t=e.target;if(t.id==="sing"){S.sing=t.checked;save();flash(S.sing?"Singing lessons included":"Singing lessons hidden")}else if(t.id==="theme"){S.theme=t.value;save();applyTheme();flash(t.value==="auto"?"Matches your iPhone":t.value==="dark"?"Dark mode":"Light mode")}else if(t.id==="snd"){S.snd=t.value;gbC={};save();flash(S.snd==="steel"?"Steel-string sound":"Nylon-string sound")}else if(t.id==="wg"){S.wgoal=+t.value;save();flash("Weekly goal updated")}else if(t.id==="lefty"){S.lefty=t.checked;save();flash("Chord diagrams updated")}};
+$("#pg").onchange=e=>{const t=e.target;if(t.id==="sing"){S.sing=t.checked;save();flash(S.sing?"Singing lessons included":"Singing lessons hidden")}else if(t.id==="fs"){S.fs=t.value;save();applyFs();flash("Text size updated")}else if(t.id==="rmt"){S.rm=S.rm||{t:"18:00",days:[1,2,3,4,5]};S.rm.t=t.value||"18:00";save(true)}else if(t.id==="theme"){S.theme=t.value;save();applyTheme();flash(t.value==="auto"?"Matches your iPhone":t.value==="dark"?"Dark mode":"Light mode")}else if(t.id==="snd"){S.snd=t.value;gbC={};save();flash(S.snd==="steel"?"Steel-string sound":"Nylon-string sound")}else if(t.id==="wg"){S.wgoal=+t.value;save();flash("Weekly goal updated")}else if(t.id==="lefty"){S.lefty=t.checked;save();flash("Chord diagrams updated")}};
 /* ---------- rhythm ---------- */
 const PATS=[
  ["1. Quarter notes",2,"D - D - D - D -"],
@@ -1234,6 +1253,82 @@ function tempoBlock(l){if(!TEMPOS.includes(l.id))return "";const h=S.tempo[l.id]
   return `<div class="blk"><h4>🎚 Tempo log</h4><p class="mute">${best?`Best clean tempo: <b>${best} BPM</b>${best>h[0].b?` · +${best-h[0].b} since you started`:""}`:"Log the fastest tempo you can play this cleanly."}</p><div class="row2"><input id="tb${l.id}" type="number" inputmode="numeric" placeholder="BPM"><button data-tlog="${l.id}" style="flex:none">Log</button></div>${h.length?`<small>${h.slice(-6).map(x=>x.b).join(" → ")} BPM</small>`:""}</div>`}
 function tempoInner(l){const h=S.tempo[l.id]||[],best=h.length?Math.max(...h.map(x=>x.b)):0;
   return `<p class="mute">${best?`Best clean tempo: <b>${best} BPM</b>${best>h[0].b?` · +${best-h[0].b} since you started`:""}`:"Log the fastest tempo you can play this cleanly."}</p><div class="row2" style="margin-top:8px"><input id="tb${l.id}" type="number" inputmode="numeric" placeholder="BPM"><button data-tlog="${l.id}" style="flex:none">Log</button></div>${h.length?`<small>${h.slice(-6).map(x=>x.b).join(" → ")} BPM</small>`:""}`}
+/* ---------- weekly review ---------- */
+function reviewData(){
+  const w=weekData(),start=day(new Date(Date.now()-6*864e5)),days=w.days.filter(x=>x.m>0).length,wg=S.wgoal||4;
+  const finished=Object.keys(S.dd||{}).filter(k=>S.dd[k]>=start&&LB[k]&&enabled(k)).map(k=>LB[k].t);
+  const chals=Object.keys(S.cdone||{}).filter(k=>S.cdone[k]>=start&&PATH[k]).map(k=>PATH[k][4]+" "+PATH[k][0]);
+  const tempo=[];for(const id in S.tempo){if(!LB[id])continue;const all=S.tempo[id],rec=all.filter(x=>x.d>=start);if(!rec.length)continue;
+    const prev=all.filter(x=>x.d<start).map(x=>x.b),base=prev.length?Math.max(...prev):all[0].b,best=Math.max(...rec.map(x=>x.b));if(best>base)tempo.push([LB[id].t,base,best])}
+  const sh=FLAT.filter(l=>S.shaky[l.id]&&enabled(l.id)).pop(),L=nextL();let focus;
+  if(sh)focus=`Revisit "${sh.t}", which you flagged as needing work.`;
+  else if(days<wg)focus=`Practise ${wg} days next week. You managed ${days}. Short sessions count.`;
+  else if(!tempo.length)focus="Log a tempo gain on a drill. Pushing the speed up 5 BPM is the clearest sign of progress.";
+  else if(L)focus=`Keep going with "${L.t}" in ${PATH[phaseOf(L.id)][0]}.`;
+  else focus="You finished every mission. Perform your favourite song and record it.";
+  return {mins:w.wk,days,wg,finished,chals,tempo,focus,w}}
+const sundayKey=()=>day(new Date(Date.now()-new Date().getDay()*864e5));
+function reviewDue(){const dow=new Date().getDay();return (dow===0||dow===1)&&S.rvSeen!==sundayKey()}
+function reviewPage(){const r=reviewData();S.rvSeen=sundayKey();save(true);
+  return `<div class="lp"><h2>Your week</h2><p class="mute">The last 7 days</p>
+  <div class="tiles" style="margin-top:12px"><div class="tile"><span>⏱</span><b>${fT(r.mins)}</b><small>practised</small></div><div class="tile"><span>📅</span><b>${r.days}/${r.wg}</b><small>days</small></div><div class="tile"><span>✅</span><b>${r.finished.length}</b><small>missions</small></div></div>
+  <h3 style="margin:14px 0 6px">Missions finished</h3>${r.finished.length?`<ul class="rl">${r.finished.map(x=>`<li>${x}</li>`).join("")}</ul>`:`<p class="mute">None this week.</p>`}
+  ${r.chals.length?`<h3 style="margin:14px 0 6px">Challenges completed</h3><ul class="rl">${r.chals.map(x=>`<li>🏆 ${x}</li>`).join("")}</ul>`:""}
+  <h3 style="margin:14px 0 6px">Tempo gains</h3>${r.tempo.length?`<ul class="rl">${r.tempo.map(x=>`<li>${x[0]}: ${x[1]} → ${x[2]} BPM</li>`).join("")}</ul>`:`<p class="mute">No new tempo records.</p>`}
+  <div class="tp" style="margin-top:16px"><small>One thing to focus on</small><p style="color:var(--ink);font-size:16px;margin-top:4px">${r.focus}</p></div>
+  ${r.mins?`<div class="card wk" style="margin-top:12px">${r.w.days.map(x=>`<div class="wb"><small>${x.m||""}</small><i class="${x.m?"on":""}" style="height:${Math.round(70*x.m/r.w.mx)+6}px"></i><small>${x.l}</small></div>`).join("")}</div>`:""}</div>`}
+function renderRev(){const el=$("#rev");if(!reviewDue()){el.innerHTML="";return}const r=reviewData();
+  el.innerHTML=`<button class="lrow" data-open="review"><span class="li">📝</span><span class="lt2"><b>Your weekly review is ready</b><small>${fT(r.mins)} · ${r.days} days · ${r.finished.length} missions</small></span><span class="chev">›</span></button>`}
+$("#rev").onclick=e=>{if(e.target.closest("button"))pgOpen("Weekly review",reviewPage)};
+/* ---------- calendar reminder ---------- */
+function icsText(){const rm=S.rm||{t:"18:00",days:[1,2,3,4,5]},p=n=>String(n).padStart(2,"0"),hh=+rm.t.slice(0,2),mm=+rm.t.slice(3,5),names=["SU","MO","TU","WE","TH","FR","SA"],days=rm.days.length?rm.days:[1,2,3,4,5];
+  let d=new Date();for(let i=0;i<8&&!days.includes(d.getDay());i++)d=new Date(d.getTime()+864e5);
+  const st=new Date(d.getFullYear(),d.getMonth(),d.getDate(),hh,mm),en=new Date(st.getTime()+30*60000),f=x=>`${x.getFullYear()}${p(x.getMonth()+1)}${p(x.getDate())}T${p(x.getHours())}${p(x.getMinutes())}00`;
+  return ["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Guitar Coach//EN","CALSCALE:GREGORIAN","BEGIN:VEVENT","UID:gc-"+Date.now()+"@guitarcoach","DTSTAMP:"+new Date().toISOString().replace(/[-:]|\.\d{3}/g,""),"DTSTART:"+f(st),"DTEND:"+f(en),"RRULE:FREQ=WEEKLY;BYDAY="+days.map(i=>names[i]).join(","),"SUMMARY:Guitar practice","DESCRIPTION:Time to practise. Open Guitar Coach: "+((typeof location!=="undefined"&&location.href)||""),"BEGIN:VALARM","TRIGGER:PT0M","ACTION:DISPLAY","DESCRIPTION:Guitar practice","END:VALARM","END:VEVENT","END:VCALENDAR"].join("\r\n")}
+function addToCalendar(){try{const url=URL.createObjectURL(new Blob([icsText()],{type:"text/calendar;charset=utf-8"})),a=document.createElement("a");a.href=url;a.download="guitar-practice.ics";document.body.appendChild(a);a.click();setTimeout(()=>{try{document.body.removeChild(a);URL.revokeObjectURL(url)}catch(e){}},4000);flash("Calendar file ready")}catch(e){flash("Could not create the file")}}
+/* ---------- text size ---------- */
+const FSZ={n:1,l:1.12,x:1.25,xx:1.4};
+function applyFs(){const h=document.documentElement;if(h&&h.style&&h.style.setProperty)h.style.setProperty("--z",FSZ[S.fs]||1)}
+applyFs();
+/* ---------- chord finder ---------- */
+const QUAL=[["",[0,4,7],0],["m",[0,3,7],0],["7",[0,4,7,10],.03],["m7",[0,3,7,10],.03],["maj7",[0,4,7,11],.03],["sus2",[0,2,7],.02],["sus4",[0,5,7],.02],["add9",[0,2,4,7],.03],["5",[0,7],.06]];
+function nameChord(ch){let best=null,second=null;for(let r=0;r<12;r++)for(const q of QUAL){const m=matchChord(ch,q[1].map(i=>(r+i)%12));if(!m.ok)continue;const s=m.score-q[2],o={n:NM[r]+q[0],s};
+  if(!best||s>best.s){second=best;best=o}else if(!second||s>second.s)second=o}return {best,second}}
+let em=null;
+async function startEar(){if(em){stopEar();return}
+  try{needAc();const st=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});const an=ac.createAnalyser();an.fftSize=16384;an.smoothingTimeConstant=0;ac.createMediaStreamSource(st).connect(an);
+    em={st,an,td:new Float32Array(16384),fd:new Float32Array(8192),prev:null,cand:0,shown:null,last:null,t:setInterval(earTick,120)};$("#emic").textContent="Stop";$("#ehint").textContent="Play a chord and let it ring."}
+  catch(e){$("#ehint").textContent="The microphone is blocked. Allow it in your browser settings for this site."}}
+function stopEar(){if(!em)return;clearInterval(em.t);try{em.st.getTracks().forEach(t=>t.stop())}catch(e){}em=null;$("#emic").textContent="Start listening"}
+function earTick(){em.an.getFloatTimeDomainData(em.td);let e=0;const N=em.td.length;for(let i=N-4096;i<N;i++)e+=em.td[i]*em.td[i];if(Math.sqrt(e/4096)<.005){em.cand=0;em.prev=null;return}
+  em.an.getFloatFrequencyData(em.fd);const mag=new Float32Array(em.fd.length);for(let i=0;i<mag.length;i++)mag[i]=Math.pow(10,em.fd[i]/20);
+  const r=nameChord(chromaOf(mag,ac.sampleRate,16384)),lab=r.best?r.best.n:null;em.cand=lab===em.prev?em.cand+1:1;em.prev=lab;
+  if(lab&&em.cand>=4&&lab!==em.shown){em.shown=lab;$("#ename").textContent=lab;$("#ealt").textContent=r.second&&r.best.s-r.second.s<.06?"or "+r.second.n:"";
+    $("#efig").innerHTML=CH[lab]?`<figure style="margin:0;text-align:center">${chordSvg(CH[lab])}</figure>`:"";
+    if(lab!==em.last){em.last=lab;S.earlog=(S.earlog||[]).concat(lab).slice(-24);save(true);renderEarLog()}}}
+function renderEarLog(){const l=S.earlog||[];$("#elog").innerHTML=l.length?l.map(x=>`<i>${x}</i>`).join(""):`<small>Nothing yet.</small>`}
+function renderEar(){renderEarLog()}
+$("#emic").onclick=startEar;$("#eclear").onclick=()=>{S.earlog=[];save(true);renderEarLog()};
+$("#esave").onclick=()=>{const l=S.earlog||[];if(l.length<2){flash("Play a few chords first");return}addSong("Heard "+day(),l.join(" "),80);flash("Saved to Songs")};
+/* ---------- fretboard hunt ---------- */
+let hm=null;const HS=["low E","A","D","G","B","high e"];
+function hNext(){let s,f,m;do{s=Math.floor(Math.random()*6);f=1+Math.floor(Math.random()*12);m=OPENM[s]+f}while(hm.cur&&hm.cur.m%12===m%12);
+  hm.cur={s,f,m,t:Date.now(),ok:0};hm.hint=false;$("#hq").innerHTML=`Play <b>${NN[m%12]}</b> on the <b>${HS[s]}</b> string`;$("#hh").textContent=""}
+async function startHunt(){
+  try{needAc();const st=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});const an=ac.createAnalyser();an.fftSize=16384;an.smoothingTimeConstant=0;ac.createMediaStreamSource(st).connect(an);
+    hm={st,an,buf:new Float32Array(16384),round:0,score:0,times:[],cur:null,t:setInterval(huntTick,100)};$("#hbtn").textContent="Stop";$("#hs").textContent="Round 1 of 10";hNext()}
+  catch(e){$("#hq").textContent="The microphone is blocked. Allow it in your browser settings for this site."}}
+function huntTick(){const c=hm.cur;if(!c)return;const sec=(Date.now()-c.t)/1000;
+  if(sec>8&&!hm.hint){hm.hint=true;$("#hh").textContent="Hint: fret "+c.f}
+  if(sec>20){hNextRound(false);return}
+  hm.an.getFloatTimeDomainData(hm.buf);const N=hm.buf.length;let e=0;for(let i=N-4096;i<N;i++)e+=hm.buf[i]*hm.buf[i];if(Math.sqrt(e/4096)<.005){c.ok=0;return}
+  const r=yinT(hm.buf.subarray(N-8192),ac.sampleRate,70,900,.15);if(!(r.f>0)||r.p<.6){c.ok=0;return}
+  const m=Math.round(69+12*Math.log2(r.f/440));$("#hn").textContent=NN[m%12];if(m%12===c.m%12){c.ok++;if(c.ok>=3)hNextRound(true)}else c.ok=0}
+function hNextRound(ok){if(ok){hm.score++;hm.times.push((Date.now()-hm.cur.t)/1000);flash("✓ "+NN[hm.cur.m%12])}hm.round++;if(hm.round>=10){finishHunt();return}$("#hs").textContent="Round "+(hm.round+1)+" of 10 · score "+hm.score;hNext()}
+function finishHunt(){const sc=hm.score,avg=hm.times.length?hm.times.reduce((a,b)=>a+b,0)/hm.times.length:0,best=Math.max(S.hunt&&S.hunt.best||0,sc);S.hunt={best,avg:+avg.toFixed(1)};save(true);stopHunt();
+  $("#hq").innerHTML=`Score <b>${sc}/10</b>${avg?" · average "+avg.toFixed(1)+" s":""}`;$("#hs").textContent="Best: "+best+"/10"}
+function stopHunt(){if(!hm)return;clearInterval(hm.t);try{hm.st.getTracks().forEach(t=>t.stop())}catch(e){}hm=null;$("#hbtn").textContent="Start hunt";$("#hn").textContent="–"}
+$("#hbtn").onclick=()=>hm?stopHunt():startHunt();
 /* ---------- progress ---------- */
 function streak(){const ds=new Set(S.log.filter(l=>l.m>0).map(l=>l.d).concat(S.rest||[]));let c=0,d=new Date();
   if(!ds.has(day(d)))d.setDate(d.getDate()-1);
@@ -1247,15 +1342,16 @@ const tempoGains=()=>Object.keys(S.tempo).filter(k=>S.tempo[k].length>1&&LB[k]);
 function renderProg(){
   const w=weekData(),ach=achList(),got=ach.filter(a=>a[2]).length,path=pathL(),pd=path.filter(l=>S.done[l.id]).length,tg=tempoGains().length;
   $("#stats").innerHTML=[["🔥",streak(),"day streak"],["⏱",fT(w.wk),"this week"],["🏆",PATH.filter(p=>coreOf(p).length&&coreOf(p).every(i=>S.done[i])).length+"/"+PATH.filter(p=>coreOf(p).length).length,"challenges"]].map(x=>`<div class="tile"><span>${x[0]}</span><b>${x[1]}</b><small>${x[2]}</small></div>`).join("");
-  $("#plist").innerHTML=[["week","📅","This week",fT(w.wk)+" practised"],["ms","🏅","Badges and milestones",got+" of "+ach.length+" unlocked"],["tempo","🎚","Tempo gains",tg?tg+" lesson"+(tg>1?"s":""):"none yet"],["songs","🎵","Songs and recordings",S.songs.length+" song"+(S.songs.length===1?"":"s")],["set","⚙️","Settings","Singing lessons, left-handed"],["bk","💾","Backup and reset","Move to another phone"]]
+  $("#plist").innerHTML=[["review","📝","Weekly review","Your last 7 days at a glance"],["week","📅","This week",fT(w.wk)+" practised"],["ms","🏅","Badges and milestones",got+" of "+ach.length+" unlocked"],["tempo","🎚","Tempo gains",tg?tg+" lesson"+(tg>1?"s":""):"none yet"],["songs","🎵","Songs and recordings",S.songs.length+" song"+(S.songs.length===1?"":"s")],["set","⚙️","Settings","Singing lessons, left-handed"],["bk","💾","Backup and reset","Move to another phone"]]
    .map(r=>`<button class="lrow" data-pgk="${r[0]}"><span class="li">${r[1]}</span><span class="lt2"><b>${r[2]}</b><small>${r[3]}</small></span><span class="chev">›</span></button>`).join("")}
-function progPage(k){
+function progPage(k,open){open=open||new Set();
+  if(k==="review")return reviewPage();
   if(k==="week"){const w=weekData();return `<div class="lp"><h2>${fT(w.wk)}</h2><p class="mute">practised in the last 7 days</p><div class="card wk" style="margin-top:14px">${w.days.map(x=>`<div class="wb"><small>${x.m||""}</small><i class="${x.m?"on":""}" style="height:${Math.round(70*x.m/w.mx)+6}px"></i><small>${x.l}</small></div>`).join("")}</div></div>`}
   if(k==="ms"){return `<div class="lp"><div class="ach-g">${achList().map(a=>`<div class="ach${a[2]?" got":""}"><span>${a[2]?a[0]:"🔒"}</span>${a[1]}</div>`).join("")}</div></div>`}
   if(k==="tempo"){const t=tempoGains();return `<div class="lp">${t.length?t.map(id=>{const h=S.tempo[id];return `<div class="cpr"><b>${LB[id].t}</b> · ${h[0].b} → ${Math.max(...h.map(x=>x.b))} BPM</div>`}).join(""):`<p class="mute">Log your best clean tempo inside a lesson (Tempo log) and your gains appear here.</p>`}</div>`}
-  if(k==="set"){return `<div class="lp"><label class="field" style="margin-top:4px"><small>Weekly practice goal</small><select id="wg" style="width:100%">${[2,3,4,5,6,7].map(n=>`<option value="${n}" ${n===(S.wgoal||4)?"selected":""}>${n} days a week</option>`).join("")}</select></label><label class="field" style="margin-top:4px"><small>Appearance</small><select id="theme" style="width:100%"><option value="light" ${(S.theme||"light")==="light"?"selected":""}>Light (bright)</option><option value="dark" ${S.theme==="dark"?"selected":""}>Dark</option><option value="auto" ${S.theme==="auto"?"selected":""}>Match my iPhone</option></select></label><label class="field"><small>Practice sound</small><select id="snd" style="width:100%"><option value="nylon" ${S.snd!=="steel"?"selected":""}>Nylon-string guitar</option><option value="steel" ${S.snd==="steel"?"selected":""}>Steel-string guitar</option></select></label><div class="row2" style="margin-bottom:12px"><button data-hear="strum">▶ Strum G</button><button data-hear="pick">▶ Pick C</button></div><label class="tg2"><input type="checkbox" id="sing" ${singOn()?"checked":""}> Include singing challenges</label><label class="tg2"><input type="checkbox" id="lefty" ${S.lefty?"checked":""}> Left-handed chord diagrams</label><p class="mute" style="margin-top:14px">Reminders: iPhone web apps cannot send timed notifications. Set a daily alarm or Reminders item, or use a Shortcuts Time of Day automation with the Open URLs action and this app's link.</p></div>`}
+  if(k==="set"){const rm=S.rm||{t:"18:00",days:[1,2,3,4,5]};return `<div class="lp"><label class="field" style="margin-top:4px"><small>Weekly practice goal</small><select id="wg" style="width:100%">${[2,3,4,5,6,7].map(n=>`<option value="${n}" ${n===(S.wgoal||4)?"selected":""}>${n} days a week</option>`).join("")}</select></label><label class="field" style="margin-top:4px"><small>Appearance</small><select id="theme" style="width:100%"><option value="light" ${(S.theme||"light")==="light"?"selected":""}>Light (bright)</option><option value="dark" ${S.theme==="dark"?"selected":""}>Dark</option><option value="auto" ${S.theme==="auto"?"selected":""}>Match my iPhone</option></select></label><label class="field"><small>Text size</small><select id="fs" style="width:100%">${[["n","Normal"],["l","Large"],["x","Larger"],["xx","Largest"]].map(o=>`<option value="${o[0]}" ${(S.fs||"n")===o[0]?"selected":""}>${o[1]}</option>`).join("")}</select></label><label class="field"><small>Practice sound</small><select id="snd" style="width:100%"><option value="nylon" ${S.snd!=="steel"?"selected":""}>Nylon-string guitar</option><option value="steel" ${S.snd==="steel"?"selected":""}>Steel-string guitar</option></select></label><div class="row2" style="margin-bottom:12px"><button data-hear="strum">▶ Strum G</button><button data-hear="pick">▶ Pick C</button></div><label class="tg2"><input type="checkbox" id="sing" ${singOn()?"checked":""}> Include singing challenges</label><label class="tg2"><input type="checkbox" id="lefty" ${S.lefty?"checked":""}> Left-handed chord diagrams</label>${fold("rm","⏰ Practice reminder",rm.t,`<p class="mute">iPhone web apps cannot send notifications, so this adds a repeating event with an alert to your Calendar.</p><label class="field" style="margin-top:8px"><small>Time</small><input type="time" id="rmt" value="${rm.t}" style="width:100%"></label><div class="tstr" style="grid-template-columns:repeat(7,1fr)">${["S","M","T","W","T","F","S"].map((n,i)=>`<button class="chp${rm.days.includes(i)?" on":""}" data-rd="${i}">${n}</button>`).join("")}</div><button class="go" data-rmadd="1" style="width:100%;margin-top:12px">Add to Calendar</button><small class="lgd" style="margin-top:8px">iPhone may open the file in Files first. Tap it, then Add All. If nothing happens in the Home Screen app, open this page in Safari and try again, or create the repeating event by hand in Calendar.</small>`,open)}</div>`}
   return `<div class="lp"><p class="mute">Everything saves automatically on this device. To move it to another phone, copy a backup and restore it there.</p><div class="row2 sm2"><button id="bcopy">Copy backup</button><button id="brest">Restore</button></div><textarea id="bk" placeholder="Paste a backup here to restore"></textarea><button class="lnk" id="reset">Reset all progress</button></div>`}
-function openProgPage(k){pgOpen({week:"This week",ms:"Badges and milestones",tempo:"Tempo gains",set:"Settings",bk:"Backup and reset"}[k],()=>progPage(k))}
+function openProgPage(k){pgOpen({review:"Weekly review",week:"This week",ms:"Badges and milestones",tempo:"Tempo gains",set:"Settings",bk:"Backup and reset"}[k],o=>progPage(k,o))}
 $("#prog").onclick=pgClick;
 async function copyBackup(){const t=JSON.stringify(S);try{await navigator.clipboard.writeText(t);flash("Backup copied ✓")}catch(e){const k=$("#bk");if(k){k.value=t;k.select()}flash("Select and copy the text")}}
 function restoreBackup(){const k=$("#bk"),t=k?k.value.trim():"";if(!t){if(k)k.placeholder="Paste your backup here, then tap Restore again";return}
