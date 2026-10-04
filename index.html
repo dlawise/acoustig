@@ -71,7 +71,7 @@ nav button.on{background:var(--s2);color:var(--ink)}nav button.on .ti{filter:non
 .wy{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.wy span{border-left:4px solid var(--c);background:var(--s1);border-radius:8px;padding:6px 10px;font-size:13px}.why p{color:var(--mute);font-size:13px}
 .fin{background:var(--s1);border-radius:18px;padding:14px 16px;margin-bottom:14px;border-left:6px solid var(--ok)}.fin small{display:block}
 #run{display:none}.running #run{display:block}
-.running #hero,.running #week,.running #quick,.running #rec,.running #fin{display:none}
+.running #hero,.running #week,.running #quick,.running #rec,.running #fin,.running #cm,.running #rev{display:none}
 .rn{text-align:center;padding-top:6px}.rs{color:var(--mute);font-size:14px}.rn h2{color:var(--c);font-size:26px;margin-top:2px}
 .ring{position:relative;width:220px;margin:14px auto}
 .ring .big{position:absolute;inset:0;display:grid;place-items:center;font:700 52px var(--rd)}
@@ -229,6 +229,11 @@ body{transition:background-color .25s,color .25s}
 main,.pbody,#chk{zoom:var(--z,1)}
 .rl{margin:0;padding-left:20px}.rl li{margin-bottom:4px}
 .running #rev{display:none}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid var(--brass);outline-offset:2px}
+.card.coach{border-left:5px solid var(--brass)}.rt{display:flex;gap:8px;margin-top:8px}.rt button{flex:1}
+.pair{font:700 44px var(--rd);text-align:center;margin:8px 0}
+.beats{display:flex;gap:8px;justify-content:center;margin:16px 0}.beats i{width:22px;height:22px;border-radius:50%;border:2px solid var(--line)}.beats i.on{background:var(--hi);border-color:var(--hi)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
@@ -241,6 +246,7 @@ main,.pbody,#chk{zoom:var(--z,1)}
   <div class="rec2" id="rec"></div>
   <div id="rev"></div>
   <div id="hero"></div>
+  <div id="cm"></div>
   <div id="week"></div>
   <div class="quick" id="quick"></div>
   <div id="run"></div>
@@ -347,17 +353,33 @@ main,.pbody,#chk{zoom:var(--z,1)}
     <button id="esave" style="width:100%;margin-top:8px">Save as a song</button></div>
 </section>
 
+<section id="drill">
+  <h1>🔁 Change drill</h1>
+  <div class="card"><select id="dset" style="width:100%" aria-label="Chord set"></select>
+    <div class="pair" id="pair">G → C</div><div class="pics" id="dd"></div>
+    <p class="mute" id="dstat" style="text-align:center;margin:10px 0">Land both chords cleanly, then tap Change. 60 seconds.</p>
+    <div class="row2"><button class="go" id="ds">Start</button><button id="dc" disabled>Change ✓</button></div></div>
+</section>
+
+<section id="metro">
+  <h1>⏱ Metronome</h1>
+  <div class="card"><div class="bpm"><button id="mbm" aria-label="Slower">−</button><div><div class="bigb" id="mbpmv">80</div><small>BPM</small></div><button id="mbp" aria-label="Faster">+</button></div>
+    <input type="range" id="mbpm" min="40" max="200" value="80" aria-label="Tempo">
+    <div class="row2 sm2"><select id="msig" aria-label="Time signature"><option value="4">4/4</option><option value="3">3/4</option><option value="2">2/4</option><option value="6">6/8</option></select><button id="mtap">Tap tempo</button></div>
+    <div class="beats" id="mbeats"></div><button class="go" id="mgo" style="width:100%">Start</button></div>
+</section>
+
 </main>
 <div id="pg"><div class="pbar2"><button data-pb="1">‹ Back</button><b id="pgt"></b></div><div class="pbody" id="pgb"></div></div>
-<div id="toast"></div>
+<div id="toast" role="status" aria-live="polite"></div>
 <div id="chk"></div>
 <div id="pill" hidden></div>
-<nav id="nav"></nav>
+<nav id="nav" role="tablist" aria-label="Sections"></nav>
 
 <script>
 const $=s=>document.querySelector(s);
 const KEY="guitarcoach.v1";
-const DEF=()=>({len:25,log:[],quiz:{ok:0,n:0},pats:0,done:{},vid:{},shaky:{},chk:{},cs:{},cdone:{},wgoal:4,snd:"nylon",theme:"light",rm:{t:"18:00",days:[1,2,3,4,5]},fs:"n",earlog:[],hunt:null,sing:true,songs:[],rest:[],tempo:{},lefty:false,goal:null,range:null});
+const DEF=()=>({len:25,log:[],quiz:{ok:0,n:0},pats:0,done:{},vid:{},shaky:{},chk:{},cs:{},cdone:{},wgoal:4,snd:"nylon",theme:"light",rm:{t:"18:00",days:[1,2,3,4,5]},fs:"n",rate:[],adj:0,dbest:0,earlog:[],hunt:null,sing:true,songs:[],rest:[],tempo:{},lefty:false,goal:null,range:null});
 let S;
 try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
 S=Object.assign(DEF(),S||{});
@@ -381,17 +403,17 @@ $("#themeb").onclick=()=>{S.theme=effTheme()==="light"?"dark":"light";save();app
 applyTheme();
 /* ---------- tabs ---------- */
 const tabs=[["coach","🏠","Overview"],["learn","🏆","Learn"],["songs","🎵","Songs"],["tools","🧰","Tools"],["prog","📈","Progress"]];
-const TOOLS=[["rhythm","🥁","Rhythm"],["fret","🎼","Notes"],["voice","🎤","Voice"],["tuner","🎚","Tuner"],["backing","🎶","Backing"],["capo","🧮","Capo"],["ear","👂","Chords"]];
+const TOOLS=[["rhythm","🥁","Rhythm"],["fret","🎼","Notes"],["voice","🎤","Voice"],["tuner","🎚","Tuner"],["backing","🎶","Backing"],["capo","🧮","Capo"],["ear","👂","Chords"],["drill","🔁","Drill"],["metro","⏱","Click"]];
 const isTool=id=>TOOLS.some(t=>t[0]===id);
-$("#nav").innerHTML=tabs.map(t=>`<button data-t="${t[0]}"><span class="ti">${t[1]}</span>${t[2]}</button>`).join("");
+$("#nav").innerHTML=tabs.map(t=>`<button role="tab" aria-selected="false" data-t="${t[0]}"><span class="ti" aria-hidden="true">${t[1]}</span>${t[2]}</button>`).join("");
 let tab="coach",lastTool="rhythm";
 function show(id){pgClear();if(id==="tools")id=lastTool;if(isTool(id))lastTool=id;tab=id;
   document.querySelectorAll("section").forEach(s=>s.classList.toggle("on",s.id===id));
-  const nb=isTool(id)?"tools":id;document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.t===nb));
+  const nb=isTool(id)?"tools":id;document.querySelectorAll("nav button").forEach(b=>{b.classList.toggle("on",b.dataset.t===nb);b.setAttribute("aria-selected",String(b.dataset.t===nb))});
   $("#tbar").hidden=!isTool(id);if(isTool(id))$("#tbar").innerHTML=TOOLS.map(t=>`<button data-t="${t[0]}" class="${t[0]===id?"on":""}">${t[1]} ${t[2]}</button>`).join("");
-  if(id!=="rhythm")stop(); if(id!=="voice")stopMic(); if(id!=="tuner")stopTuner(); if(id!=="backing")stopBacking(); if(id!=="fret")stopHunt(); if(id!=="ear")stopEar();
+  if(id!=="rhythm")stop(); if(id!=="voice")stopMic(); if(id!=="tuner")stopTuner(); if(id!=="backing")stopBacking(); if(id!=="fret")stopHunt(); if(id!=="ear")stopEar(); if(id!=="metro")stopMetro(); if(id!=="drill")drillStop();
   if(id==="voice")rangeTxt(); if(id==="prog")renderProg(); if(id==="learn")renderLearn(true); if(id==="coach")renderToday();
-  if(id==="songs")renderSongs(); if(id==="backing")renderBacking(); if(id==="tuner")renderTuner(); if(id==="ear")renderEar();
+  if(id==="songs")renderSongs(); if(id==="backing")renderBacking(); if(id==="tuner")renderTuner(); if(id==="ear")renderEar(); if(id==="drill")renderDrill(); if(["rhythm","backing","metro"].includes(id))syncTempo();
   pillUpdate(); scrollTo(0,0)}
 $("#nav").onclick=e=>{const b=e.target.closest("button");if(b)show(b.dataset.t)};
 $("#tbar").onclick=e=>{const b=e.target.closest("button");if(b)show(b.dataset.t)};
@@ -402,7 +424,7 @@ const COL={warm:"#ffb347",focus:"#4ecdc4",fix:"#ff7a66",song:"#ff8fc1"};
 const todayMin=()=>S.log.filter(l=>l.d===day()).reduce((a,l)=>a+l.m,0);
 const legend=()=>`<small class="lgd">Each dot is one lesson on your roadmap. ${FLAT.length-pathL().length} more lessons are optional extras.</small>`;
 const fmt=t=>Math.floor(t/60)+":"+String(t%60).padStart(2,"0");
-const WARM={chords:["Warm-up","🔥","Play chords you already know. Clean changes, no rushing."],voice:["Voice warm-up","🎤","Breathe, do lip trills, then hum a five-note scale. Keep it easy."],finger:["Finger warm-up","🤲","Thumb on a bass string, fingers on the top three. Ease into C and G arpeggios at 60 BPM."],lead:["Scale warm-up","🔥","A minor pentatonic up and down, one note per beat. Start at 60 BPM."]};
+const WARM={chords:["Warm-up","🔥","Slow chromatic fingers (1-2-3-4 on each string), then chords you know. Clean changes, no rushing."],voice:["Voice warm-up","🎤","Breathe, do lip trills, then hum a five-note scale. Keep it easy."],finger:["Finger warm-up","🤲","Thumb on a bass string, fingers on the top three. Ease into C and G arpeggios at 60 BPM."],lead:["Scale warm-up","🔥","A minor pentatonic up and down, one note per beat. Start at 60 BPM."]};
 const SONGB={chords:["Play a real song","Use what you practised on a song you like. Play it start to finish, even if it is messy."],voice:["Sing a real song","Sing a song you love from start to finish. Record it once a week."],finger:["Play a real piece","Play one fingerstyle pattern over a song you like. Keep the thumb steady."],lead:["Solo over a song","Improvise a short solo over a backing track or a song's chords."]};
 function todaySong(){const L=S.songs.filter(s=>s.st!=="ready"),pool=L.length?L:S.songs;return pool.slice().sort((a,b)=>(a.last||"").localeCompare(b.last||""))[0]||null}
 function build(){
@@ -431,7 +453,7 @@ function renderToday(){
   $("#flame").textContent=st?`🔥 ${st}`:"🎸 0";
   $("#fin").innerHTML="";build();
   const L=nextL(),cpi=L?phaseOf(L.id):-1,p=cpi>=0?PATH[cpi]:null,core=p?p[3].filter(i=>enabled(i)&&!BONUS.has(i)):[],cd=core.filter(i=>S.done[i]).length,c=L?phColor(L.id):"#8fd17a",tm=todayMin(),wg=S.wgoal||4,w=weekData(),wk=w.days.filter(x=>x.m>0).length;
-  $("#rec").innerHTML=recText();renderRev();
+  $("#rec").innerHTML=recText();renderRev();$("#cm").innerHTML=coachCard();
   $("#hero").innerHTML=`<div class="hero" style="--c:${c}"><div class="hk">${p?p[4]+" Current challenge":"All challenges complete"}</div><h2>${p?p[0]:"Roadmap complete 🎉"}</h2><p>${p?p[1]:"Keep playing songs and recording yourself."}</p>`+
    (p?`<div class="pbar" style="margin:0 0 6px"><i style="width:${100*cd/core.length}%"></i></div><small>${cd} of ${core.length} missions · next: ${L.t}</small>`:"")+
    `<div class="seg" style="margin-top:14px">${[5,15,25,40,60].map(m=>`<button data-m="${m}" class="${m===lenMin?"on":""}">${m}</button>`).join("")}<span>min</span></div>
@@ -541,7 +563,7 @@ Z("ashape","tech","A-shape barre chords","Play barre chords rooted on the A stri
  ["Creep (G B C Cm)","Hotel California (capo 7: Bm F# A E G D Em F#)"],
  ["Bm and C ring on every string","Loop Bm, G, D, A at 70 BPM","You can play C in two places"],"A shape barre chords"),
 Z("rhythm16","tech","Muted strums and 16th-note rhythm","Add percussive chops and play sixteenth-note patterns.","This is what makes acoustic strumming sound modern and driving.",
- ["The chop (X): relax the fretting hand slightly to deaden the strings as you strum.","Your strumming hand keeps moving constantly, even on beats you do not hit.","Sixteenths mean four strums per beat. Count 1 e & a, 2 e & a.","Accent beats 2 and 4 with the chop."],
+ ["The chop (X): relax the fretting hand slightly to deaden the strings as you strum.","Ghost strum: keep your hand moving and barely brush the strings on the off-beats. It keeps the groove without adding volume.","Your strumming hand keeps moving constantly, even on beats you do not hit.","Sixteenths mean four strums per beat. Count 1 e & a, 2 e & a.","Accent beats 2 and 4 with the chop."],
  [[5,"Rhythm gym pattern 5 (muted chop) at 60 BPM."],[5,"Pattern 7 (sixteenths) at 60 BPM, then 70."],[5,"Pattern 8 at 70 BPM, then use it on a chord loop."]],
  [["Hand tenses at speed","Shake out your wrist and keep it loose. Play louder than you need to, then softer."],["Losing the beat","Count 1 e & a out loud. Play only the downs first, then add the ups."]],
  ["Wagon Wheel at 100 BPM","Any song with a driving strum"],
@@ -706,19 +728,19 @@ Z("proj5","project","Milestone: sing a full song","Sing a complete song with you
 const LB={};FLAT.forEach(l=>LB[l.id]=l);
 const LV=["Foundations","Core skills","Applied","Advanced"];
 const TY={tech:["🎸","Technique"],theory:["🧠","Theory"],voice:["🎤","Voice"],project:["⭐","Milestone"]};
-const TOOL={strum:"rhythm",rhythm16:"rhythm",palm:"rhythm",singstrum:"rhythm",notes:"fret",pent:"fret",caged:"fret",warmup:"voice",pitch:"voice",range:"voice"};
-const TL={rhythm:["rhythm","Rhythm gym"],fret:["fret","Fretboard"],voice:["voice","Voice coach"]};
+const TOOL={clean:"drill",strum:"rhythm",rhythm16:"rhythm",palm:"rhythm",singstrum:"rhythm",notes:"fret",pent:"fret",caged:"fret",warmup:"voice",pitch:"voice",range:"voice"};
+const TL={drill:["drill","Change drill"],rhythm:["rhythm","Rhythm gym"],fret:["fret","Fretboard"],voice:["voice","Voice coach"]};
 const PATH=[
- ["First Song","Play a whole song with open chords",1,["clean","strum","color","capo","proj1"],"🎸",14],
- ["Find Your Voice","Warm up safely and sing a note on pitch",1,["vcare","breath","warmup"],"🎤",7],
- ["Sing and Strum","Sing a full song while you strum",2,["pitch","range","singstrum","proj5"],"🎶",14],
- ["Barre Breakthrough","Play a song with barre chords",2,["fmaj","eshape","ashape","rhythm16","palm","proj2"],"💪",21],
- ["Own the Neck","Know your notes and play a pentatonic lick with a bend",2,["notes","pent","legato","bends"],"🧭",14],
- ["Fingerstyle Flow","Play a 16-bar fingerstyle piece",3,["arp","travis","perc","proj4"],"🤲",14],
- ["First Solo","Improvise, then play a solo you wrote",3,["caged","improv","proj3"],"🔥",10],
- ["Expression","Sing and play with feeling",3,["tone","phrasing"],"✨",7],
- ["Colour and Craft","Reharmonise a song with richer chords",4,["ext","invert","tunings"],"🎨",10],
- ["Showtime","Arrange and perform a full song",4,["arrange"],"🏆",7]
+ ["First Song","Play a whole song with open chords",1,["clean","strum","color","capo","proj1"],"🎸",14,70],
+ ["Find Your Voice","Warm up safely and sing a note on pitch",1,["vcare","breath","warmup"],"🎤",7,70],
+ ["Sing and Strum","Sing a full song while you strum",2,["pitch","range","singstrum","proj5"],"🎶",14,70],
+ ["Barre Breakthrough","Play a song with barre chords",2,["fmaj","eshape","ashape","rhythm16","palm","proj2"],"💪",21,70],
+ ["Own the Neck","Know your notes and play a pentatonic lick with a bend",2,["notes","pent","legato","bends"],"🧭",14,70],
+ ["Fingerstyle Flow","Play a 16-bar fingerstyle piece",3,["arp","travis","perc","proj4"],"🤲",14,60],
+ ["First Solo","Improvise, then play a solo you wrote",3,["caged","improv","proj3"],"🔥",10,70],
+ ["Expression","Sing and play with feeling",3,["tone","phrasing"],"✨",7,70],
+ ["Colour and Craft","Reharmonise a song with richer chords",4,["ext","invert","tunings"],"🎨",10,70],
+ ["Showtime","Arrange and perform a full song",4,["arrange"],"🏆",7,80]
 ];
 const BONUS=new Set(["perc","caged","invert","tunings"]);
 const STRAND={};[["chords",["clean","strum","color","capo","proj1","fmaj","eshape","ashape","rhythm16","palm","proj2","ext","invert","tunings","arrange"]],["lead",["notes","pent","legato","bends","caged","improv","proj3"]],["finger",["arp","travis","perc","proj4"]],["voice",["vcare","breath","warmup","pitch","range","singstrum","tone","phrasing","proj5"]]].forEach(x=>x[1].forEach(i=>STRAND[i]=x[0]));
@@ -750,7 +772,7 @@ function chordSvg(f){const a=f.split("").map(c=>c==="x"?-1:+c),fr=a.filter(v=>v>
   if(idx.length>=3||(idx.length===2&&idx[1]-idx[0]===1)){const y=18+(mf-base)*12+6,x1=X(idx[0]),x2=X(idx[idx.length-1]);g+=`<rect x="${Math.min(x1,x2)-4}" y="${y-4}" width="${Math.abs(x1-x2)+8}" height="8" rx="4" fill="var(--c)"/>`}
   a.forEach((v,i)=>{const x=X(i);if(v<0)g+=`<text x="${x}" y="13" font-size="10" text-anchor="middle" fill="currentColor">×</text>`;else if(v===0)g+=`<circle cx="${x}" cy="9" r="3" fill="none" stroke="currentColor"/>`;else g+=`<circle cx="${x}" cy="${18+(v-base)*12+6}" r="4.2" fill="var(--c)"/>`});
   if(base>1)g+=`<text x="${S.lefty?56:0}" y="28" font-size="8" fill="currentColor">${base}</text>`;
-  return `<svg viewBox="0 0 60 82" width="62">${g}</svg>`}
+  return `<svg viewBox="0 0 60 82" width="62" role="img" aria-label="Chord diagram. Strings low to high: ${a.map(v=>v<0?"muted":v===0?"open":"fret "+v).join(", ")}">${g}</svg>`}
 function scaleSvg(o){let g="";
   for(let k=0;k<=4;k++)g+=`<line x1="${20+k*34}" y1="10" x2="${20+k*34}" y2="80" stroke="currentColor" opacity=".5"/>`;
   for(let s=0;s<6;s++)g+=`<line x1="20" y1="${10+(5-s)*14}" x2="156" y2="${10+(5-s)*14}" stroke="currentColor" opacity=".6"/>`;
@@ -805,7 +827,7 @@ function chalPage(pi){ensureRows();const p=PATH[pi],all=p[3].filter(enabled),ids
   <div style="height:12px"></div><h3 style="margin-bottom:8px">Missions</h3>`+
   all.map(i=>{const l=LB[i],done=S.done[i],bonus=BONUS.has(i),tk=todayK(i),n=tickN(l);
     return `<button class="lr${done?" done":""}${cur&&cur.id===i?" cur":""}" data-les="${i}" style="--c:${c}"><span class="tick">${done?"✓":i===last?"🏁":bonus?"·":ids.indexOf(i)+1}</span><span class="lt"><b>${l.t}</b><small><span class="ty">${TY[l.ty][0]} ${TY[l.ty][1]}</span>${i===last?"Finish line":n&&!done?n+" of "+l.c.length+" checks":l.g}</small></span>${cur&&cur.id===i?`<em class="tg focus">Next</em>`:tk==="fix"?`<em class="tg fix">Review</em>`:""}${bonus?`<em class="tg bn">Bonus</em>`:""}<span class="chev">›</span></button>`}).join("")+
-  `<details class="why" style="margin-top:12px"><summary>How challenges work</summary><p style="margin-top:8px">Do one mission at a time and practise about 4 days a week. Each mission has checkpoints you can verify with 🎧 Check. Finish the last mission to win the badge. The suggested days are a pace, not a deadline.</p></details></div>`}
+  `${!fin?`<button class="lnk" data-cskip="${pi}">I can already do this challenge</button>`:""}<details class="why" style="margin-top:12px"><summary>How challenges work</summary><p style="margin-top:8px">Do one mission at a time and practise about 4 days a week. Each mission has checkpoints you can verify with 🎧 Check. Finish the last mission to win the badge. The suggested days are a pace, not a deadline.</p></details></div>`}
 function fold(k,title,hint,inner,open){return `<details class="fold" data-k="${k}" ${open.has(k)?"open":""}><summary><b>${title}</b><small>${hint}</small><span class="chev2">›</span></summary><div class="fb2">${inner}</div></details>`}
 function ckList(l){const a=S.chk[l.id]||[],chs=CHK[l.id]||[];return l.c.map((x,i)=>{const on=S.done[l.id]||a[i],j=chs.findIndex(c=>c.ck===i);return `<div class="ckr"><button class="ck${on?" on":""}" data-ck="${l.id}|${i}"><span>${on?"✓":""}</span>${x}</button>${j>=0?`<button class="chb" data-chk="${l.id}|${j}" aria-label="Check my playing">🎧</button>`:""}</div>`}).join("")}
 function lessonPage(id,open){ensureRows();const l=LB[id],done=S.done[id],ty=TY[l.ty],ids=pathIds(),pos=ids.indexOf(id)+1,bonus=BONUS.has(id),c=phColor(id),tk=todayK(id),chs=CHK[id]||[],lv=lvlOf(l),pic=pics(id),ord=allIds(),oi=ord.indexOf(id);
@@ -841,6 +863,7 @@ function pgClick(e){const b=e.target.closest("button");if(!b)return;const d=b.da
   if(d.hear){needAc();const t0=ac.currentTime+.05;if(d.hear==="strum")strumC("G",t0,"D",.5);else [48,52,55,60,64,60,55,52].forEach((m,k)=>pluck(m,t0+k*.24,.5));return}
   if(d.rd!=null){S.rm=S.rm||{t:"18:00",days:[1,2,3,4,5]};const i=+d.rd,a=S.rm.days;S.rm.days=a.includes(i)?a.filter(x=>x!==i):a.concat(i).sort();save(true);pgRefresh();return}
   if(d.rmadd){addToCalendar();return}
+  if(d.cskip!=null){skipChallenge(+d.cskip);return}
   if(d.go){show(d.go);return}
   if(d.chk){const p=d.chk.split("|");openCheck(p[0],+p[1]);return}
   if(d.play!=null){document.querySelector('.vbox[data-i="'+d.play+'"]').innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${S.vid[d.play]||VIDEOS[d.play]}?playsinline=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`;return}
@@ -1329,6 +1352,62 @@ function finishHunt(){const sc=hm.score,avg=hm.times.length?hm.times.reduce((a,b
   $("#hq").innerHTML=`Score <b>${sc}/10</b>${avg?" · average "+avg.toFixed(1)+" s":""}`;$("#hs").textContent="Best: "+best+"/10"}
 function stopHunt(){if(!hm)return;clearInterval(hm.t);try{hm.st.getTracks().forEach(t=>t.stop())}catch(e){}hm=null;$("#hbtn").textContent="Start hunt";$("#hn").textContent="–"}
 $("#hbtn").onclick=()=>hm?stopHunt():startHunt();
+/* ---------- Coach Me: rating, adaptive tempo ---------- */
+const ub={};
+const curBase=()=>{const L=nextL();return L&&PATH[phaseOf(L.id)]?PATH[phaseOf(L.id)][6]||70:70};
+const practiceBpm=()=>Math.max(40,Math.min(160,curBase()+(S.adj||0)));
+const needRate=()=>todayMin()>=5&&!(S.rate||[]).some(x=>x.d===day());
+function syncTempo(){const bp=practiceBpm();[["bpm","bpmv",40,160],["bbpm","bbpmv",50,160],["mbpm","mbpmv",40,200]].forEach(x=>{if(ub[x[0]])return;const v=Math.max(x[2],Math.min(x[3],bp)),e=$("#"+x[0]),l=$("#"+x[1]);if(e)e.value=v;if(l)l.textContent=v})}
+{const map={bpm:"bpm",bm:"bpm",bp:"bpm",bbpm:"bbpm",bbm:"bbpm",bbp:"bbpm",mbpm:"mbpm",mbm:"mbpm",mbp:"mbpm",mtap:"mbpm"};
+ Object.keys(map).forEach(id=>{const e=$("#"+id);if(e&&e.addEventListener){const f=()=>{ub[map[id]]=1};e.addEventListener("input",f);e.addEventListener("click",f)}})}
+function coachMsg(){const r=(S.rate||[]).slice(-3).map(x=>x.r),L=nextL(),bp=practiceBpm(),up=Math.min(160,bp+5);
+  if(r.length===3&&r.every(x=>x==="easy"))return L&&CHK[L.id]?`Three easy days in a row. Try 🎧 Check on "${L.t}", or raise your tempo to ${up} BPM. Passing the check moves you on.`:`Three easy days in a row. Raise your tempo to ${up} BPM or pick a harder song.`;
+  if(r.filter(x=>x==="hard").length>=2)return `Two hard days lately, so I lowered your practice tempo to ${bp} BPM. Stay with "${L?L.t:"your current mission"}" and play slower, cleaner changes.`;
+  return `Practice tempo: ${bp} BPM. Keep going until the changes feel automatic.`}
+function coachCard(){
+  if(needRate())return `<div class="card coach"><h3>Coach Me</h3><p>How did today feel?</p><div class="rt"><button data-rate="easy">Easy</button><button data-rate="right">About right</button><button data-rate="hard">Hard</button></div></div>`;
+  if(!(S.rate||[]).length)return "";
+  return `<div class="card coach"><h3>Coach Me</h3><p>${coachMsg()}</p></div>`}
+$("#cm").onclick=e=>{const b=e.target.closest("button");if(!b||!b.dataset.rate)return;const r=b.dataset.rate;
+  S.rate=(S.rate||[]).concat({d:day(),r}).slice(-30);S.adj=Math.max(-20,Math.min(20,(S.adj||0)+(r==="easy"?5:r==="hard"?-5:0)));save();syncTempo();renderToday()};
+/* ---------- skip a challenge ---------- */
+function skipChallenge(pi){const p=PATH[pi];if(!p||!confirm("Mark every mission in "+p[0]+" as done?"))return;
+  coreOf(p).forEach(i=>{if(!S.done[i]){const l=LB[i];S.chk[i]=l.c.map(()=>1);S.done[i]=1;delete S.shaky[i]}});save();refreshLearn();renderToday()}
+/* ---------- chord change drill (tap to count) ---------- */
+const DSETS=[["Open chords",["G","C","D","Em","Am"]],["More open chords",["E","A","Dm","G","C"]],["Barre mix",["F","Bm","Am","C","G"]],["Colour chords",["Cadd9","Em7","Asus2","Dsus2","G"]]];
+const dsetList=()=>DSETS.concat(S.songs.map(s=>[s.t,[...new Set(s.c.split(/\s+/).filter(x=>CH[x]))]]).filter(x=>x[1].length>1));
+let dg=null;
+const dset=()=>(dsetList()[+$("#dset").value||0]||DSETS[0])[1];
+function dDiag(a,b){$("#dd").innerHTML=[a,b].map(n=>CH[n]?`<figure>${chordSvg(CH[n])}<figcaption>${n}</figcaption></figure>`:"").join("")}
+function renderDrill(){const cur=$("#dset").value,l=dsetList();$("#dset").innerHTML=l.map((x,i)=>`<option value="${i}">${x[0]}</option>`).join("");if(cur&&l[+cur])$("#dset").value=cur;
+  if(!dg){const s=dset();$("#pair").textContent=s[0]+" → "+s[1];dDiag(s[0],s[1]);$("#dstat").textContent="Land both chords cleanly, then tap Change. 60 seconds. Best: "+(S.dbest||0)}}
+function dPick(){const s=dset();let b;do b=s[Math.random()*s.length|0];while(b===dg.cur);dg.next=b;$("#pair").textContent=dg.cur+" → "+b;dDiag(dg.cur,b)}
+function drillStart(){const s=dset();dg={n:0,left:60,cur:s[Math.random()*s.length|0]};dPick();$("#ds").textContent="Stop";$("#dc").disabled=false;$("#dstat").textContent="60 s left · 0 changes";
+  dg.t=setInterval(()=>{dg.left--;$("#dstat").textContent=dg.left+" s left · "+dg.n+" changes";if(dg.left<=0)drillEnd()},1000)}
+function drillEnd(){if(!dg)return;clearInterval(dg.t);const n=dg.n;dg=null;$("#ds").textContent="Start";$("#dc").disabled=true;const nb=n>(S.dbest||0);if(nb){S.dbest=n;save(true)}
+  $("#dstat").textContent=`Done: ${n} changes in a minute. Best: ${S.dbest||0}${nb&&n>0?" · new best!":""}`}
+function drillStop(){if(dg){clearInterval(dg.t);dg=null;$("#ds").textContent="Start";$("#dc").disabled=true}}
+$("#ds").onclick=()=>dg?drillEnd():drillStart();
+$("#dc").onclick=()=>{if(!dg)return;dg.n++;dg.cur=dg.next;dPick();$("#dstat").textContent=dg.left+" s left · "+dg.n+" changes"};
+$("#dset").onchange=()=>{drillStop();const s=dset();$("#pair").textContent=s[0]+" → "+s[1];dDiag(s[0],s[1])};
+/* ---------- metronome ---------- */
+let mt=null,taps=[];
+function mDraw(on){const n=+$("#msig").value;$("#mbeats").innerHTML=Array.from({length:n},(_,i)=>`<i class="${i===on?"on":""}"></i>`).join("")}
+function mStart(){needAc();const sig=+$("#msig").value;mt={i:0,next:ac.currentTime+.08,sig};mt.t=setInterval(mSched,25);$("#mgo").textContent="Stop"}
+function mSched(){if(!mt)return;const bpm=+$("#mbpm").value,sig=mt.sig;
+  while(mt.next<ac.currentTime+.12){const i=mt.i,t=mt.next;let f=1000,g=.32;
+    if(sig===6){if(i===0){f=1500;g=.5}else if(i===3){f=1250;g=.38}else g=.14;mt.next+=60/bpm/3}
+    else{if(i===0){f=1500;g=.5}mt.next+=60/bpm}
+    tone(t,f,.05,g,"square");setTimeout(()=>mDraw(i),Math.max(0,(t-ac.currentTime)*1000));mt.i=(i+1)%sig}}
+function stopMetro(){if(mt){clearInterval(mt.t);mt=null}$("#mgo").textContent="Start";mDraw(-1)}
+function setM(v){$("#mbpm").value=v;$("#mbpmv").textContent=v}
+$("#mgo").onclick=()=>mt?stopMetro():mStart();
+$("#msig").onchange=()=>{const was=!!mt;stopMetro();if(was)mStart()};
+$("#mbpm").oninput=()=>$("#mbpmv").textContent=$("#mbpm").value;
+$("#mbm").onclick=()=>setM(Math.max(40,+$("#mbpm").value-5));$("#mbp").onclick=()=>setM(Math.min(200,+$("#mbpm").value+5));
+$("#mtap").onclick=()=>{const n=Date.now();if(taps.length&&n-taps[taps.length-1]>2000)taps=[];taps.push(n);taps=taps.slice(-5);
+  if(taps.length>1){const iv=[];for(let i=1;i<taps.length;i++)iv.push(taps[i]-taps[i-1]);setM(Math.max(40,Math.min(200,Math.round(60000/(iv.reduce((a,b)=>a+b,0)/iv.length)))))}};
+mDraw(-1);syncTempo();
 /* ---------- progress ---------- */
 function streak(){const ds=new Set(S.log.filter(l=>l.m>0).map(l=>l.d).concat(S.rest||[]));let c=0,d=new Date();
   if(!ds.has(day(d)))d.setDate(d.getDate()-1);
