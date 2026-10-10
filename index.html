@@ -243,6 +243,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,su
 #wl .wopt small{display:block;color:var(--mute);font-weight:500}.pinb{width:100%;margin:8px 0 0;background:var(--s1);border:2px dashed var(--go);font-weight:700}
 .tl{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.tlc{font:700 15px var(--rd);background:var(--s2);border-radius:10px;padding:6px 10px;min-width:56px;text-align:center}.tlc small{display:block;font:500 10px var(--rd);color:var(--mute)}.tlc.on{outline:2px solid var(--go)}
 .mtr{position:relative;height:18px;background:var(--line);border-radius:9px;overflow:hidden;margin:14px 0 4px}.mtr i{display:block;height:100%;width:0;background:var(--ok);transition:width .08s}.mtr .mz1{position:absolute;left:55%;top:0;bottom:0;width:2px;background:var(--bg);opacity:.6}.mtr .mz2{position:absolute;left:90%;top:0;bottom:0;width:3px;background:#e0584f}.mtl{display:flex;justify-content:space-between;font-size:12px;color:var(--mute)}.mcm{text-align:center;font-weight:600;min-height:44px;margin:10px 0 0}.nudge{background:var(--s1);border-radius:16px;padding:12px 14px;margin:0 0 12px;border-left:5px solid var(--go)}.nudge p{margin:4px 0 10px;color:var(--mute);font-size:14px}.nudge b{font:700 16px var(--rd)}
+.pa{text-align:center;padding:6px 0}.pa .pn{font-size:72px;line-height:1.1}.pat{flex-wrap:nowrap;overflow-x:auto;padding-bottom:6px}.pat .tlc{flex:none}
 </style>
 </head>
 <body>
@@ -957,6 +958,9 @@ function pgClick(e){const b=e.target.closest("button");if(!b)return;const d=b.da
   if(d.recl){openRecord(LB[d.recl].t);return}
   if(d.cstart!=null){S.cs[d.cstart]=day();save();pgRefresh();return}
   if(d.pgk){const k=d.pgk;if(k==="songs"){show("songs");return}openProgPage(k);return}
+  if(b.id==="paplay"&&SL.au){if(SL.au.paused)SL.au.play().catch(()=>flash("Could not play this file"));else SL.au.pause();return}
+  if(d.pas!=null&&SL.au){SL.au.currentTime=SL.segs[+d.pas].t;SL.au.play().catch(()=>{});return}
+  if(b.id==="pawrong"){const i=SL.pa&&SL.pa.cur>=0?SL.pa.cur:-1;if(i<0){flash("Wait for a chord to play first");return}SL.fixI=i;$("#pafixw").innerHTML=`<label class="field"><small>Change ${SL.segs[i].n} to</small><select id="pafix">${chordStates(false).map(c=>`<option ${c.n===SL.segs[i].n?"selected":""}>${c.n}</option>`).join("")}<option value="">Remove it</option></select></label>`;return}
   if(b.id==="mcgo"){mcToggle();return}
   if(b.id==="bfile"){fileBackup();return}
   if(b.id==="bcopy"){copyBackup();return}
@@ -978,7 +982,8 @@ function pgClick(e){const b=e.target.closest("button");if(!b)return;const d=b.da
     if(a.every(Boolean)){S.done[l.id]=1;delete S.shaky[l.id];save(true);flash("Lesson complete 🎉")}else{delete S.done[l.id];save()}refreshLearn();return}
   if(d.know){const l=LB[d.know];if(S.done[l.id]){S.chk[l.id]=l.c.map(()=>0);delete S.done[l.id];save()}else{completeLesson(l);flash("Lesson complete 🎉")}refreshLearn()}}
 $("#lessons").onclick=pgClick;$("#pg").onclick=pgClick;
-$("#pg").onchange=e=>{const t=e.target;if(t.id==="sens"){S.sens=+t.value||1;if(mc&&mc.g)mc.g.gain.value=S.sens;save(true);flash("Sensitivity updated")}else if(t.id==="brf"){const f=t.files&&t.files[0];if(f)f.text().then(restoreFrom);t.value=""}else if(t.id==="sing"){S.sing=t.checked;save();flash(S.sing?"Singing lessons included":"Singing lessons hidden")}else if(t.id==="fs"){S.fs=t.value;save();applyFs();flash("Text size updated")}else if(t.id==="rmt"){S.rm=S.rm||{t:"18:00",days:[1,2,3,4,5]};S.rm.t=t.value||"18:00";save(true)}else if(t.id==="theme"){S.theme=t.value;save();applyTheme();flash(t.value==="auto"?"Matches your iPhone":t.value==="dark"?"Dark mode":"Light mode")}else if(t.id==="snd"){S.snd=t.value;gbC={};save();flash(S.snd==="steel"?"Steel-string sound":"Nylon-string sound")}else if(t.id==="wg"){S.wgoal=+t.value;save();flash("Weekly goal updated")}else if(t.id==="lefty"){S.lefty=t.checked;save();flash("Chord diagrams updated")}};
+$("#pg").addEventListener("input",e=>{if(e.target.id==="paseek"&&SL.au&&SL.au.duration)SL.au.currentTime=e.target.value/1000*SL.au.duration});
+$("#pg").onchange=e=>{const t=e.target;if(t.id==="pasp"){if(SL.au)SL.au.playbackRate=+t.value}else if(t.id==="pafix"){const v=t.value;if(v)SL.segs[SL.fixI].n=v;else SL.segs.splice(SL.fixI,1);SL.pa.cur=-2;pgRefresh();slRender()}else if(t.id==="sens"){S.sens=+t.value||1;if(mc&&mc.g)mc.g.gain.value=S.sens;save(true);flash("Sensitivity updated")}else if(t.id==="brf"){const f=t.files&&t.files[0];if(f)f.text().then(restoreFrom);t.value=""}else if(t.id==="sing"){S.sing=t.checked;save();flash(S.sing?"Singing lessons included":"Singing lessons hidden")}else if(t.id==="fs"){S.fs=t.value;save();applyFs();flash("Text size updated")}else if(t.id==="rmt"){S.rm=S.rm||{t:"18:00",days:[1,2,3,4,5]};S.rm.t=t.value||"18:00";save(true)}else if(t.id==="theme"){S.theme=t.value;save();applyTheme();flash(t.value==="auto"?"Matches your iPhone":t.value==="dark"?"Dark mode":"Light mode")}else if(t.id==="snd"){S.snd=t.value;gbC={};save();flash(S.snd==="steel"?"Steel-string sound":"Nylon-string sound")}else if(t.id==="wg"){S.wgoal=+t.value;save();flash("Weekly goal updated")}else if(t.id==="lefty"){S.lefty=t.checked;save();flash("Chord diagrams updated")}};
 /* ---------- rhythm ---------- */
 const PATS=[
  ["1. Quarter notes",2,"D - D - D - D -"],
@@ -1506,9 +1511,10 @@ function slRender(){const el=$("#slres");if(!el)return;const s=SL.segs;
    <div class="wh"><b>Chords in order</b><small>Tap one to hear it</small></div>
    <div class="tl">${s.map((x,i)=>`<button class="tlc${SL.sel===i?" on":""}" data-slc="${i}">${x.n}<small>${mmss(x.t)}</small></button>`).join("")}</div>
    ${SL.sel>=0?`<div class="card" style="margin-top:10px"><label class="field"><small>Wrong? Change this chord to</small><select id="slfix">${chordStates(false).map(c=>`<option ${c.n===s[SL.sel].n?"selected":""}>${c.n}</option>`).join("")}<option value="">Remove it</option></select></label></div>`:""}
+   ${SL.url&&!SL.mic?`<button class="go" id="slplay" style="width:100%;margin-top:12px">▶ Play along with the chords</button>`:""}
    <label class="field" style="margin-top:12px"><small>Song title</small><input id="sltitle" value="${(SL.title||"Heard "+day()).replace(/"/g,"&quot;")}" maxlength="60" style="width:100%"></label>
    <button class="go" id="slsave" style="width:100%">Save to my songs</button><small class="lgd">Chords are a best guess, so check them by ear and fix any that sound wrong.</small>`}
-async function slFile(file){if(!file||SL.busy)return;SL.busy=true;SL.title=file.name.replace(/\.[^.]+$/,"");$("#slhint").textContent="Reading the file...";$("#slres").innerHTML="";
+async function slFile(file){if(!file||SL.busy)return;SL.busy=true;if(SL.au){try{SL.au.pause()}catch(e){}}SL.au=null;if(SL.url){try{URL.revokeObjectURL(SL.url)}catch(e){}}SL.url=URL.createObjectURL(file);SL.title=file.name.replace(/\.[^.]+$/,"");$("#slhint").textContent="Reading the file...";$("#slres").innerHTML="";
   try{needAc();const buf=await file.arrayBuffer();const ab=await new Promise((res,rej)=>{const p=ac.decodeAudioData(buf,res,rej);if(p&&p.then)p.then(res,rej)});
     const sr=ab.sampleRate,n=Math.min(ab.length,sr*420),x=new Float32Array(n),chs=ab.numberOfChannels;for(let c=0;c<chs;c++){const d=ab.getChannelData(c);for(let i=0;i<n;i++)x[i]+=d[i]/chs}
     await slAnalyse(x,sr)}catch(e){$("#slhint").textContent="I could not open that file. Try an mp3, m4a or wav file that is not copy-protected."}SL.busy=false}
@@ -1517,7 +1523,7 @@ async function slAnalyse(x,sr){const hop=Math.round(sr*SLH),F=Math.max(0,Math.fl
   SL.fr=fr.map(r=>r.c&&r.rms>mxr*.04?r:{c:null});$("#slhint").textContent="Done. "+mmss(x.length/sr)+" analysed.";slRun()}
 async function slMic(){if(SL.mic){slStop();return}
   try{needAc();const st=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});const an=ac.createAnalyser();an.fftSize=SLW;an.smoothingTimeConstant=0;micIn(st,an);
-    SL.fr=[];SL.segs=[];SL.title="";SL.mic={st,an,td:new Float32Array(SLW),t:setInterval(slTick,SLH*1000),mx:0};$("#slmic").textContent="■ Stop and show chords";$("#slhint").textContent="Listening... play the song near your phone.";$("#slres").innerHTML=""}
+    if(SL.au){try{SL.au.pause()}catch(e){}}SL.au=null;SL.url=null;SL.fr=[];SL.segs=[];SL.title="";SL.mic={st,an,td:new Float32Array(SLW),t:setInterval(slTick,SLH*1000),mx:0};$("#slmic").textContent="■ Stop and show chords";$("#slhint").textContent="Listening... play the song near your phone.";$("#slres").innerHTML=""}
   catch(e){$("#slhint").textContent="The microphone is blocked. Allow it in your browser settings for this site."}}
 function slTick(){const m=SL.mic;if(!m)return;m.an.getFloatTimeDomainData(m.td);const r=frameChroma(m.td,0,ac.sampleRate);m.mx=Math.max(m.mx,r.rms);SL.fr.push(r);
   const rec=SL.fr.slice(-3).map(f=>f.c).filter(Boolean);if(rec.length&&r.rms>.004){const c=new Array(12).fill(0);rec.forEach(v=>v.forEach((x,i)=>c[i]+=x));const st=chordStates(slOnly());let b=null,bs=-9;st.forEach(s=>{let d=0;for(let i=0;i<12;i++)d+=c[i]*s.v[i];d=d/Math.hypot(...c)-s.pen;if(d>bs){bs=d;b=s}});$("#slhint").textContent="Hearing: "+(b&&bs>.6?b.n:"...")+" · "+mmss(SL.fr.length*SLH)}
@@ -1527,8 +1533,25 @@ if($("#slmic")){$("#slmic").onclick=slMic;$("#slpick").onclick=()=>$("#slfile").
   $("#slmode").onchange=()=>{if(SL.fr.length&&!SL.mic)slRun()};
   $("#slres").onclick=e=>{const b=e.target.closest("button");if(!b)return;
     if(b.dataset.slc!=null){const i=+b.dataset.slc;SL.sel=SL.sel===i?-1:i;if(CH[SL.segs[i].n]){needAc();strumC(SL.segs[i].n,ac.currentTime+.05,"D",.5)}slRender();return}
+    if(b.id==="slplay"){slPlayOpen();return}
     if(b.id==="slsave"){const seq=[];SL.segs.forEach(x=>{if(seq[seq.length-1]!==x.n)seq.push(x.n)});const t=($("#sltitle").value||"").trim()||"Heard "+day();SL.title=t;addSong(t,seq.slice(0,64).join(" "),80);flash("Saved to Songs ✓")}};
   $("#slres").onchange=e=>{if(e.target.id==="slfix"){const v=e.target.value;if(v)SL.segs[SL.sel].n=v;else SL.segs.splice(SL.sel,1);SL.sel=-1;slRender()}if(e.target.id==="sltitle")SL.title=e.target.value}}
+/* ---------- play along ---------- */
+function slPlayPage(){const sp=SL.au?SL.au.playbackRate:1;return `<div class="lp"><div class="pa"><small>Now playing</small><div class="pn" id="pacur">–</div><div class="bfig" id="pafig"></div><p class="mute" id="panext" style="text-align:center;min-height:22px;margin:4px 0"></p></div>
+  <input type="range" id="paseek" min="0" max="1000" value="0" style="width:100%" aria-label="Song position"><div class="mtl"><span id="patime">0:00</span><span id="padur"></span></div>
+  <div class="row2" style="margin:10px 0"><button class="go" id="paplay">▶ Play</button><select id="pasp" aria-label="Speed"><option value="1" ${sp===1?"selected":""}>Normal speed</option><option value="0.75" ${sp===.75?"selected":""}>¾ speed</option><option value="0.5" ${sp===.5?"selected":""}>½ speed</option></select></div>
+  <div class="tl pat" id="patl">${SL.segs.map((x,i)=>`<button class="tlc" data-pas="${i}" id="pc${i}">${x.n}<small>${mmss(x.t)}</small></button>`).join("")}</div>
+  <p class="mute" style="font-size:13px">Tap a chord to jump to it. Slow the song down to learn a tricky part.</p>
+  <button class="lnk" id="pawrong">This chord sounds wrong</button><div id="pafixw"></div></div>`}
+function slPlayOpen(){if(!SL.url||!SL.segs.length)return;if(!SL.au){SL.au=new Audio(SL.url);SL.au.preload="auto";SL.au.preservesPitch=true;SL.au.webkitPreservesPitch=true}
+  pgOpen("Play along",()=>slPlayPage());SL.pa={cur:-2};requestAnimationFrame(paLoop)}
+function paCur(t){const s=SL.segs;for(let i=0;i<s.length;i++)if(t>=s[i].t-.05&&t<s[i].t+s[i].d)return i;return -1}
+function paLoop(){const au=SL.au;if(!$("#pacur")||!au){if(au)au.pause();return}const t=au.currentTime,dur=au.duration||0,i=paCur(t),p=SL.pa||(SL.pa={cur:-2});
+  if(i!==p.cur){p.cur=i;const n=i>=0?SL.segs[i].n:"–";$("#pacur").textContent=n;$("#pafig").innerHTML=i>=0&&CH[n]?`<figure style="margin:0;text-align:center">${chordSvg(CH[n])}</figure>`:"";
+    document.querySelectorAll("#patl .tlc").forEach((e,k)=>e.classList.toggle("on",k===i));const c=$("#pc"+i);if(c&&c.parentNode)c.parentNode.scrollLeft=c.offsetLeft-c.parentNode.clientWidth/2+c.offsetWidth/2}
+  const nx=SL.segs.find(x=>x.t>t+.05);$("#panext").textContent=nx?"Next: "+nx.n+" in "+Math.max(0,Math.ceil((nx.t-t)/au.playbackRate))+" s":"";
+  if(dur&&document.activeElement!==$("#paseek"))$("#paseek").value=Math.round(1000*t/dur);$("#patime").textContent=mmss(t);$("#padur").textContent=dur?mmss(dur):"";$("#paplay").textContent=au.paused?"▶ Play":"❚❚ Pause";
+  requestAnimationFrame(paLoop)}
 /* ---------- fretboard hunt ---------- */
 let hm=null;const HS=["low E","A","D","G","B","high e"];
 function hNext(){let s,f,m;do{s=Math.floor(Math.random()*6);f=1+Math.floor(Math.random()*12);m=OPENM[s]+f}while(hm.cur&&hm.cur.m%12===m%12);
