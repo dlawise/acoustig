@@ -172,6 +172,7 @@ details.card summary span{color:var(--mute);font-size:20px}
 .cpr{background:var(--s1);border-radius:14px;padding:12px;margin-bottom:8px}.cpr b{font-family:var(--rd)}.cpr.best{border-left:5px solid var(--ok)}
 .tg2{display:flex;gap:10px;align-items:center;margin-top:10px}.tg2 input{width:24px;height:24px;min-height:0}
 input[type=number]{width:100%}
+.tlab{display:flex;justify-content:space-between;text-align:center;font-size:12px;color:var(--mute);margin:-4px 0 4px;line-height:1.25}.tlab span{flex:1}.tadv{margin:10px 0;font-size:14px}.tadv summary{color:var(--mute);cursor:pointer}
 .tc{text-align:center;font:700 22px var(--rd);color:var(--mute);min-height:30px}
 .tt{background:linear-gradient(90deg,var(--line) 0 45%,var(--ok) 45% 55%,var(--line) 55% 100%)}
 .tstr{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-top:6px}
@@ -320,13 +321,14 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,su
 
 <section id="tuner">
   <h1>🎚 Tuner</h1>
-  <div class="card"><div class="row2"><select id="tun" aria-label="Guitar tuning"></select><select id="tref" style="flex:none;width:104px"></select></div>
+  <div class="card"><label class="field" style="margin:0"><small>Which tuning is your guitar in?</small><select id="tun" aria-label="Guitar tuning" style="width:100%"></select></label>
     <div class="tstr" id="tcus" hidden style="grid-template-columns:repeat(3,1fr);margin-top:10px"></div><small class="lgd" id="tnote2"></small>
     <div class="pn" id="tnote">–</div><div class="tc" id="tcents"></div>
-    <div class="track tt"><i class="mid"></i><b id="tneedle"></b></div>
+    <div class="track tt"><i class="mid"></i><b id="tneedle"></b></div><div class="tlab"><span>◀ Too low<br>tighten</span><span>In tune</span><span>Too high ▶<br>loosen</span></div>
     <p class="mute" id="thint" style="text-align:center;margin:12px 0">Tap Start, then pluck one string.</p>
     <div class="tstr" id="tstr"></div>
     <small id="tmode" class="lgd" style="margin-top:8px"></small>
+    <details class="tadv"><summary>Advanced: reference pitch</summary><p class="mute" style="margin:8px 0">Almost all guitars use A = 440. This is the pitch the note A is tuned to. Leave it at 440 unless you play with another instrument tuned differently.</p><select id="tref" aria-label="Reference pitch" style="width:100%"></select></details>
     <button class="go" id="tmic" style="width:100%">Start tuning</button></div>
   <details class="card"><summary><h3>New nylon strings</h3><span>＋</span></summary><ol><li>Nylon stretches a lot at first. Tune up slowly in small steps, then retune several times over a few days.</li><li>Thin high strings snap when pushed too high. Tune up to the note from below and stop at the note. Never crank past it.</li><li>If a string feels too tight, choose a lower tuning above, for example a whole step down. Everything in the app follows it.</li><li>Your own tuning lets you set each string to whatever note you actually have.</li></ol></details>
   <details class="card"><summary><h3>Tips for an acoustic</h3><span>＋</span></summary>
@@ -1327,8 +1329,8 @@ function tunerTick(){if(Date.now()<tm.mute)return;tm.an.getFloatTimeDomainData(t
   const same=tm.hist.filter(x=>x.i===best.i).slice(-5).map(x=>x.c).sort((a,b)=>a-b),med=same[same.length>>1];
   tm.sm=tm.si===best.i?tm.sm*.4+med*.6:med;tm.si=best.i;const c=tm.sm,inT=Math.abs(c)<=4;
   if(inT){tm.hold++;if(tm.hold>=5)tm.ok[best.i]=1}else tm.hold=0;
-  $("#tnote").textContent=nm2(tg[best.i]);$("#tneedle").style.left=(50+Math.max(-50,Math.min(50,c)))+"%";$("#tcents").textContent=(c>0?"+":"")+Math.round(c)+"¢";
-  $("#thint").textContent=inT?"In tune ✓":c>0?"Too high: loosen the string":"Too low: tighten the string";drawStrs(best.i,tm.ok)}
+  $("#tnote").textContent=nm2(tg[best.i]);$("#tneedle").style.left=(50+Math.max(-50,Math.min(50,c)))+"%";$("#tcents").textContent=inT?"✓":Math.abs(c)<12?"almost":c>0?"too high":"too low";$("#tcents").style.color=inT?"var(--ok)":"";
+  $("#thint").textContent=inT?"In tune ✓ Hold it there.":Math.abs(c)<12?(c>0?"Almost there. Loosen very slightly.":"Almost there. Tighten very slightly."):c>0?"Too high: loosen the string":"Too low: tighten the string";drawStrs(best.i,tm.ok)}
 $("#tmic").onclick=startTuner;
 /* ---------- backing track ---------- */
 const PROGS=[["Pop · C G Am F","C G Am F"],["Folk · G D Em C","G D Em C"],["Rock · D C G","D C G"],["Minor jam · Am G F G","Am G F G"],["Blues in A · 12 bars","A7 A7 A7 A7 D7 D7 A7 A7 E7 D7 A7 E7"],["Soft jazz · Cmaj7 Am7 Dm7 G7","Cmaj7 Am7 Dm7 G7"]];
