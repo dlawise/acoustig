@@ -241,6 +241,8 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,su
 #wl .wdots{display:flex;gap:6px;justify-content:center;margin:14px 0}#wl .wdots i{width:8px;height:8px;border-radius:50%;background:var(--s2)}#wl .wdots i.on{background:var(--go)}
 #wl .wb{max-width:460px;width:100%;margin:0 auto}#wl .wb .go{width:100%}#wl .wopt{display:flex;gap:10px;align-items:center;text-align:left;width:100%;margin:0 0 8px;padding:12px 14px;border-radius:14px;background:var(--s1);border:2px solid transparent;font-weight:600}#wl .wopt.on{border-color:var(--go)}
 #wl .wopt small{display:block;color:var(--mute);font-weight:500}.pinb{width:100%;margin:8px 0 0;background:var(--s1);border:2px dashed var(--go);font-weight:700}
+.tl{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.tlc{font:700 15px var(--rd);background:var(--s2);border-radius:10px;padding:6px 10px;min-width:56px;text-align:center}.tlc small{display:block;font:500 10px var(--rd);color:var(--mute)}.tlc.on{outline:2px solid var(--go)}
+.mtr{position:relative;height:18px;background:var(--line);border-radius:9px;overflow:hidden;margin:14px 0 4px}.mtr i{display:block;height:100%;width:0;background:var(--ok);transition:width .08s}.mtr .mz1{position:absolute;left:55%;top:0;bottom:0;width:2px;background:var(--bg);opacity:.6}.mtr .mz2{position:absolute;left:90%;top:0;bottom:0;width:3px;background:#e0584f}.mtl{display:flex;justify-content:space-between;font-size:12px;color:var(--mute)}.mcm{text-align:center;font-weight:600;min-height:44px;margin:10px 0 0}.nudge{background:var(--s1);border-radius:16px;padding:12px 14px;margin:0 0 12px;border-left:5px solid var(--go)}.nudge p{margin:4px 0 10px;color:var(--mute);font-size:14px}.nudge b{font:700 16px var(--rd)}
 </style>
 </head>
 <body>
@@ -254,6 +256,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,su
   <div id="rev"></div>
   <div id="hero"></div>
   <div id="cm"></div>
+  <div id="nudge"></div>
   <div id="week"></div>
   <div class="quick" id="quick"></div>
   <div id="run"></div>
@@ -329,7 +332,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,su
     <div class="tstr" id="tstr"></div>
     <small id="tmode" class="lgd" style="margin-top:8px"></small>
     <details class="tadv"><summary>Advanced: reference pitch</summary><p class="mute" style="margin:8px 0">Almost all guitars use A = 440. This is the pitch the note A is tuned to. Leave it at 440 unless you play with another instrument tuned differently.</p><select id="tref" aria-label="Reference pitch" style="width:100%"></select></details>
-    <button class="go" id="tmic" style="width:100%">Start tuning</button></div>
+    <button class="go" id="tmic" style="width:100%">Start tuning</button><button class="lnk" id="tmc">Is the app hearing me? Check the microphone</button></div>
   <details class="card"><summary><h3>New nylon strings</h3><span>＋</span></summary><ol><li>Nylon stretches a lot at first. Tune up slowly in small steps, then retune several times over a few days.</li><li>Thin high strings snap when pushed too high. Tune up to the note from below and stop at the note. Never crank past it.</li><li>If a string feels too tight, choose a lower tuning above, for example a whole step down. Everything in the app follows it.</li><li>Your own tuning lets you set each string to whatever note you actually have.</li></ol></details>
   <details class="card"><summary><h3>Tips for an acoustic</h3><span>＋</span></summary>
     <ol><li>Sit in a quiet room and hold the phone 20 to 30 cm from the soundhole.</li><li>Pluck one string at medium strength and let it ring. The reading settles after about a second.</li><li>Tune up to the note: if you go sharp, loosen below the note and tighten back up.</li><li>Tune E, A, D, G, B, e, then go round again, because tension changes as you go.</li><li>If the reading jumps, tap the note to hear it and lock to that string.</li><li>Take the capo off first.</li><li>Nylon strings are quieter and stretch for the first week or two, so hold the phone closer (10 to 20 cm) and re-check the tuning often.</li></ol></details>
@@ -359,6 +362,10 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,su
   <div class="card"><div class="pn" id="ename">–</div><p class="mute" id="ealt" style="text-align:center;min-height:20px"></p><div class="bfig" id="efig"></div>
     <p class="mute" id="ehint" style="text-align:center;margin:10px 0">Tap Start, play a chord and let it ring.</p>
     <button class="go" id="emic" style="width:100%">Start listening</button></div>
+    <div class="card" id="slcard"><h3 style="margin:0 0 6px">🎧 Find the chords of a song</h3><p class="mute" style="margin:0 0 10px">Play a song near your phone, or choose an audio file. The app works out the chords. Works best on simple, acoustic songs.</p>
+    <div class="row2"><button class="go" id="slmic">🎤 Listen to a song</button><button id="slpick">📁 Choose a file</button></div><input type="file" id="slfile" accept="audio/*" hidden>
+    <label class="field" style="margin-top:10px"><small>Show</small><select id="slmode" style="width:100%"><option value="all">All chords I can hear</option><option value="app">Only chords with a picture in this app</option></select></label>
+    <p class="mute" id="slhint" style="margin:6px 0">Tap one of the buttons to start.</p><div id="slres"></div></div>
   <div class="card"><div class="wh"><b>Chords heard</b><button class="lnk" id="eclear" style="width:auto;margin:0;min-height:0;padding:0">Clear</button></div><div class="chs" id="elog"></div>
     <button id="esave" style="width:100%;margin-top:8px">Save as a song</button></div>
 </section>
@@ -377,6 +384,11 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,su
     <input type="range" id="mbpm" min="40" max="200" value="80" aria-label="Tempo">
     <div class="row2 sm2"><select id="msig" aria-label="Time signature"><option value="4">4/4</option><option value="3">3/4</option><option value="2">2/4</option><option value="6">6/8</option></select><button id="mtap">Tap tempo</button></div>
     <div class="beats" id="mbeats"></div><button class="go" id="mgo" style="width:100%">Start</button></div>
+  <div class="card"><label class="tg2" style="margin:0"><input type="checkbox" id="mst"> Speed trainer: speed up automatically</label>
+    <div id="mstset" hidden><p class="mute" style="margin:8px 0">The click starts at the tempo above and gets faster after a set number of bars, until it reaches your goal.</p>
+    <div class="row2 sm2"><label class="field"><small>Goal</small><select id="msg" style="width:100%"></select></label><label class="field"><small>Add</small><select id="msp" style="width:100%"><option value="2">+2 BPM</option><option value="4">+4 BPM</option><option value="5">+5 BPM</option><option value="10">+10 BPM</option></select></label></div>
+    <label class="field"><small>Every</small><select id="msb" style="width:100%"><option value="2">2 bars</option><option value="4">4 bars</option><option value="8">8 bars</option><option value="16">16 bars</option></select></label></div>
+    <p class="mute" id="msst" style="margin:6px 0 0"></p></div>
 </section>
 
 </main>
@@ -467,7 +479,7 @@ function renderToday(){
   $("#flame").textContent=st?`🔥 ${st}`:"🎸 0";
   $("#fin").innerHTML="";build();
   const L=nextL(),cpi=L?phaseOf(L.id):-1,p=cpi>=0?PATH[cpi]:null,core=p?p[3].filter(i=>enabled(i)&&!BONUS.has(i)):[],cd=core.filter(i=>S.done[i]).length,c=L?phColor(L.id):"#8fd17a",tm=todayMin(),wg=S.wgoal||4,w=weekData(),wk=w.days.filter(x=>x.m>0).length;
-  $("#rec").innerHTML=recText();renderRev();$("#cm").innerHTML=coachCard();
+  $("#nudge").innerHTML=nudgeHtml();$("#rec").innerHTML=recText();renderRev();$("#cm").innerHTML=coachCard();
   $("#hero").innerHTML=`<div class="hero" style="--c:${c}"><div class="hk">${p?p[4]+(S.pin!=null&&S.pin===cpi?" 📌 Your focus":" Current challenge"):"All challenges complete"}</div><h2>${p?p[0]:"Roadmap complete 🎉"}</h2><p>${p?p[1]:"Keep playing songs and recording yourself."}</p>`+
    (p?`<div class="pbar" style="margin:0 0 6px"><i style="width:${100*cd/core.length}%"></i></div><small>${cd} of ${core.length} missions · next: ${L.t}</small>`:"")+
    `<div class="seg" style="margin-top:14px">${[5,15,25,40,60].map(m=>`<button data-m="${m}" class="${m===lenMin?"on":""}">${m}</button>`).join("")}<span>min</span></div>
@@ -945,6 +957,8 @@ function pgClick(e){const b=e.target.closest("button");if(!b)return;const d=b.da
   if(d.recl){openRecord(LB[d.recl].t);return}
   if(d.cstart!=null){S.cs[d.cstart]=day();save();pgRefresh();return}
   if(d.pgk){const k=d.pgk;if(k==="songs"){show("songs");return}openProgPage(k);return}
+  if(b.id==="mcgo"){mcToggle();return}
+  if(b.id==="bfile"){fileBackup();return}
   if(b.id==="bcopy"){copyBackup();return}
   if(b.id==="brest"){restoreBackup();return}
   if(b.id==="reset"){resetAll();return}
@@ -964,7 +978,7 @@ function pgClick(e){const b=e.target.closest("button");if(!b)return;const d=b.da
     if(a.every(Boolean)){S.done[l.id]=1;delete S.shaky[l.id];save(true);flash("Lesson complete 🎉")}else{delete S.done[l.id];save()}refreshLearn();return}
   if(d.know){const l=LB[d.know];if(S.done[l.id]){S.chk[l.id]=l.c.map(()=>0);delete S.done[l.id];save()}else{completeLesson(l);flash("Lesson complete 🎉")}refreshLearn()}}
 $("#lessons").onclick=pgClick;$("#pg").onclick=pgClick;
-$("#pg").onchange=e=>{const t=e.target;if(t.id==="sing"){S.sing=t.checked;save();flash(S.sing?"Singing lessons included":"Singing lessons hidden")}else if(t.id==="fs"){S.fs=t.value;save();applyFs();flash("Text size updated")}else if(t.id==="rmt"){S.rm=S.rm||{t:"18:00",days:[1,2,3,4,5]};S.rm.t=t.value||"18:00";save(true)}else if(t.id==="theme"){S.theme=t.value;save();applyTheme();flash(t.value==="auto"?"Matches your iPhone":t.value==="dark"?"Dark mode":"Light mode")}else if(t.id==="snd"){S.snd=t.value;gbC={};save();flash(S.snd==="steel"?"Steel-string sound":"Nylon-string sound")}else if(t.id==="wg"){S.wgoal=+t.value;save();flash("Weekly goal updated")}else if(t.id==="lefty"){S.lefty=t.checked;save();flash("Chord diagrams updated")}};
+$("#pg").onchange=e=>{const t=e.target;if(t.id==="sens"){S.sens=+t.value||1;if(mc&&mc.g)mc.g.gain.value=S.sens;save(true);flash("Sensitivity updated")}else if(t.id==="brf"){const f=t.files&&t.files[0];if(f)f.text().then(restoreFrom);t.value=""}else if(t.id==="sing"){S.sing=t.checked;save();flash(S.sing?"Singing lessons included":"Singing lessons hidden")}else if(t.id==="fs"){S.fs=t.value;save();applyFs();flash("Text size updated")}else if(t.id==="rmt"){S.rm=S.rm||{t:"18:00",days:[1,2,3,4,5]};S.rm.t=t.value||"18:00";save(true)}else if(t.id==="theme"){S.theme=t.value;save();applyTheme();flash(t.value==="auto"?"Matches your iPhone":t.value==="dark"?"Dark mode":"Light mode")}else if(t.id==="snd"){S.snd=t.value;gbC={};save();flash(S.snd==="steel"?"Steel-string sound":"Nylon-string sound")}else if(t.id==="wg"){S.wgoal=+t.value;save();flash("Weekly goal updated")}else if(t.id==="lefty"){S.lefty=t.checked;save();flash("Chord diagrams updated")}};
 /* ---------- rhythm ---------- */
 const PATS=[
  ["1. Quarter notes",2,"D - D - D - D -"],
@@ -1064,7 +1078,7 @@ function pitchTick(){
 async function listen(){if(mic){stopMic();return}
   try{const st=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});
     ac=ac||new (window.AudioContext||window.webkitAudioContext)();await ac.resume();
-    const an=ac.createAnalyser();an.fftSize=4096;ac.createMediaStreamSource(st).connect(an);
+    const an=ac.createAnalyser();an.fftSize=4096;micIn(st,an);
     mic={st,an,buf:new Float32Array(4096),t:setInterval(pitchTick,70)};$("#mic").textContent="Stop listening";$("#phint").textContent="Listening..."}
   catch(e){$("#phint").textContent="The microphone is blocked. Allow it in your browser settings for this site, then try again."}}
 function stopMic(){if(!mic)return;clearInterval(mic.t);mic.st.getTracks().forEach(t=>t.stop());mic=null;$("#mic").textContent="Start listening";$("#pnote").textContent="–";$("#needle").style.left="50%"}
@@ -1159,6 +1173,7 @@ function strumC(name,t,dir,g,dry){const f=CH[name];if(!f)return;const idx=[];f.s
 function chopC(t,g){if(!chopB){const sr=ac.sampleRate,n=Math.floor(sr*.09);chopB=ac.createBuffer(1,n,sr);const d=chopB.getChannelData(0);let a=0,b=0;for(let i=0;i<n;i++){a+=((Math.random()*2-1)-a)*.28;b+=(a-b)*.5;d[i]=b*Math.exp(-i/(sr*.018))*2.2}}
   const s=ac.createBufferSource(),gn=ac.createGain();s.buffer=chopB;gn.gain.value=g;s.connect(gn);gn.connect(gbus().in);s.start(t)}
 function warmSound(names){names.forEach(n=>{const f=CH[n];if(!f)return;f.split("").forEach((ch,i)=>{if(ch!=="x")guitarBuf(440*Math.pow(2,(OPENM[i]+Number(ch)-69)/12))})})}
+function micIn(st,an){const src=ac.createMediaStreamSource(st),g=ac.createGain();g.gain.value=S.sens||1;src.connect(g);g.connect(an);return g}
 function needAc(){ac=ac||new (window.AudioContext||window.webkitAudioContext)();ac.resume()}
 function previewC(c){needAc();const t=ac.currentTime+.05;
   if(c.ty==="rhythm"){const tk=c.pat.split(" "),sd=60/c.bpm/c.sub;for(let b=0;b<2;b++)tk.forEach((x,i)=>{const w=t+(b*tk.length+i)*sd;if(x==="D"||x==="U")strumC(c.ch,w,x,.5);else if(x==="X")chopC(w,.5)});
@@ -1186,7 +1201,7 @@ function drawCheck(){const o=$("#chk"),c=CK.c;o.classList.add("on");
   o.innerHTML=h}
 async function startCheck(){const c=CK.c;
   try{needAc();const st=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});
-    const an=ac.createAnalyser();an.fftSize=16384;an.smoothingTimeConstant=0;ac.createMediaStreamSource(st).connect(an);
+    const an=ac.createAnalyser();an.fftSize=16384;an.smoothingTimeConstant=0;micIn(st,an);
     CK.m={st,an,td:new Float32Array(16384),fd:new Float32Array(8192)}}
   catch(e){CK.err="The microphone is blocked. Allow it in your browser settings for this site, then try again.";drawCheck();return}
   CK.rec=null;CK.chunks=[];try{CK.rec=new MediaRecorder(CK.m.st);CK.rec.ondataavailable=e=>CK.chunks.push(e.data);CK.rec.start()}catch(e){CK.rec=null}
@@ -1314,7 +1329,7 @@ function refTone(f){needAc();plF(f,ac.currentTime+.02,.7,true)}
 $("#tstr").onclick=e=>{const b=e.target.closest("button");if(!b)return;const i=+b.dataset.ts;refTone(fOfM(tgt()[i]));tlock=tlock===i?null:i;if(tm){tm.hist=[];tm.si=-1;tm.mute=Date.now()+2200}drawStrs(tm?tm.si:null,tm?tm.ok:null)};
 async function startTuner(){if(tm){stopTuner();return}
   try{needAc();const st=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});
-    const an=ac.createAnalyser();an.fftSize=16384;an.smoothingTimeConstant=0;ac.createMediaStreamSource(st).connect(an);
+    const an=ac.createAnalyser();an.fftSize=16384;an.smoothingTimeConstant=0;micIn(st,an);
     tm={st,an,buf:new Float32Array(16384),ok:[],hist:[],hold:0,quiet:0,mute:0,sm:0,si:-1,t:setInterval(tunerTick,90)};$("#tmic").textContent="Stop";$("#thint").textContent="Pluck one string and let it ring."}
   catch(e){$("#thint").textContent="The microphone is blocked. Allow it in your browser settings for this site."}}
 function stopTuner(){if(!tm)return;clearInterval(tm.t);try{tm.st.getTracks().forEach(t=>t.stop())}catch(e){}tm=null;$("#tmic").textContent="Start tuning";$("#tnote").textContent="–";$("#tcents").textContent="";$("#tneedle").style.left="50%"}
@@ -1331,7 +1346,19 @@ function tunerTick(){if(Date.now()<tm.mute)return;tm.an.getFloatTimeDomainData(t
   if(inT){tm.hold++;if(tm.hold>=5)tm.ok[best.i]=1}else tm.hold=0;
   $("#tnote").textContent=nm2(tg[best.i]);$("#tneedle").style.left=(50+Math.max(-50,Math.min(50,c)))+"%";$("#tcents").textContent=inT?"✓":Math.abs(c)<12?"almost":c>0?"too high":"too low";$("#tcents").style.color=inT?"var(--ok)":"";
   $("#thint").textContent=inT?"In tune ✓ Hold it there.":Math.abs(c)<12?(c>0?"Almost there. Loosen very slightly.":"Almost there. Tighten very slightly."):c>0?"Too high: loosen the string":"Too low: tighten the string";drawStrs(best.i,tm.ok)}
-$("#tmic").onclick=startTuner;
+$("#tmic").onclick=startTuner;$("#tmc").onclick=()=>{stopTuner();openProgPage("mic")};
+/* ---------- microphone check ---------- */
+let mc=null;
+async function mcToggle(){if(mc){mcStop();return}
+  try{needAc();const st=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});const an=ac.createAnalyser();an.fftSize=4096;an.smoothingTimeConstant=0;const g=micIn(st,an);
+    mc={st,an,g,td:new Float32Array(4096),pk:[],t:setInterval(mcTick,80)};if($("#mcgo"))$("#mcgo").textContent="Stop"}
+  catch(e){if($("#mcmsg"))$("#mcmsg").textContent="The microphone is blocked. Allow it in your browser settings for this site."}}
+function mcStop(){if(!mc)return;clearInterval(mc.t);try{mc.st.getTracks().forEach(t=>t.stop())}catch(e){}mc=null;if($("#mcgo"))$("#mcgo").textContent="Start";if($("#mcbar"))$("#mcbar").style.width="0%"}
+function mcTick(){if(!mc)return;if(!$("#mcbar")){mcStop();return}mc.an.getFloatTimeDomainData(mc.td);let e=0,pk=0;for(let i=0;i<4096;i++){const v=Math.abs(mc.td[i]);e+=v*v;if(v>pk)pk=v}const rms=Math.sqrt(e/4096),db=20*Math.log10(rms+1e-9),lv=Math.max(0,Math.min(1,(db+60)/60));
+  $("#mcbar").style.width=(lv*100)+"%";mc.pk.push({r:rms,p:pk});if(mc.pk.length>25)mc.pk.shift();
+  const mr=Math.max(...mc.pk.map(x=>x.r)),mp=Math.max(...mc.pk.map(x=>x.p));
+  $("#mcmsg").textContent=mp>.97?"Too loud. Lower the sensitivity or move back.":mr<.004?"I cannot hear you. Move closer or raise the sensitivity.":mr<.02?"A little quiet. Try a higher sensitivity or move closer.":"Good ✓ Your guitar is coming through clearly.";
+  if(rms>.01){const f=detect(mc.td,ac.sampleRate);$("#mcnote").textContent=f>0?nm2(Math.round(69+12*Math.log2(f/A4))):"–"}}
 /* ---------- backing track ---------- */
 const PROGS=[["Pop · C G Am F","C G Am F"],["Folk · G D Em C","G D Em C"],["Rock · D C G","D C G"],["Minor jam · Am G F G","Am G F G"],["Blues in A · 12 bars","A7 A7 A7 A7 D7 D7 A7 A7 E7 D7 A7 E7"],["Soft jazz · Cmaj7 Am7 Dm7 G7","Cmaj7 Am7 Dm7 G7"]];
 let bk=null;
@@ -1426,7 +1453,7 @@ function nameChord(ch){let best=null,second=null;for(let r=0;r<12;r++)for(const 
   if(!best||s>best.s){second=best;best=o}else if(!second||s>second.s)second=o}return {best,second}}
 let em=null;
 async function startEar(){if(em){stopEar();return}
-  try{needAc();const st=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});const an=ac.createAnalyser();an.fftSize=16384;an.smoothingTimeConstant=0;ac.createMediaStreamSource(st).connect(an);
+  try{needAc();const st=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});const an=ac.createAnalyser();an.fftSize=16384;an.smoothingTimeConstant=0;micIn(st,an);
     em={st,an,td:new Float32Array(16384),fd:new Float32Array(8192),prev:null,cand:0,shown:null,last:null,t:setInterval(earTick,120)};$("#emic").textContent="Stop";$("#ehint").textContent="Play a chord and let it ring."}
   catch(e){$("#ehint").textContent="The microphone is blocked. Allow it in your browser settings for this site."}}
 function stopEar(){if(!em)return;clearInterval(em.t);try{em.st.getTracks().forEach(t=>t.stop())}catch(e){}em=null;$("#emic").textContent="Start listening"}
@@ -1440,12 +1467,74 @@ function renderEarLog(){const l=S.earlog||[];$("#elog").innerHTML=l.length?l.map
 function renderEar(){renderEarLog()}
 $("#emic").onclick=startEar;$("#eclear").onclick=()=>{S.earlog=[];save(true);renderEarLog()};
 $("#esave").onclick=()=>{const l=S.earlog||[];if(l.length<2){flash("Play a few chords first");return}addSong("Heard "+day(),l.join(" "),80);flash("Saved to Songs")};
+/* ---------- song listener ---------- */
+const SQ=[["",[0,4,7],0],["m",[0,3,7],0],["7",[0,4,7,10],.05],["m7",[0,3,7,10],.06]];
+const KPM=[6.35,2.23,3.48,2.33,4.38,4.09,2.52,5.19,2.39,3.66,2.29,2.88],KPN=[6.33,2.68,3.52,5.38,2.6,3.53,2.54,4.75,3.98,2.69,3.34,3.17];
+const SLEASY=new Set(["C","D","E","G","A","Am","Dm","Em","A7","D7","E7","G7","Em7","Am7"]);
+const SLW=16384,SLH=.3;
+const SLHAN=new Float64Array(SLW);for(let i=0;i<SLW;i++)SLHAN[i]=.5-.5*Math.cos(2*Math.PI*i/(SLW-1));
+let SL={fr:[],segs:[],sel:-1,mic:null,busy:false,title:"",key:null,capo:null};
+function songChroma(mag,sr,fft){const c=new Array(12).fill(0),bw=sr/fft,lo=Math.max(2,Math.ceil(80/bw)),hi=Math.min(mag.length-2,Math.floor(2000/bw));let mx=0;
+  for(let i=lo;i<hi;i++)if(mag[i]>mx)mx=mag[i];if(!(mx>0))return null;const th=mx*.08;
+  for(let i=lo;i<hi;i++){const v=mag[i];if(v>th&&v>=mag[i-1]&&v>mag[i+1]){const f=i*bw,m=12*Math.log2(f/440)+69,k=Math.round(m),w=Math.sqrt(v)*(f<250?1.5:f<500?1:.5)*(1-Math.min(.5,Math.abs(m-k)));c[((k%12)+12)%12]+=w}}
+  const n=Math.hypot(...c);return n>0?c.map(x=>x/n):null}
+function frameChroma(x,start,sr){const re=new Float64Array(SLW),im=new Float64Array(SLW);let e=0;for(let i=0;i<SLW;i++){const v=start+i<x.length?x[start+i]:0;re[i]=v*SLHAN[i];e+=v*v}
+  const rms=Math.sqrt(e/SLW);fftT(re,im);const mag=new Float64Array(SLW/2);for(let i=0;i<mag.length;i++)mag[i]=Math.hypot(re[i],im[i]);return {rms,c:songChroma(mag,sr,SLW)}}
+function chordStates(only){const out=[];for(let r=0;r<12;r++)for(const q of SQ){const n=NM[r]+q[0];if(only&&!CH[n])continue;const v=new Array(12).fill(0);q[1].forEach((x,i)=>{v[(r+x)%12]=i===3?.7:1});const nn=Math.hypot(...v);out.push({n,v:v.map(x=>x/nn),pen:q[2]})}return out}
+function segmentChords(fr,hop,only){const st=chordStates(only),K=st.length,F=fr.length;if(!K||!F)return[];const LAM=.45,NE=.38;
+  const E=fr.map(c=>{const a=new Array(K+1).fill(0);if(c){for(let k=0;k<K;k++){let d=0;for(let i=0;i<12;i++)d+=c[i]*st[k].v[i];a[k]=d-st[k].pen}a[K]=NE}else a[K]=.9;return a});
+  let sc=E[0].slice();const bp=[];
+  for(let f=1;f<F;f++){let b=0;for(let k=1;k<=K;k++)if(sc[k]>sc[b])b=k;const ns=new Array(K+1),pt=new Array(K+1);
+    for(let k=0;k<=K;k++){if(sc[k]>=sc[b]-LAM){ns[k]=sc[k]+E[f][k];pt[k]=k}else{ns[k]=sc[b]-LAM+E[f][k];pt[k]=b}}sc=ns;bp.push(pt)}
+  let k=0;for(let i=1;i<=K;i++)if(sc[i]>sc[k])k=i;const path=new Array(F);path[F-1]=k;for(let f=F-1;f>=1;f--){k=bp[f-1][k];path[f-1]=k}
+  let segs=[];path.forEach((p,i)=>{const n=p===K?null:st[p].n,l=segs[segs.length-1];if(l&&l.n===n)l.d+=hop;else segs.push({t:i*hop,d:hop,n})});
+  for(let i=0;i<segs.length;i++){if(segs[i].n&&segs[i].d<.65&&segs.length>1){const j=i>0?i-1:i+1;segs[j].d+=segs[i].d;if(j>i)segs[j].t=segs[i].t;segs.splice(i,1);i=Math.max(-1,i-2)}}
+  const out=[];segs.forEach(s=>{const l=out[out.length-1];if(l&&l.n===s.n)l.d+=s.d;else out.push({t:s.t,d:s.d,n:s.n})});return out.filter(s=>s.n)}
+function keyOf(fr){const t=new Array(12).fill(0);fr.forEach(c=>{if(c)for(let i=0;i<12;i++)t[i]+=c[i]});const cor=(a,b)=>{const ma=a.reduce((x,y)=>x+y)/12,mb=b.reduce((x,y)=>x+y)/12;let n=0,da=0,db=0;for(let i=0;i<12;i++){n+=(a[i]-ma)*(b[i]-mb);da+=(a[i]-ma)**2;db+=(b[i]-mb)**2}return n/Math.sqrt(da*db||1)};
+  let best=null;for(let r=0;r<12;r++){const rot=p=>t.map((_,i)=>0).map((_,i)=>p[(i-r+12)%12]);[[KPM,""],[KPN,"m"]].forEach(([p,q])=>{const s=cor(t,rot(p));if(!best||s>best.s)best={s,n:NM[r]+(q?" minor":" major"),r,q}})}return best}
+const shapeOf=(n,k)=>{const m=n.match(/^([A-G][b#]?)(.*)$/);if(!m||RM[m[1]]==null)return n;return NM[(RM[m[1]]-k+120)%12]+m[2]};
+function capoPlan(segs){const tot=segs.reduce((a,s)=>a+s.d,0)||1,sc=k=>segs.reduce((a,s)=>a+(SLEASY.has(shapeOf(s.n,k))?s.d:0),0);let b=0,bs=sc(0);for(let k=1;k<=7;k++){const v=sc(k);if(v>bs+1e-9){bs=v;b=k}}
+  return b>0&&bs-sc(0)>=.15*tot?{k:b,easy:Math.round(100*bs/tot),shapes:[...new Set(segs.map(s=>shapeOf(s.n,b)))]}:null}
+const mmss=t=>Math.floor(t/60)+":"+String(Math.floor(t%60)).padStart(2,"0");
+function slOnly(){return $("#slmode")&&$("#slmode").value==="app"}
+function slRun(){const fr=SL.fr.map(f=>f&&f.c),segs=segmentChords(fr,SLH,slOnly());SL.segs=segs;SL.sel=-1;SL.key=segs.length?keyOf(fr):null;SL.capo=segs.length?capoPlan(segs):null;slRender()}
+function slRender(){const el=$("#slres");if(!el)return;const s=SL.segs;
+  if(!SL.fr.length){el.innerHTML="";return}
+  if(!s.length){el.innerHTML=`<p class="mute">I could not hear clear chords. Try a louder or simpler song, hold the phone closer to the speaker, or choose a file.</p>`;return}
+  const seq=[];s.forEach(x=>{if(seq[seq.length-1]!==x.n)seq.push(x.n)});const cnt={};s.forEach(x=>cnt[x.n]=(cnt[x.n]||0)+x.d);const top=Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]).slice(0,5);
+  el.innerHTML=`<div class="up" style="--c:#a994e6"><small>Likely key</small><b style="margin-bottom:4px">${SL.key?SL.key.n:"Unknown"}</b><p class="mute" style="margin:0">Most used: ${top.join(", ")}</p>${SL.capo?`<p style="margin:8px 0 0"><b style="font:700 15px var(--rd);display:inline">Easier with a capo on fret ${SL.capo.k}</b><br><span class="mute">Play these shapes: ${SL.capo.shapes.join(", ")}</span></p>`:""}</div>
+   <div class="wh"><b>Chords in order</b><small>Tap one to hear it</small></div>
+   <div class="tl">${s.map((x,i)=>`<button class="tlc${SL.sel===i?" on":""}" data-slc="${i}">${x.n}<small>${mmss(x.t)}</small></button>`).join("")}</div>
+   ${SL.sel>=0?`<div class="card" style="margin-top:10px"><label class="field"><small>Wrong? Change this chord to</small><select id="slfix">${chordStates(false).map(c=>`<option ${c.n===s[SL.sel].n?"selected":""}>${c.n}</option>`).join("")}<option value="">Remove it</option></select></label></div>`:""}
+   <label class="field" style="margin-top:12px"><small>Song title</small><input id="sltitle" value="${(SL.title||"Heard "+day()).replace(/"/g,"&quot;")}" maxlength="60" style="width:100%"></label>
+   <button class="go" id="slsave" style="width:100%">Save to my songs</button><small class="lgd">Chords are a best guess, so check them by ear and fix any that sound wrong.</small>`}
+async function slFile(file){if(!file||SL.busy)return;SL.busy=true;SL.title=file.name.replace(/\.[^.]+$/,"");$("#slhint").textContent="Reading the file...";$("#slres").innerHTML="";
+  try{needAc();const buf=await file.arrayBuffer();const ab=await new Promise((res,rej)=>{const p=ac.decodeAudioData(buf,res,rej);if(p&&p.then)p.then(res,rej)});
+    const sr=ab.sampleRate,n=Math.min(ab.length,sr*420),x=new Float32Array(n),chs=ab.numberOfChannels;for(let c=0;c<chs;c++){const d=ab.getChannelData(c);for(let i=0;i<n;i++)x[i]+=d[i]/chs}
+    await slAnalyse(x,sr)}catch(e){$("#slhint").textContent="I could not open that file. Try an mp3, m4a or wav file that is not copy-protected."}SL.busy=false}
+async function slAnalyse(x,sr){const hop=Math.round(sr*SLH),F=Math.max(0,Math.floor((x.length-SLW)/hop)+1),fr=[];let mxr=0;
+  for(let f=0;f<F;f++){const r=frameChroma(x,f*hop,sr);fr.push(r);if(r.rms>mxr)mxr=r.rms;if(f%6===5){$("#slhint").textContent="Listening... "+Math.round(100*f/F)+"%";await new Promise(r=>setTimeout(r,0))}}
+  SL.fr=fr.map(r=>r.c&&r.rms>mxr*.04?r:{c:null});$("#slhint").textContent="Done. "+mmss(x.length/sr)+" analysed.";slRun()}
+async function slMic(){if(SL.mic){slStop();return}
+  try{needAc();const st=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});const an=ac.createAnalyser();an.fftSize=SLW;an.smoothingTimeConstant=0;micIn(st,an);
+    SL.fr=[];SL.segs=[];SL.title="";SL.mic={st,an,td:new Float32Array(SLW),t:setInterval(slTick,SLH*1000),mx:0};$("#slmic").textContent="■ Stop and show chords";$("#slhint").textContent="Listening... play the song near your phone.";$("#slres").innerHTML=""}
+  catch(e){$("#slhint").textContent="The microphone is blocked. Allow it in your browser settings for this site."}}
+function slTick(){const m=SL.mic;if(!m)return;m.an.getFloatTimeDomainData(m.td);const r=frameChroma(m.td,0,ac.sampleRate);m.mx=Math.max(m.mx,r.rms);SL.fr.push(r);
+  const rec=SL.fr.slice(-3).map(f=>f.c).filter(Boolean);if(rec.length&&r.rms>.004){const c=new Array(12).fill(0);rec.forEach(v=>v.forEach((x,i)=>c[i]+=x));const st=chordStates(slOnly());let b=null,bs=-9;st.forEach(s=>{let d=0;for(let i=0;i<12;i++)d+=c[i]*s.v[i];d=d/Math.hypot(...c)-s.pen;if(d>bs){bs=d;b=s}});$("#slhint").textContent="Hearing: "+(b&&bs>.6?b.n:"...")+" · "+mmss(SL.fr.length*SLH)}
+  if(SL.fr.length*SLH>600)slStop()}
+function slStop(){const m=SL.mic;if(!m)return;clearInterval(m.t);try{m.st.getTracks().forEach(t=>t.stop())}catch(e){}SL.mic=null;SL.fr=SL.fr.map(r=>r.c&&r.rms>m.mx*.04?r:{c:null});$("#slmic").textContent="🎤 Listen to a song";$("#slhint").textContent="Done. "+mmss(SL.fr.length*SLH)+" heard.";slRun()}
+if($("#slmic")){$("#slmic").onclick=slMic;$("#slpick").onclick=()=>$("#slfile").click();$("#slfile").onchange=e=>{const f=e.target.files&&e.target.files[0];if(f)slFile(f);e.target.value=""};
+  $("#slmode").onchange=()=>{if(SL.fr.length&&!SL.mic)slRun()};
+  $("#slres").onclick=e=>{const b=e.target.closest("button");if(!b)return;
+    if(b.dataset.slc!=null){const i=+b.dataset.slc;SL.sel=SL.sel===i?-1:i;if(CH[SL.segs[i].n]){needAc();strumC(SL.segs[i].n,ac.currentTime+.05,"D",.5)}slRender();return}
+    if(b.id==="slsave"){const seq=[];SL.segs.forEach(x=>{if(seq[seq.length-1]!==x.n)seq.push(x.n)});const t=($("#sltitle").value||"").trim()||"Heard "+day();SL.title=t;addSong(t,seq.slice(0,64).join(" "),80);flash("Saved to Songs ✓")}};
+  $("#slres").onchange=e=>{if(e.target.id==="slfix"){const v=e.target.value;if(v)SL.segs[SL.sel].n=v;else SL.segs.splice(SL.sel,1);SL.sel=-1;slRender()}if(e.target.id==="sltitle")SL.title=e.target.value}}
 /* ---------- fretboard hunt ---------- */
 let hm=null;const HS=["low E","A","D","G","B","high e"];
 function hNext(){let s,f,m;do{s=Math.floor(Math.random()*6);f=1+Math.floor(Math.random()*12);m=OPENM[s]+f}while(hm.cur&&hm.cur.m%12===m%12);
   hm.cur={s,f,m,t:Date.now(),ok:0};hm.hint=false;$("#hq").innerHTML=`Play <b>${NN[m%12]}</b> on the <b>${HS[s]}</b> string`;$("#hh").textContent=""}
 async function startHunt(){
-  try{needAc();const st=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});const an=ac.createAnalyser();an.fftSize=16384;an.smoothingTimeConstant=0;ac.createMediaStreamSource(st).connect(an);
+  try{needAc();const st=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});const an=ac.createAnalyser();an.fftSize=16384;an.smoothingTimeConstant=0;micIn(st,an);
     hm={st,an,buf:new Float32Array(16384),round:0,score:0,times:[],cur:null,t:setInterval(huntTick,100)};$("#hbtn").textContent="Stop";$("#hs").textContent="Round 1 of 10";hNext()}
   catch(e){$("#hq").textContent="The microphone is blocked. Allow it in your browser settings for this site."}}
 function huntTick(){const c=hm.cur;if(!c)return;const sec=(Date.now()-c.t)/1000;
@@ -1501,13 +1590,13 @@ $("#dset").onchange=()=>{drillStop();const s=dset();$("#pair").textContent=s[0]+
 /* ---------- metronome ---------- */
 let mt=null,taps=[];
 function mDraw(on){const n=+$("#msig").value;$("#mbeats").innerHTML=Array.from({length:n},(_,i)=>`<i class="${i===on?"on":""}"></i>`).join("")}
-function mStart(){needAc();const sig=+$("#msig").value;mt={i:0,next:ac.currentTime+.08,sig};mt.t=setInterval(mSched,25);$("#mgo").textContent="Stop"}
+function mStart(){needAc();const sig=+$("#msig").value;mt={i:0,next:ac.currentTime+.08,sig,bars:0,start:+$("#mbpm").value,done:false};stSt();mt.t=setInterval(mSched,25);$("#mgo").textContent="Stop"}
 function mSched(){if(!mt)return;const bpm=+$("#mbpm").value,sig=mt.sig;
   while(mt.next<ac.currentTime+.12){const i=mt.i,t=mt.next;let f=1000,g=.32;
     if(sig===6){if(i===0){f=1500;g=.5}else if(i===3){f=1250;g=.38}else g=.14;mt.next+=60/bpm/3}
     else{if(i===0){f=1500;g=.5}mt.next+=60/bpm}
-    tone(t,f,.05,g,"square");setTimeout(()=>mDraw(i),Math.max(0,(t-ac.currentTime)*1000));mt.i=(i+1)%sig}}
-function stopMetro(){if(mt){clearInterval(mt.t);mt=null}$("#mgo").textContent="Start";mDraw(-1)}
+    tone(t,f,.05,g,"square");setTimeout(()=>mDraw(i),Math.max(0,(t-ac.currentTime)*1000));mt.i=(i+1)%sig;if(mt.i===0)stBar()}}
+function stopMetro(){if(mt){clearInterval(mt.t);if(S.spd&&S.spd.on&&mt.start)setM(mt.start);mt=null;if($("#msst"))$("#msst").textContent=""}$("#mgo").textContent="Start";mDraw(-1)}
 function setM(v){$("#mbpm").value=v;$("#mbpmv").textContent=v}
 $("#mgo").onclick=()=>mt?stopMetro():mStart();
 $("#msig").onchange=()=>{const was=!!mt;stopMetro();if(was)mStart()};
@@ -1515,6 +1604,14 @@ $("#mbpm").oninput=()=>$("#mbpmv").textContent=$("#mbpm").value;
 $("#mbm").onclick=()=>setM(Math.max(40,+$("#mbpm").value-5));$("#mbp").onclick=()=>setM(Math.min(200,+$("#mbpm").value+5));
 $("#mtap").onclick=()=>{const n=Date.now();if(taps.length&&n-taps[taps.length-1]>2000)taps=[];taps.push(n);taps=taps.slice(-5);
   if(taps.length>1){const iv=[];for(let i=1;i<taps.length;i++)iv.push(taps[i]-taps[i-1]);setM(Math.max(40,Math.min(200,Math.round(60000/(iv.reduce((a,b)=>a+b,0)/iv.length)))))}};
+const spd=()=>S.spd=Object.assign({on:false,goal:100,step:4,bars:4},S.spd||{});
+function stSt(){if(!mt)return;const o=spd(),bpm=+$("#mbpm").value;if(!o.on){$("#msst").textContent="";return}
+  $("#msst").textContent=mt.done?"Goal of "+o.goal+" BPM reached ✓ Stay here for a few rounds.":"Bar "+(mt.bars+1)+" of "+o.bars+" at "+bpm+" BPM · goal "+o.goal}
+function stBar(){const o=spd();if(!o.on||mt.done)return;mt.bars++;if(mt.bars>=o.bars){const bpm=+$("#mbpm").value;if(bpm>=o.goal){mt.done=true;flash("Goal tempo reached 🎉")}else{setM(Math.min(o.goal,bpm+o.step));mt.bars=0}}stSt()}
+function stDraw(){const o=spd(),m=$("#mst");if(!m)return;m.checked=o.on;$("#mstset").hidden=!o.on;$("#msg").innerHTML=[60,70,80,90,100,110,120,140,160,180].map(n=>`<option ${n===o.goal?"selected":""}>${n}</option>`).join("");$("#msp").value=String(o.step);$("#msb").value=String(o.bars)}
+$("#mst").onchange=()=>{spd().on=$("#mst").checked;save(true);stDraw();stSt()};
+$("#msg").onchange=()=>{spd().goal=+$("#msg").value;save(true);if(mt)mt.done=false;stSt()};$("#msp").onchange=()=>{spd().step=+$("#msp").value;save(true)};$("#msb").onchange=()=>{spd().bars=+$("#msb").value;save(true);stSt()};
+stDraw();
 mDraw(-1);syncTempo();
 /* ---------- progress ---------- */
 function streak(){const ds=new Set(S.log.filter(l=>l.m>0).map(l=>l.d).concat(S.rest||[]));let c=0,d=new Date();
@@ -1529,18 +1626,28 @@ const tempoGains=()=>Object.keys(S.tempo).filter(k=>S.tempo[k].length>1&&LB[k]);
 function renderProg(){
   const w=weekData(),ach=achList(),got=ach.filter(a=>a[2]).length,path=pathL(),pd=path.filter(l=>S.done[l.id]).length,tg=tempoGains().length;
   $("#stats").innerHTML=[["🔥",streak(),"day streak"],["⏱",fT(w.wk),"this week"],["🏆",PATH.filter(p=>coreOf(p).length&&coreOf(p).every(i=>S.done[i])).length+"/"+PATH.filter(p=>coreOf(p).length).length,"challenges"]].map(x=>`<div class="tile"><span>${x[0]}</span><b>${x[1]}</b><small>${x[2]}</small></div>`).join("");
-  $("#plist").innerHTML=[["review","📝","Weekly review","Your last 7 days at a glance"],["week","📅","This week",fT(w.wk)+" practised"],["ms","🏅","Badges and milestones",got+" of "+ach.length+" unlocked"],["tempo","🎚","Tempo gains",tg?tg+" lesson"+(tg>1?"s":""):"none yet"],["songs","🎵","Songs and recordings",S.songs.length+" song"+(S.songs.length===1?"":"s")],["set","⚙️","Settings","Singing lessons, left-handed"],["bk","💾","Backup and reset","Move to another phone"]]
+  $("#plist").innerHTML=[["review","📝","Weekly review","Your last 7 days at a glance"],["week","📅","This week",fT(w.wk)+" practised"],["ms","🏅","Badges and milestones",got+" of "+ach.length+" unlocked"],["tempo","🎚","Tempo gains",tg?tg+" lesson"+(tg>1?"s":""):"none yet"],["songs","🎵","Songs and recordings",S.songs.length+" song"+(S.songs.length===1?"":"s")],["set","⚙️","Settings","Singing lessons, left-handed"],["mic","🎙","Microphone check","See if the app can hear your guitar"],["bk","💾","Backup and reset","Move to another phone"]]
    .map(r=>`<button class="lrow" data-pgk="${r[0]}"><span class="li">${r[1]}</span><span class="lt2"><b>${r[2]}</b><small>${r[3]}</small></span><span class="chev">›</span></button>`).join("")}
 function progPage(k,open){open=open||new Set();
   if(k==="review")return reviewPage();
   if(k==="week"){const w=weekData();return `<div class="lp"><h2>${fT(w.wk)}</h2><p class="mute">practised in the last 7 days</p><div class="card wk" style="margin-top:14px">${w.days.map(x=>`<div class="wb"><small>${x.m||""}</small><i class="${x.m?"on":""}" style="height:${Math.round(70*x.m/w.mx)+6}px"></i><small>${x.l}</small></div>`).join("")}</div></div>`}
   if(k==="ms"){return `<div class="lp"><div class="ach-g">${achList().map(a=>`<div class="ach${a[2]?" got":""}"><span>${a[2]?a[0]:"🔒"}</span>${a[1]}</div>`).join("")}</div></div>`}
   if(k==="tempo"){const t=tempoGains();return `<div class="lp">${t.length?t.map(id=>{const h=S.tempo[id];return `<div class="cpr"><b>${LB[id].t}</b> · ${h[0].b} → ${Math.max(...h.map(x=>x.b))} BPM</div>`}).join(""):`<p class="mute">Log your best clean tempo inside a lesson (Tempo log) and your gains appear here.</p>`}</div>`}
+  if(k==="mic")return `<div class="lp"><p class="mute">Tap Start and play a string or a chord. The bar should reach the middle or higher on your loudest notes without hitting the red end.</p>
+    <div class="mtr"><i id="mcbar"></i><b class="mz1"></b><b class="mz2"></b></div><div class="mtl"><span>Too quiet</span><span>Good</span><span>Too loud</span></div>
+    <p class="mcm" id="mcmsg">Tap Start, then play.</p><div class="pn" id="mcnote" style="font-size:44px">–</div>
+    <button class="go" id="mcgo" style="width:100%">Start</button>
+    <label class="field" style="margin-top:14px"><small>Microphone sensitivity</small><select id="sens" style="width:100%">${[[.6,"Low"],[1,"Normal"],[2,"High"],[4,"Very high"]].map(o=>`<option value="${o[0]}" ${(S.sens||1)===o[0]?"selected":""}>${o[1]}</option>`).join("")}</select></label>
+    <p class="mute" style="margin:0 0 10px">Raise it if the app does not hear you. Lower it if the bar hits the red end. This applies to the tuner, the 🎧 checks and the song finder.</p>
+    <div class="row2"><button data-hear="strum">▶ Test the speaker</button></div>
+    <details class="why" style="margin-top:12px"><summary>Nothing to hear or see?</summary><p style="margin-top:8px">If you hear no sound from the app, check that the iPhone silent switch is off and the volume is up. If the bar does not move, allow the microphone for this site in your browser settings, and hold the phone 20 to 30 cm from the soundhole. A quiet room helps.</p></details></div>`;
   if(k==="set"){const rm=S.rm||{t:"18:00",days:[1,2,3,4,5]};return `<div class="lp"><label class="field" style="margin-top:4px"><small>Weekly practice goal</small><select id="wg" style="width:100%">${[2,3,4,5,6,7].map(n=>`<option value="${n}" ${n===(S.wgoal||4)?"selected":""}>${n} days a week</option>`).join("")}</select></label><label class="field" style="margin-top:4px"><small>Appearance</small><select id="theme" style="width:100%"><option value="light" ${(S.theme||"light")==="light"?"selected":""}>Light (bright)</option><option value="dark" ${S.theme==="dark"?"selected":""}>Dark</option><option value="auto" ${S.theme==="auto"?"selected":""}>Match my iPhone</option></select></label><label class="field"><small>Text size</small><select id="fs" style="width:100%">${[["n","Normal"],["l","Large"],["x","Larger"],["xx","Largest"]].map(o=>`<option value="${o[0]}" ${(S.fs||"n")===o[0]?"selected":""}>${o[1]}</option>`).join("")}</select></label><label class="field"><small>Practice sound</small><select id="snd" style="width:100%"><option value="nylon" ${S.snd!=="steel"?"selected":""}>Nylon-string guitar</option><option value="steel" ${S.snd==="steel"?"selected":""}>Steel-string guitar</option></select></label><div class="row2" style="margin-bottom:12px"><button data-hear="strum">▶ Strum G</button><button data-hear="pick">▶ Pick C</button></div><label class="tg2"><input type="checkbox" id="sing" ${singOn()?"checked":""}> Include singing challenges</label><button class="lnk" data-welcome="1" style="margin:0 0 8px">Replay the welcome</button><label class="tg2"><input type="checkbox" id="lefty" ${S.lefty?"checked":""}> Left-handed chord diagrams</label>${fold("rm","⏰ Practice reminder",rm.t,`<p class="mute">iPhone web apps cannot send notifications, so this adds a repeating event with an alert to your Calendar.</p><label class="field" style="margin-top:8px"><small>Time</small><input type="time" id="rmt" value="${rm.t}" style="width:100%"></label><div class="tstr" style="grid-template-columns:repeat(7,1fr)">${["S","M","T","W","T","F","S"].map((n,i)=>`<button class="chp${rm.days.includes(i)?" on":""}" data-rd="${i}">${n}</button>`).join("")}</div><button class="go" data-rmadd="1" style="width:100%;margin-top:12px">Add to Calendar</button><small class="lgd" style="margin-top:8px">iPhone may open the file in Files first. Tap it, then Add All. If nothing happens in the Home Screen app, open this page in Safari and try again, or create the repeating event by hand in Calendar.</small>`,open)}</div>`}
-  return `<div class="lp"><p class="mute">Everything saves automatically on this device. To move it to another phone, copy a backup and restore it there.</p><div class="row2 sm2"><button id="bcopy">Copy backup</button><button id="brest">Restore</button></div><textarea id="bk" placeholder="Paste a backup here to restore"></textarea><button class="lnk" id="reset">Reset all progress</button></div>`}
-function openProgPage(k){pgOpen({review:"Weekly review",week:"This week",ms:"Badges and milestones",tempo:"Tempo gains",set:"Settings",bk:"Backup and reset"}[k],o=>progPage(k,o))}
+  return `<div class="lp"><p class="mute">Everything saves automatically on this device. To move it to another phone, copy a backup and restore it there.</p><div class="row2 sm2"><button id="bcopy">Copy backup</button><button id="brest">Restore</button></div><button id="bfile" style="width:100%;margin-bottom:8px">Save backup as a file</button><label class="field"><small>Or restore from a backup file</small><input type="file" id="brf" accept=".json,application/json" style="width:100%"></label><p class="mute" style="font-size:13px">Recordings are not included in a backup. They stay on this device only.</p><textarea id="bk" placeholder="Paste a backup here to restore"></textarea><button class="lnk" id="reset">Reset all progress</button></div>`}
+function openProgPage(k){pgOpen({review:"Weekly review",week:"This week",ms:"Badges and milestones",tempo:"Tempo gains",set:"Settings",mic:"Microphone check",bk:"Backup and reset"}[k],o=>progPage(k,o))}
 $("#prog").onclick=pgClick;
-async function copyBackup(){const t=JSON.stringify(S);try{await navigator.clipboard.writeText(t);flash("Backup copied ✓")}catch(e){const k=$("#bk");if(k){k.value=t;k.select()}flash("Select and copy the text")}}
+async function copyBackup(){const t=JSON.stringify(S);try{await navigator.clipboard.writeText(t);S.lastBackup=Date.now();save(true);flash("Backup copied ✓")}catch(e){const k=$("#bk");if(k){k.value=t;k.select()}flash("Select and copy the text")}}
+function fileBackup(){try{const b=new Blob([JSON.stringify(S)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="guitar-coach-backup-"+day()+".json";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);S.lastBackup=Date.now();save(true);flash("Backup file saved ✓")}catch(e){flash("Could not save a file. Use Copy backup instead")}}
+function restoreFrom(t){try{const o=JSON.parse(t);if(!Array.isArray(o.log))throw 0;S=Object.assign(DEF(),o);migPv();applyTuning();save();renderProg();renderToday();flash("Restored ✓")}catch(e){flash("That is not a valid backup")}}
 function restoreBackup(){const k=$("#bk"),t=k?k.value.trim():"";if(!t){if(k)k.placeholder="Paste your backup here, then tap Restore again";return}
   try{const o=JSON.parse(t);if(!Array.isArray(o.log))throw 0;S=Object.assign(DEF(),o);migPv();save();k.value="";renderProg();renderToday();flash("Restored ✓")}catch(e){flash("That is not a valid backup")}}
 function resetAll(){if(confirm("Erase all progress on this device?")){S=DEF();save();pgClear();renderProg();renderToday();flash("Progress reset")}}
@@ -1552,7 +1659,7 @@ try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}ca
 const WLC=[["🎸","Practise a little, most days","Fifteen to 25 minutes, about four days a week, beats one long session. Pick a challenge, do one mission at a time. Everything saves by itself on this phone."],
  ["🎚","Tune first","Tune before every session in Tools, then Tuner. Pluck one string and let it ring. Out-of-tune strings make good playing sound wrong."],
  ["🧭","Five tabs","Overview shows today's practice. Learn holds the challenges. Songs, Tools and Progress do what they say."],
- ["🎤","Why the microphone","Tuner and Check listen to your guitar to tell you if you played it right. Sound is analysed on your phone only. Nothing is uploaded, and recordings stay on this device."]];
+ ["🎤","Why the microphone","Tuner and Check listen to your guitar to tell you if you played it right. Sound is analysed on your phone only. Nothing is uploaded, and recordings stay on this device. You can test it any time in Progress, then Microphone check."]];
 let WS={i:0,pick:-1,early:false};
 function wlClose(){$("#wl").hidden=true;S.welcomed=1;save(true);renderToday();renderLearn()}
 function wlOpen(i){WS.i=i;if(i===0){WS.pick=S.pin!=null?S.pin:-1;WS.early=false}const el=$("#wl"),n=WLC.length+1;
@@ -1571,6 +1678,16 @@ if($("#wl")){$("#wl").onclick=e=>{const b=e.target.closest("button");if(!b)retur
   if(d.wp!=null){WS.pick=+d.wp;wlOpen(WS.i)}};
  $("#wl").onchange=e=>{if(e.target.id==="wearly")WS.early=e.target.checked}}
 function maybeWelcome(){if(S.welcomed!==undefined)return;if(!S.log.length&&!Object.keys(S.done).length)wlOpen(0);else{S.welcomed=1;save(true)}}
+/* ---------- install and backup nudges ---------- */
+const standalone=()=>navigator.standalone===true||(window.matchMedia&&matchMedia("(display-mode: standalone)").matches);
+const DAYMS=864e5;
+function nudgeHtml(){if(run||S.welcomed===undefined||!S.log.length)return "";const now=Date.now();
+  if(!standalone()&&/iPhone|iPad|iPod|Android/.test(navigator.userAgent)&&now-(S.nd||0)>14*DAYMS)
+    return `<div class="nudge"><b>📲 Add to your Home Screen</b><p>In Safari, tap the Share button, then Add to Home Screen. The app opens full-screen and your progress is safer. Safari can clear a website's saved data after about a week of non-use.</p><button data-nd="inst">Got it</button></div>`;
+  if(S.log.length>=5&&now-(S.lastBackup||0)>14*DAYMS&&now-(S.bkd||0)>7*DAYMS)
+    return `<div class="nudge"><b>💾 Back up your progress</b><p>Save a backup now and then, so you can restore it if this phone is cleared or you switch phones.</p><div class="row2 sm2"><button class="go" data-nd="bk">Back up now</button><button data-nd="later">Later</button></div></div>`;
+  return ""}
+$("#nudge").onclick=e=>{const b=e.target.closest("button");if(!b)return;const k=b.dataset.nd;if(k==="inst"){S.nd=Date.now()}else if(k==="later"){S.bkd=Date.now()}else if(k==="bk"){S.bkd=Date.now();save(true);openProgPage("bk");renderToday();return}save(true);renderToday()};
 /* ---------- icon + offline ---------- */
 try{maybeWelcome()}catch(e){}
 (function(){try{const c=document.createElement("canvas");c.width=c.height=180;const x=c.getContext("2d");
