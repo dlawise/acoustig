@@ -234,6 +234,12 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,su
 .pair{font:700 44px var(--rd);text-align:center;margin:8px 0}
 .beats{display:flex;gap:8px;justify-content:center;margin:16px 0}.beats i{width:22px;height:22px;border-radius:50%;border:2px solid var(--line)}.beats i.on{background:var(--hi);border-color:var(--hi)}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+#wl{position:fixed;inset:0;z-index:100;background:var(--bg);overflow:auto;padding:calc(20px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom));display:flex;flex-direction:column}
+#wl[hidden]{display:none}#wl .wc{flex:1;display:flex;flex-direction:column;justify-content:center;max-width:460px;width:100%;margin:0 auto}
+#wl .we{font-size:56px;margin-bottom:8px}#wl h2{font:700 28px var(--rd);margin:0 0 10px}#wl p{color:var(--mute);font-size:16px;line-height:1.5;margin:0 0 10px}
+#wl .wdots{display:flex;gap:6px;justify-content:center;margin:14px 0}#wl .wdots i{width:8px;height:8px;border-radius:50%;background:var(--s2)}#wl .wdots i.on{background:var(--go)}
+#wl .wb{max-width:460px;width:100%;margin:0 auto}#wl .wb .go{width:100%}#wl .wopt{display:flex;gap:10px;align-items:center;text-align:left;width:100%;margin:0 0 8px;padding:12px 14px;border-radius:14px;background:var(--s1);border:2px solid transparent;font-weight:600}#wl .wopt.on{border-color:var(--go)}
+#wl .wopt small{display:block;color:var(--mute);font-weight:500}.pinb{width:100%;margin:8px 0 0;background:var(--s1);border:2px dashed var(--go);font-weight:700}
 </style>
 </head>
 <body>
@@ -314,13 +320,15 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,su
 
 <section id="tuner">
   <h1>🎚 Tuner</h1>
-  <div class="card"><div class="row2"><select id="tun"></select><select id="tref" style="flex:none;width:104px"></select></div>
+  <div class="card"><div class="row2"><select id="tun" aria-label="Guitar tuning"></select><select id="tref" style="flex:none;width:104px"></select></div>
+    <div class="tstr" id="tcus" hidden style="grid-template-columns:repeat(3,1fr);margin-top:10px"></div><small class="lgd" id="tnote2"></small>
     <div class="pn" id="tnote">–</div><div class="tc" id="tcents"></div>
     <div class="track tt"><i class="mid"></i><b id="tneedle"></b></div>
     <p class="mute" id="thint" style="text-align:center;margin:12px 0">Tap Start, then pluck one string.</p>
     <div class="tstr" id="tstr"></div>
     <small id="tmode" class="lgd" style="margin-top:8px"></small>
     <button class="go" id="tmic" style="width:100%">Start tuning</button></div>
+  <details class="card"><summary><h3>New nylon strings</h3><span>＋</span></summary><ol><li>Nylon stretches a lot at first. Tune up slowly in small steps, then retune several times over a few days.</li><li>Thin high strings snap when pushed too high. Tune up to the note from below and stop at the note. Never crank past it.</li><li>If a string feels too tight, choose a lower tuning above, for example a whole step down. Everything in the app follows it.</li><li>Your own tuning lets you set each string to whatever note you actually have.</li></ol></details>
   <details class="card"><summary><h3>Tips for an acoustic</h3><span>＋</span></summary>
     <ol><li>Sit in a quiet room and hold the phone 20 to 30 cm from the soundhole.</li><li>Pluck one string at medium strength and let it ring. The reading settles after about a second.</li><li>Tune up to the note: if you go sharp, loosen below the note and tighten back up.</li><li>Tune E, A, D, G, B, e, then go round again, because tension changes as you go.</li><li>If the reading jumps, tap the note to hear it and lock to that string.</li><li>Take the capo off first.</li><li>Nylon strings are quieter and stretch for the first week or two, so hold the phone closer (10 to 20 cm) and re-check the tuning often.</li></ol></details>
 </section>
@@ -376,13 +384,17 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,su
 <div id="pill" hidden></div>
 <nav id="nav" role="tablist" aria-label="Sections"></nav>
 
+<div id="wl" hidden role="dialog" aria-modal="true" aria-label="Welcome"></div>
 <script>
 const $=s=>document.querySelector(s);
 const KEY="guitarcoach.v1";
-const DEF=()=>({len:25,log:[],quiz:{ok:0,n:0},pats:0,done:{},vid:{},shaky:{},chk:{},cs:{},cdone:{},wgoal:4,snd:"nylon",theme:"light",rm:{t:"18:00",days:[1,2,3,4,5]},fs:"n",rate:[],adj:0,dbest:0,earlog:[],hunt:null,sing:true,songs:[],rest:[],tempo:{},lefty:false,goal:null,range:null});
+const DEF=()=>({len:25,log:[],quiz:{ok:0,n:0},pats:0,done:{},vid:{},shaky:{},chk:{},cs:{},cdone:{},wgoal:4,snd:"nylon",theme:"light",rm:{t:"18:00",days:[1,2,3,4,5]},fs:"n",rate:[],adj:0,dbest:0,earlog:[],hunt:null,sing:true,songs:[],rest:[],tempo:{},lefty:false,goal:null,range:null,pin:null,cskip:{}});
 let S;
 try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
 S=Object.assign(DEF(),S||{});
+function migPv(){const mv=(from,withSkip)=>{const sh=o=>{const n={};for(const k in (o||{})){const i=+k;n[i>=from?i+1:i]=o[k]}return n};S.cs=sh(S.cs);S.cdone=sh(S.cdone);if(withSkip)S.cskip=sh(S.cskip);if(S.pin!=null&&S.pin>=from)S.pin++};
+  if(!(S.pv>=2))mv(1,false);if(!(S.pv>=3))mv(6,true);S.pv=3}
+migPv();
 S.log=S.log.filter(l=>l.m>0);
 const MIG={0:"clean",1:"strum",2:"color",3:"capo",4:"fmaj",5:"eshape",6:"ashape",7:"rhythm16",8:"palm",9:"notes",10:"pent",11:"legato",12:"bends",13:"caged",14:"arp",15:"travis",16:"perc",17:"invert",18:"ext",19:"tunings",20:"improv",21:"arrange",22:"vcare",23:"breath",24:"warmup",25:"pitch",26:"range",27:"singstrum",28:"tone",29:"phrasing"};
 ["done","shaky","vid"].forEach(k=>{const o=S[k]||{},n={};for(const i in o)n[MIG[i]||i]=o[i];S[k]=n});
@@ -454,10 +466,10 @@ function renderToday(){
   $("#fin").innerHTML="";build();
   const L=nextL(),cpi=L?phaseOf(L.id):-1,p=cpi>=0?PATH[cpi]:null,core=p?p[3].filter(i=>enabled(i)&&!BONUS.has(i)):[],cd=core.filter(i=>S.done[i]).length,c=L?phColor(L.id):"#8fd17a",tm=todayMin(),wg=S.wgoal||4,w=weekData(),wk=w.days.filter(x=>x.m>0).length;
   $("#rec").innerHTML=recText();renderRev();$("#cm").innerHTML=coachCard();
-  $("#hero").innerHTML=`<div class="hero" style="--c:${c}"><div class="hk">${p?p[4]+" Current challenge":"All challenges complete"}</div><h2>${p?p[0]:"Roadmap complete 🎉"}</h2><p>${p?p[1]:"Keep playing songs and recording yourself."}</p>`+
+  $("#hero").innerHTML=`<div class="hero" style="--c:${c}"><div class="hk">${p?p[4]+(S.pin!=null&&S.pin===cpi?" 📌 Your focus":" Current challenge"):"All challenges complete"}</div><h2>${p?p[0]:"Roadmap complete 🎉"}</h2><p>${p?p[1]:"Keep playing songs and recording yourself."}</p>`+
    (p?`<div class="pbar" style="margin:0 0 6px"><i style="width:${100*cd/core.length}%"></i></div><small>${cd} of ${core.length} missions · next: ${L.t}</small>`:"")+
    `<div class="seg" style="margin-top:14px">${[5,15,25,40,60].map(m=>`<button data-m="${m}" class="${m===lenMin?"on":""}">${m}</button>`).join("")}<span>min</span></div>
-   <button class="go" id="start">${tm>=lenMin?"▶  Practise more":"▶  Start "+lenMin+"-minute practice"}</button>${p?`<button class="lnk" data-open="chal">View challenge ›</button>`:""}${restBtn()}</div>`;
+   <button class="go" id="start">${tm>=lenMin?"▶  Practise more":"▶  Start "+lenMin+"-minute practice"}</button>${p?`<button class="lnk" data-open="chal">View challenge ›</button>`:""}${restBtn()}${tuned()?`<small class="lgd" style="display:block;margin-top:8px">🎚 Tuning: ${tuneName()}. Chord shapes stay the same.</small>`:""}</div>`;
   $("#week").innerHTML=`<div class="wcard"><div class="wh"><b>This week</b><small>${wk} of ${wg} practice days</small></div><div class="wdots">${w.days.map((x,i)=>`<div class="wd${x.m?" on":""}${x.r?" rest":""}${i===6?" now":""}"><i>${x.m?"✓":x.r?"☾":""}</i><small>${x.l}</small></div>`).join("")}</div><div class="pbar"><i style="width:${Math.min(100,100*wk/wg)}%"></i></div><small>Today: ${tm} of ${lenMin} min</small></div>`;
   $("#quick").innerHTML=[["tuner","🎚","Tune"],["rhythm","🥁","Rhythm"],["backing","🎶","Backing"],["songs","🎵","Songs"]].map(q=>`<button data-q="${q[0]}"><span>${q[1]}</span>${q[2]}</button>`).join("");
 }
@@ -514,6 +526,66 @@ $("#run").onclick=e=>{const b=e.target.closest("button"),a=b&&b.dataset.r;if(!a|
 /* ---------- curriculum ---------- */
 const Z=(id,ty,t,g,w,s,d,f,sg,c,q)=>({id,ty,t,g,w,s,d,f,sg,c,q});
 const FLAT=[
+Z("pima1","tech","Meet p, i, m and a","You know which right-hand finger plays which string and your hand sits relaxed over the strings.","Naming your fingers is how every fingerstyle piece is written and taught.",
+ ["The names: p is the thumb, i the index, m the middle and a the ring finger. The little finger rests or stays out of the way.","Thumb plays the three bass strings (6, 5, 4). Fingers i, m and a stay on strings 3, 2 and 1, one finger per string.","Rest your fingers lightly on strings 3, 2, 1. Curl each finger and pluck by closing it toward your palm (free stroke) so it does not hit the next string.","Keep the wrist level and loose. The thumb sits slightly ahead of the fingers, not under them."],
+ [[5,"Silently place p on string 5 and i, m, a on strings 3, 2, 1. Lift and replace 10 times."],[5,"Pluck each open string with its finger: p, i, m, a, one note per beat at 50 BPM."],[5,"Repeat p, i, m, a on different bass strings. Keep the fingers curled and relaxed."]],
+ [["Fingers collide","Curl more and pluck with the fingertip and a little nail. Bring the hand slightly closer to the strings."],["Sound is thin","Pluck toward the palm, not up away from the guitar. Use a slightly deeper touch."]],
+ [],
+ ["I can say which finger plays which string","Fingers pluck by curling, not flicking","p, i, m, a each sound clear and even"],"classical guitar right hand p i m a fingerstyle technique"),
+Z("pima2","tech","Arpeggios with p-i-m-a","You play a steady p-i-m-a arpeggio over a chord with an even, clear sound.","The arpeggio is the backbone of fingerstyle accompaniment and most solo pieces.",
+ ["Hold an Em chord. p plays string 6, i string 3, m string 2, a string 1.","Play p-i-m-a, then back m-i, so the pattern is p-i-m-a-m-i. Count 1 and 2 and 3 and.","Leave each finger on the string after plucking, then release only when it is time to play again.","Slow and even beats fast. Add a metronome at 50 BPM."],
+ [[5,"Em arpeggio p-i-m-a-m-i, 8 rounds at 50 BPM, listening for even volume."],[5,"Add Am, C and G. Change chords every round and keep the arpeggio going."],[5,"Em to Am to C to G at 60 BPM without stopping."]],
+ [["Uneven volume","The ring finger is usually quieter. Practise a-m-a alone, slowly."],["Thumb gets lost","Say p-i-m-a aloud. Keep the thumb just ahead of the fingers."]],
+ [],
+ ["p-i-m-a-m-i even at 50 BPM","Two chords connected without a gap","Smooth Em Am C G loop at 60 BPM"],"fingerstyle arpeggio pima beginner lesson"),
+Z("pima3","tech","Pattern variations","You can play at least three different pima patterns and change between them.","Different patterns give the same chords different moods, from lullaby to folk to pop.",
+ ["Pattern A: p-i-m-a-m-i (the rolling arpeggio you know).","Pattern B: p-i-m-i-p-i-m-i (steady, with the index repeated).","Pattern C: p-m-i-a (bass note followed by a rolled finger group).","Learn each on Em, then move to Am and C."],
+ [[5,"Pattern A, then B, then C on Em at 55 BPM."],[5,"Play each pattern on Am, then C, 4 rounds each."],[5,"Choose one pattern and play a four-chord progression for two minutes."]],
+ [["Patterns feel the same","Accent the thumb a little louder, keep fingers softer."],["Rushing the change","Pause one beat on the new chord, then speed up."]],
+ [],
+ ["Three patterns on Em","Three patterns on Am and C","Four chords, no stopping"],"fingerstyle patterns pima guitar lesson"),
+Z("pima4","tech","Tremolo (p-a-m-i)","You play a smooth, even tremolo on one string.","Tremolo gives nylon-string guitar its singing, sustained sound.",
+ ["Pluck a single high string (string 1) with a-m-i, three quick even notes, after one thumb note on a bass string.","The whole group is one 'beat': p, a, m, i. Count 1 and a 2 and a.","Start slow and even, then speed up.","Keep the fingers curled. Do not tense the hand."],
+ [[5,"Open string 1 with a-m-i at 40 BPM, groups of four, 20 times."],[5,"Add the thumb on string 4 before each group at 50 BPM."],[5,"Em chord with tremolo for a minute. Listen for evenness."]],
+ [["Uneven","Slow down until all four notes are equal, then add speed."],["Fingers cramp","Rest, shake out, and lighten your touch."]],
+ [],
+ ["a-m-i even on string 1","p-a-m-i groups steady at 50 BPM","One minute of tremolo without stopping"],"classical guitar tremolo technique beginner"),
+Z("projp","project","Milestone: an arpeggio study","Play a 16-bar arpeggio study with p-i-m-a, smooth and steady at 60 BPM.","A real piece shows your right hand is controlled, relaxed and musical.",
+ ["Choose a short study, for example the first Giuliani right-hand study or your own Am, Dm, E7 pattern.","Learn four bars at a time, hands separate if needed.","Play with a metronome at 50, then 60 BPM.","Record your best take and listen for even volume."],
+ [[10,"Four bars at a time at 50 BPM."],[10,"Whole piece at 55 BPM."],[10,"Whole piece at 60 BPM and record it."]],
+ [["Rushing the easy bars","Use the metronome and let it hold you back."],["Tension","Shake your hands out between sections. Relaxed is controlled."]],
+ [],
+ ["16 bars without stopping","Even volume across the fingers","Recorded and reviewed"],"classical guitar arpeggio study giuliani"),
+Z("fpost","tech","Hand position and posture","Your fretting hand sits relaxed, with a curved wrist and arched fingers.","Good position prevents buzzing, tension and pain, and makes every later skill easier.",
+ ["Sit tall with the guitar body against you and the neck angled slightly up.","Place your thumb behind the neck, roughly opposite your first or second finger. Do not grip it like a hammer.","Curve your fingers so the tips land on the strings. Keep the wrist fairly straight, not bent sharply.","Press just behind the fret wire with only enough force to stop the buzz. Squeeze lightly, then lighter still."],
+ [[5,"Place fingers 1 to 4 on the 5th to 8th frets of the low E string, one per fret. Check the arch and thumb. Release, repeat 10 times."],[5,"Same shape on each string, moving from low E to high E. Press lightly and listen for a clean note."],[5,"Play the shape while watching yourself in a mirror or video. Look for flat fingers and a squeezing thumb."]],
+ [["Flat fingers","Roll up onto the fingertips. Short nails help. Bring the elbow in slightly."],["Hand aches","Press lighter. Stop and shake out the hand. Never push through pain."]],
+ [],
+ ["Fingers arched, tips on the strings","Thumb behind the neck, not gripping","Shape holds with a light press"],"guitar fretting hand position beginner"),
+Z("fstretch","tech","Finger strength and stretch","Your fingers press cleanly and the hand stays loose through short exercises.","A little strength and reach, built gradually, makes barre chords and runs possible.",
+ ["Warm up first. Play slowly for a minute or two before any stretch.","Press each finger down and hold for 3 seconds, then relax. Repeat across the strings.","Stretch gently: fingers 1 and 4 on frets 5 and 8 of a single string. Stop at the first tight feeling.","Rest for 30 seconds every few minutes. Pain, numbness or tingling means stop for the day."],
+ [[5,"Hold-and-release: each finger on the 5th fret of each string, 3 seconds on, 3 seconds off."],[5,"Add the 4-finger stretch on frets 5 to 8 on each string. Gentle, never forced."],[5,"Hold a light F barre shape for 10 seconds, then rest. Do 3 rounds."]],
+ [["Sore fingertips","This is normal early on and fades in a few weeks. Short sessions beat long ones."],["Pain in the wrist or joints","Stop. Lower your effort, check your posture, and see a doctor if it persists."]],
+ [],
+ ["Warm up before stretching","Each finger holds without a buzz","Rested when the hand felt tight"],"guitar finger strength stretching exercises"),
+Z("findep","tech","Finger independence 1-2-3-4","Each finger moves on its own while the others stay relaxed and close to the strings.","Independent fingers are the base of clean scales, lead lines and fingerstyle.",
+ ["Place fingers 1, 2, 3 and 4 on frets 1, 2, 3 and 4 of the low E string.","Play one finger per fret, one note per beat, slowly. Fingers stay near the string between notes.","Keep each finger pressed until the next one lands, then release.","Repeat on every string, then move the pattern up the neck."],
+ [[5,"Low E string, frets 1 to 4 up and down at 50 BPM, one note per beat."],[5,"All six strings, 1-2-3-4 on each, at 60 BPM."],[5,"Try the 1-3-2-4 and 4-3-2-1 patterns at 60 BPM, then 70."]],
+ [["Fingers fly away","Keep them within a centimetre of the strings. Tiny movements are faster."],["Ring and little finger weak","Slow down and practise 3-4 pairs alone. They improve with short daily practice."]],
+ [],
+ ["1-2-3-4 up and down with no buzz","All six strings clean at 60 BPM","Notes even in volume and timing"],"guitar finger independence exercise 1234 spider"),
+Z("fclean","tech","Clean fretting and muting","Notes ring clearly and unwanted strings stay quiet.","Clean notes and quiet unused strings make chords and melodies sound professional.",
+ ["Fret right behind the fret wire, not in the middle of the space.","Check each chord string by string and fix any buzz or dead note.","Let fingertips lean slightly to mute neighbouring strings you do not play.","Keep your touch light. If it buzzes, move closer to the fret, not harder."],
+ [[5,"Pluck each string of C, G, Am and Em one at a time. Fix every buzz."],[5,"Play C, G, Am, Em as clean strums at 60 BPM, listening for muted strings."],[5,"One-minute changes among C, G, Am, Em with every note ringing."]],
+ [["Buzzing","Move the fingertip closer to the fret wire and press a little firmer. Check the finger is not touching the next string."],["Dead string","Another finger is touching it. Arch more, and angle fingertips up."]],
+ [],
+ ["Each string rings in C, G, Am, Em","No unwanted dead notes","Clean at 60 BPM"],"guitar clean chords no buzzing fretting"),
+Z("projf","project","Milestone: the chromatic run","Play a 24-note chromatic run, 1-2-3-4 on every string, clean and even at 70 BPM.","This proves your fingers are controlled, even and relaxed.",
+ ["Start on the low E string, fret 1 with finger 1, then 2, 3, 4.","Move to the next string and repeat, until you reach the high E string.","Keep the notes even in volume and timing.","Use a metronome at 60 BPM, then 70. Record your best take."],
+ [[10,"Whole run at 50 BPM, one note per beat."],[10,"Whole run at 60 BPM."],[10,"Whole run at 70 BPM and record it."]],
+ [["Uneven notes","Slow down. Give each note the same pressure and listen to the gaps."],["Tension creeping in","Shake the hand out between rounds. Relaxed is fast."]],
+ [],
+ ["24 notes, no stopping","Even timing at 70 BPM","Recorded and reviewed"],"chromatic exercise guitar finger warm up"),
 Z("clean","tech","Clean chords and fast changes","Every open chord rings clearly and changes land on the beat.","Everything else you play is built on clean, quick chord changes.",
  ["Fret with your fingertips, arched, close to the fret wire.","Pluck each string one at a time and fix any that buzz or die.","Move your fingers together as one shape, not one at a time.","Look for anchor fingers that stay put or slide one string (C to Am, A to D)."],
  [[5,"One-minute changes: G to C, then Em to D. Count clean switches in 60 seconds. Target 15."],[5,"Loop G, C, Em, D with one strum per beat at 70 BPM, then 90."],[5,"Change chords with your eyes closed. Target 12 clean changes a minute."]],
@@ -728,14 +800,16 @@ Z("proj5","project","Milestone: sing a full song","Sing a complete song with you
 const LB={};FLAT.forEach(l=>LB[l.id]=l);
 const LV=["Foundations","Core skills","Applied","Advanced"];
 const TY={tech:["🎸","Technique"],theory:["🧠","Theory"],voice:["🎤","Voice"],project:["⭐","Milestone"]};
-const TOOL={clean:"drill",strum:"rhythm",rhythm16:"rhythm",palm:"rhythm",singstrum:"rhythm",notes:"fret",pent:"fret",caged:"fret",warmup:"voice",pitch:"voice",range:"voice"};
-const TL={drill:["drill","Change drill"],rhythm:["rhythm","Rhythm gym"],fret:["fret","Fretboard"],voice:["voice","Voice coach"]};
+const TOOL={pima2:"metro",pima3:"metro",pima4:"metro",projp:"metro",findep:"metro",projf:"metro",fclean:"ear",clean:"drill",strum:"rhythm",rhythm16:"rhythm",palm:"rhythm",singstrum:"rhythm",notes:"fret",pent:"fret",caged:"fret",warmup:"voice",pitch:"voice",range:"voice"};
+const TL={metro:["metro","Metronome"],ear:["ear","Chord finder"],drill:["drill","Change drill"],rhythm:["rhythm","Rhythm gym"],fret:["fret","Fretboard"],voice:["voice","Voice coach"]};
 const PATH=[
  ["First Song","Play a whole song with open chords",1,["clean","strum","color","capo","proj1"],"🎸",14,70],
+ ["Finger Control","Fret cleanly and move your fingers independently",1,["fpost","fstretch","findep","fclean","projf"],"🖐",10,60],
  ["Find Your Voice","Warm up safely and sing a note on pitch",1,["vcare","breath","warmup"],"🎤",7,70],
  ["Sing and Strum","Sing a full song while you strum",2,["pitch","range","singstrum","proj5"],"🎶",14,70],
  ["Barre Breakthrough","Play a song with barre chords",2,["fmaj","eshape","ashape","rhythm16","palm","proj2"],"💪",21,70],
  ["Own the Neck","Know your notes and play a pentatonic lick with a bend",2,["notes","pent","legato","bends"],"🧭",14,70],
+ ["PIMA Fingerstyle","Play steady arpeggio patterns with p, i, m and a",3,["pima1","pima2","pima3","pima4","projp"],"🎻",14,60],
  ["Fingerstyle Flow","Play a 16-bar fingerstyle piece",3,["arp","travis","perc","proj4"],"🤲",14,60],
  ["First Solo","Improvise, then play a solo you wrote",3,["caged","improv","proj3"],"🔥",10,70],
  ["Expression","Sing and play with feeling",3,["tone","phrasing"],"✨",7,70],
@@ -743,7 +817,7 @@ const PATH=[
  ["Showtime","Arrange and perform a full song",4,["arrange"],"🏆",7,80]
 ];
 const BONUS=new Set(["perc","caged","invert","tunings"]);
-const STRAND={};[["chords",["clean","strum","color","capo","proj1","fmaj","eshape","ashape","rhythm16","palm","proj2","ext","invert","tunings","arrange"]],["lead",["notes","pent","legato","bends","caged","improv","proj3"]],["finger",["arp","travis","perc","proj4"]],["voice",["vcare","breath","warmup","pitch","range","singstrum","tone","phrasing","proj5"]]].forEach(x=>x[1].forEach(i=>STRAND[i]=x[0]));
+const STRAND={};[["chords",["fpost","fstretch","findep","fclean","projf","clean","strum","color","capo","proj1","fmaj","eshape","ashape","rhythm16","palm","proj2","ext","invert","tunings","arrange"]],["lead",["notes","pent","legato","bends","caged","improv","proj3"]],["finger",["pima1","pima2","pima3","pima4","projp","arp","travis","perc","proj4"]],["voice",["vcare","breath","warmup","pitch","range","singstrum","tone","phrasing","proj5"]]].forEach(x=>x[1].forEach(i=>STRAND[i]=x[0]));
 const LC=["#f0b84a","#59c2b5","#a994e6","#f08fb0"];
 const singOn=()=>S.sing!==false;
 const enabled=id=>singOn()||STRAND[id]!=="voice";
@@ -753,8 +827,8 @@ const pathL=()=>pathIds().map(i=>LB[i]);
 const rel=l=>pathIds().includes(l.id);
 const phaseOf=id=>PATH.findIndex(p=>p[3].includes(id));
 const phColor=id=>{const i=phaseOf(id);return i>=0?LC[PATH[i][2]-1]:"#8a7a66"};
-function chalCheck(){S.cdone=S.cdone||{};let msg=null;PATH.forEach((p,pi)=>{const core=p[3].filter(i=>enabled(i)&&!BONUS.has(i));if(core.length&&core.every(i=>S.done[i])&&!S.cdone[pi]){S.cdone[pi]=day();msg="🏆 Challenge complete: "+p[0]}});return msg}
-const nextL=()=>pathL().find(l=>!S.done[l.id]);
+function chalCheck(){S.cdone=S.cdone||{};let msg=null;PATH.forEach((p,pi)=>{const core=p[3].filter(i=>enabled(i)&&!BONUS.has(i));if(core.length&&core.every(i=>S.done[i])&&!S.cdone[pi]&&!(S.cskip||{})[pi]){S.cdone[pi]=day();msg="🏆 Challenge complete: "+p[0]}});return msg}
+const nextL=()=>{if(S.pin!=null&&PATH[S.pin]){const c=PATH[S.pin][3].filter(i=>enabled(i)&&!BONUS.has(i)).find(i=>!S.done[i]);if(c)return LB[c]}return pathL().find(l=>!S.done[l.id])};
 const tickN=l=>S.done[l.id]?l.c.length:(S.chk[l.id]||[]).filter(Boolean).length;
 const lvlOf=l=>Math.min(l.d.length-1,tickN(l));
 const focusText=l=>"Level "+(lvlOf(l)+1)+" · "+l.d[lvlOf(l)][0]+" min. "+l.d[lvlOf(l)][1];
@@ -762,7 +836,7 @@ function completeLesson(l){S.chk[l.id]=l.c.map(()=>1);S.done[l.id]=1;delete S.sh
 const VIDEOS={clean:"qXK_If0QzDM",strum:"CjM5fyXoV8w",capo:"Y22MT3etzwM",fmaj:"4cR1sa1_d_8",eshape:"IxXG5S8vSd8",palm:"5H7Q6dSxuQc",notes:"nXN7hYNMfhA",pent:"eEJpypexUDg",legato:"dYaeIXXyy1Y",travis:"K2Z3RZc5t-A",warmup:"rYsuVwyGe-4",breath:"98Gk-OsMblM"};
 /* ---------- pictures ---------- */
 const CH={"C":"x32010","G":"320003","D":"xx0232","A":"x02220","E":"022100","Am":"x02210","Em":"022000","Dm":"xx0231","A7":"x02020","D7":"xx0212","E7":"020100","G7":"320001","Asus2":"x02200","Dsus2":"xx0230","Em7":"020000","Cadd9":"x32030","F easy":"xx3211","F full":"133211","F (fret 1)":"133211","G (fret 3)":"355433","A (fret 5)":"577655","Bm (fret 2)":"x24432","C (fret 3)":"x35553","Cmaj7":"x32000","Am7":"x02010","Dm7":"xx0211","Cmaj9":"x32430","E5":"022xxx","A5":"x022xx","D5":"xx023x","F":"xx3211","Bm":"x24432","F#m":"244222","Bb":"x13331","B":"x24442","Cm":"x35543","Gm":"355333","Fm":"133111","C7":"x32310","B7":"x21202","Asus4":"x02230","Dsus4":"xx0233","Esus4":"022200","Fmaj7":"xx3210"};
-const PICS={clean:["C","G","D","A","E","Am","Em","Dm"],color:["E7","A7","Em7","Asus2","Cadd9","G7","D7","Dsus2"],fmaj:["F easy","F full"],eshape:["F (fret 1)","G (fret 3)","A (fret 5)"],ashape:["Bm (fret 2)","C (fret 3)"],ext:["Cmaj7","Am7","Dm7","G7","Cmaj9"],palm:["E5","A5","D5"]};
+const PICS={clean:["C","G","D","A","E","Am","Em","Dm"],color:["E7","A7","Em7","Asus2","Cadd9","G7","D7","Dsus2"],fmaj:["F easy","F full"],eshape:["F (fret 1)","G (fret 3)","A (fret 5)"],ashape:["Bm (fret 2)","C (fret 3)"],ext:["Cmaj7","Am7","Dm7","G7","Cmaj9"],palm:["E5","A5","D5"],fclean:["C","G","Am","Em"]};
 const STR={strum:["D - D U - U D U",2],rhythm16:["X - D U X U D U",2]};
 const SCL={pent:{base:5,notes:[[0,5],[0,8],[1,5],[1,7],[2,5],[2,7],[3,5],[3,7],[4,5],[4,8],[5,5],[5,8]],roots:[[0,5],[2,7],[5,5]]}};
 function chordSvg(f){const a=f.split("").map(c=>c==="x"?-1:+c),fr=a.filter(v=>v>0),mf=Math.min(...fr),M=Math.max(...fr),base=M>4?mf:1,X=i=>10+(S.lefty?5-i:i)*9;let g="";
@@ -781,7 +855,15 @@ function scaleSvg(o){let g="";
   return `<svg viewBox="0 0 160 102" width="240">${g}</svg>`}
 function strumHtml(p,sub){sub=sub||2;const t=p.split(" "),cnt=["1","e","&","a"];
   return `<div class="str">${t.map((x,i)=>`<div><small>${i%sub===0?(i/sub+1):(sub===2?"&":cnt[i%sub])}</small><b class="${x==="-"?"rest":""}">${x==="D"?"↓":x==="U"?"↑":x==="X"?"✕":"·"}</b></div>`).join("")}</div>`}
+function fingSvg(){let g="";for(let j=0;j<=4;j++)g+=`<line x1="${20+j*40}" y1="14" x2="${20+j*40}" y2="46" stroke="currentColor" stroke-width="${j===0?3:1.2}" opacity="${j===0?1:.6}"/>`;
+  for(let i=0;i<6;i++)g+=`<line x1="20" y1="${14+i*6.4}" x2="180" y2="${14+i*6.4}" stroke="currentColor" stroke-width="1" opacity=".5"/>`;
+  for(let k=1;k<=4;k++)g+=`<circle cx="${20+k*40-20}" cy="46" r="8" fill="var(--c)"/><text x="${k*40}" y="49.5" text-anchor="middle" font-size="10" font-weight="700" fill="#1d1611">${k}</text>`;
+  return `<svg viewBox="0 0 200 64" width="100%" role="img" aria-label="Fingers 1 to 4 on frets 1 to 4">${g}</svg>`}
+function pimaSvg(){const L=["p","p","p","i","m","a"],C=["6 E","5 A","4 D","3 G","2 B","1 e"];let g="";for(let i=0;i<6;i++){const y=12+i*13;g+=`<line x1="34" y1="${y}" x2="190" y2="${y}" stroke="currentColor" stroke-width="${1+(5-i)*.25}" opacity=".6"/><text x="4" y="${y+4}" font-size="9" fill="currentColor" opacity=".7">${C[i]}</text><circle cx="${i<3?210:210}" cy="${y}" r="7" fill="var(--c)"/><text x="210" y="${y+3.5}" text-anchor="middle" font-size="10" font-weight="700" fill="#1d1611">${L[i]}</text>`}
+  return `<svg viewBox="0 0 224 90" width="100%" role="img" aria-label="Right hand fingers by string">${g}</svg>`}
 function pics(id){let h="";
+  if(id==="pima1"||id==="pima2")return `<div class="pics"><figure style="min-width:240px">${pimaSvg()}<figcaption>Thumb (p) plays the bass strings 6, 5, 4. i, m, a play strings 3, 2, 1.</figcaption></figure></div>`;
+  if(id==="findep")return `<div class="pics"><figure style="min-width:240px">${fingSvg()}<figcaption>Low E string. One finger per fret: 1, 2, 3, 4. Keep fingers close to the strings.</figcaption></figure></div>`;
   if(PICS[id])h=`<div class="pics">${PICS[id].map(n=>`<figure>${chordSvg(CH[n])}<figcaption>${n}</figcaption></figure>`).join("")}</div>`;
   else if(STR[id])h=strumHtml(STR[id][0],STR[id][1])+`<small>Down ↓, up ↑, chop ✕. Count 1 & 2 & 3 & 4 &.</small>`;
   else if(SCL[id])h=`<div class="pics"><figure>${scaleSvg(SCL[id])}<figcaption>A minor pentatonic, position 1. Red is A.</figcaption></figure></div>`;
@@ -815,7 +897,7 @@ function renderLearn(){
   let h=cur?`<div class="up" style="--c:${phColor(cur.id)}"><small>${PATH[cpi][4]} Current challenge</small><b>${PATH[cpi][0]}</b><p class="mute" style="margin:0 0 12px">Next mission: ${cur.t}</p><div class="row2"><button class="go" data-les="${cur.id}">Continue</button><button data-ph="${cpi}">View challenge</button></div></div>`:`<div class="up" style="--c:#8fd17a"><b>🎉 Every challenge complete</b></div>`;
   h+=`<div class="sl"><b>${cdn} of ${live.length}</b> challenges · ${pd} of ${path.length} missions · about ${Math.round(days/30)} months at a steady pace</div><div class="lad">`+[1,2,3,4].map(n=>{const li=[].concat(...PATH.filter(p=>p[2]===n).map(coreOf));if(!li.length)return "";const d=li.filter(i=>S.done[i]).length;return `<div class="lvl"><small>Level ${n}</small><b>${LV[n-1]}</b><div class="pbar"><i style="width:${100*d/li.length}%"></i></div></div>`}).join("")+`</div>`;
   PATH.forEach((p,pi)=>{const core=coreOf(p);if(!core.length)return;const d=core.filter(i=>S.done[i]).length,c=LC[p[2]-1],full=d===core.length;
-    h+=`<button class="pc${pi===cpi?" cur":""}${full?" done":""}" data-ph="${pi}" style="--c:${c}"><span class="pn2">${full?"✓":p[4]}</span><span class="pt"><b>${p[0]}</b><small>${p[1]}</small><span class="pbar"><i style="width:${100*d/core.length}%"></i></span><small>${d} of ${core.length} missions · about ${p[5]} days</small></span>${pi===cpi?`<em class="tg focus">Now</em>`:""}<span class="chev">›</span></button>`});
+    h+=`<button class="pc${pi===cpi?" cur":""}${full?" done":""}" data-ph="${pi}" style="--c:${c}"><span class="pn2">${full?"✓":p[4]}</span><span class="pt"><b>${p[0]}</b><small>${p[1]}</small><span class="pbar"><i style="width:${100*d/core.length}%"></i></span><small>${d} of ${core.length} missions · about ${p[5]} days</small></span>${pi===cpi?`<em class="tg focus">${S.pin===pi?"📌 Focus":"Now"}</em>`:""}<span class="chev">›</span></button>`});
   if(!singOn())h+=`<button class="lrow" data-pgk="set"><span class="li">🎤</span><span class="lt2"><b>Singing challenges are off</b><small>Turn them on in Settings</small></span><span class="chev">›</span></button>`;
   $("#lessons").innerHTML=h}
 function chalPage(pi){ensureRows();const p=PATH[pi],all=p[3].filter(enabled),ids=pathIds(),cur=nextL(),core=coreOf(p),d=core.filter(i=>S.done[i]).length,c=LC[p[2]-1],st=S.cs[pi],fin=S.cdone[pi],last=core[core.length-1];
@@ -824,12 +906,13 @@ function chalPage(pi){ensureRows();const p=PATH[pi],all=p[3].filter(enabled),ids
   <div class="tp" style="border-color:${c}"><small style="color:${c}">By the end you can</small><b>${p[1]}</b></div>
   <div class="pbar" style="--c:${c};margin:6px 0 4px"><i style="width:${100*d/core.length}%"></i></div><small>${d} of ${core.length} missions done${st&&!fin?" · day "+dayN+" of about "+p[5]:""}</small>
   ${!st&&!fin?`<button class="go" data-cstart="${pi}" style="width:100%;margin:12px 0 4px;background:${c}">Start this challenge</button>`:""}
+  ${!fin?(S.pin===pi?`<button class="lnk" data-pin="off">📌 Your focus right now. Tap to unpin</button>`:`<button class="pinb" data-pin="${pi}">📌 Work on this now</button>`):""}
   <div style="height:12px"></div><h3 style="margin-bottom:8px">Missions</h3>`+
   all.map(i=>{const l=LB[i],done=S.done[i],bonus=BONUS.has(i),tk=todayK(i),n=tickN(l);
     return `<button class="lr${done?" done":""}${cur&&cur.id===i?" cur":""}" data-les="${i}" style="--c:${c}"><span class="tick">${done?"✓":i===last?"🏁":bonus?"·":ids.indexOf(i)+1}</span><span class="lt"><b>${l.t}</b><small><span class="ty">${TY[l.ty][0]} ${TY[l.ty][1]}</span>${i===last?"Finish line":n&&!done?n+" of "+l.c.length+" checks":l.g}</small></span>${cur&&cur.id===i?`<em class="tg focus">Next</em>`:tk==="fix"?`<em class="tg fix">Review</em>`:""}${bonus?`<em class="tg bn">Bonus</em>`:""}<span class="chev">›</span></button>`}).join("")+
   `${!fin?`<button class="lnk" data-cskip="${pi}">I can already do this challenge</button>`:""}<details class="why" style="margin-top:12px"><summary>How challenges work</summary><p style="margin-top:8px">Do one mission at a time and practise about 4 days a week. Each mission has checkpoints you can verify with 🎧 Check. Finish the last mission to win the badge. The suggested days are a pace, not a deadline.</p></details></div>`}
 function fold(k,title,hint,inner,open){return `<details class="fold" data-k="${k}" ${open.has(k)?"open":""}><summary><b>${title}</b><small>${hint}</small><span class="chev2">›</span></summary><div class="fb2">${inner}</div></details>`}
-function ckList(l){const a=S.chk[l.id]||[],chs=CHK[l.id]||[];return l.c.map((x,i)=>{const on=S.done[l.id]||a[i],j=chs.findIndex(c=>c.ck===i);return `<div class="ckr"><button class="ck${on?" on":""}" data-ck="${l.id}|${i}"><span>${on?"✓":""}</span>${x}</button>${j>=0?`<button class="chb" data-chk="${l.id}|${j}" aria-label="Check my playing">🎧</button>`:""}</div>`}).join("")}
+function ckList(l){const rb=`<button class="lnk" data-recl="${l.id}">● Record a take of this practice</button>`;const a=S.chk[l.id]||[],chs=CHK[l.id]||[];return l.c.map((x,i)=>{const on=S.done[l.id]||a[i],j=chs.findIndex(c=>c.ck===i);return `<div class="ckr"><button class="ck${on?" on":""}" data-ck="${l.id}|${i}"><span>${on?"✓":""}</span>${x}</button>${j>=0?`<button class="chb" data-chk="${l.id}|${j}" aria-label="Check my playing">🎧</button>`:""}</div>`}).join("")+rb}
 function lessonPage(id,open){ensureRows();const l=LB[id],done=S.done[id],ty=TY[l.ty],ids=pathIds(),pos=ids.indexOf(id)+1,bonus=BONUS.has(id),c=phColor(id),tk=todayK(id),chs=CHK[id]||[],lv=lvlOf(l),pic=pics(id),ord=allIds(),oi=ord.indexOf(id);
   let h=`<div class="lp" style="--c:${c}"><div class="lchips"><span class="ty">${ty[0]} ${ty[1]}</span><span>${bonus?"Bonus":pos?"Mission "+pos+" of "+ids.length:"Hidden"}</span>${done?`<span class="dn">Done ✓</span>`:""}${tk?`<em class="tg ${tk}">${tk==="focus"?"Next":"Review"}</em>`:""}</div><h2>${l.t}</h2><p class="mute">${l.g}</p>`+
    `<div class="tp"><small>${tk?"Your next practice":"Practice"}</small><b>Level ${lv+1} · ${l.d[lv][0]} min</b><p>${l.d[lv][1]}</p></div>`+
@@ -855,6 +938,9 @@ function pgClick(e){const b=e.target.closest("button");if(!b)return;const d=b.da
   if(d.ph!=null){openChal(+d.ph);return}
   if(d.les){openLessonPage(d.les);return}
   if(d.nav){const top=PGS[PGS.length-1],pi=phaseOf(d.nav);top.t=pi>=0?PATH[pi][0]:"Lesson";top.r=o=>lessonPage(d.nav,o);$("#pgt").textContent=top.t;$("#pgb").innerHTML=top.r(new Set(["look","chk"]));$("#pgb").scrollTop=0;return}
+  if(d.pin!=null){S.pin=d.pin==="off"?null:+d.pin;if(S.pin!=null&&!S.cs[S.pin])S.cs[S.pin]=day();save(true);refreshLearn();renderToday();flash(S.pin==null?"Unpinned":"Pinned as your focus");return}
+  if(d.welcome){wlOpen(0);return}
+  if(d.recl){openRecord(LB[d.recl].t);return}
   if(d.cstart!=null){S.cs[d.cstart]=day();save();pgRefresh();return}
   if(d.pgk){const k=d.pgk;if(k==="songs"){show("songs");return}openProgPage(k);return}
   if(b.id==="bcopy"){copyBackup();return}
@@ -992,10 +1078,18 @@ function saveNote(k){if(lastMidi==null||Date.now()-lastSeen>2000){$("#phint").te
 $("#lo").onclick=()=>saveNote("lo");$("#hi").onclick=()=>saveNote("hi");
 
 /* ---------- check yourself ---------- */
-const OPENM=[40,45,50,55,59,64],NN=["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+const STDM=[40,45,50,55,59,64],OPENM=STDM.slice(),NN=["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
 const QP=["D - D - D - D -",2],P3=["D - D U - U D U",2];
 const PENT=[[0,5],[0,8],[1,5],[1,7],[2,5],[2,7],[3,5],[3,7],[4,5],[4,8],[5,5],[5,8]].map(x=>OPENM[x[0]]+x[1]);
+const SIX=[].concat(...OPENM.map(o=>[1,2,3,4].map(f=>o+f)));
 const CHK={
+ pima2:[{ty:"notes",ck:0,title:"Em arpeggio p-i-m-a-m-i",seq:[40,55,59,64,59,55,40,55,59,64,59,55,40,55,59,64,59,55],min:3,txt:"Hold Em. Play p-i-m-a-m-i three times, slowly and evenly."},{ty:"changes",ck:2,title:"Em to Am to C to G",ch:["Em","Am","C","G"],secs:40,need:3,txt:"Play the chords one after another, letting each ring."}],
+ pima1:[{ty:"notes",ck:2,title:"p, i, m, a on open strings",seq:[45,55,59,64,59,55],min:3,txt:"Play A (p), G (i), B (m), e (a), then back down, one open string per finger."}],
+ pima3:[{ty:"changes",ck:2,title:"Em, Am and C",ch:["Em","Am","C"],secs:40,need:3,txt:"Play Em, Am and C, each as an arpeggio pattern."}],
+ projp:[{ty:"record",ck:2,title:"Record your study",txt:"Play the study once through, then listen back."}],
+ findep:[{ty:"notes",ck:0,title:"1-2-3-4 on the low E string",seq:[41,42,43,44,43,42,41],min:3,txt:"Play frets 1 to 4 on the low E string up and back down, one finger per fret."},{ty:"notes",ck:1,title:"All six strings",seq:SIX,min:3,txt:"Play 1-2-3-4 on each string from low E to high E, slowly and evenly."}],
+ fclean:[{ty:"changes",ck:0,title:"C to G, clean",ch:["C","G"],secs:30,need:6,txt:"Alternate C and G for 30 seconds, every string ringing."},{ty:"changes",ck:1,title:"Am to Em, clean",ch:["Am","Em"],secs:30,need:6,txt:"Alternate Am and Em for 30 seconds, every string ringing."}],
+ projf:[{ty:"notes",ck:0,title:"The chromatic run",seq:SIX,min:3,txt:"Play all 24 notes in order, low E to high E, without stopping."},{ty:"rhythm",ck:1,title:"Steady at 70 BPM",pat:"D - D - D - D -",sub:2,bpm:70,bars:4,ch:"Em",txt:"Keep a steady pulse at 70 BPM. Strum Em once per beat to prove your timing."},{ty:"record",ck:2,title:"Record your run",txt:"Play the run once through, then listen back."}],
  clean:[{ty:"changes",ck:0,title:"G to C changes",ch:["G","C"],secs:60,need:15,txt:"Alternate G and C cleanly for 60 seconds. Target: 15 changes."},{ty:"changes",ck:1,title:"Em to D changes",ch:["Em","D"],secs:30,need:6,txt:"Alternate Em and D for 30 seconds."},{ty:"rhythm",ck:2,title:"Strum once per beat",pat:QP[0],sub:2,bpm:90,bars:4,ch:"G",txt:"Strum one chord per beat at 90 BPM while changing G, C, Em, D."}],
  strum:[{ty:"rhythm",ck:0,title:"Folk pattern, 4 bars",pat:P3[0],sub:2,bpm:80,bars:4,ch:"Em",txt:"Play the pattern for 4 bars at 80 BPM."},{ty:"rhythm",ck:1,title:"Chord loop, 8 bars",pat:P3[0],sub:2,bpm:80,bars:8,ch:"C",txt:"Loop Em, C, G, D with the pattern for 8 bars."}],
  color:[{ty:"changes",ck:0,title:"E7 and A7",ch:["E7","A7"],secs:30,need:4,txt:"Switch between E7 and A7 for 30 seconds."},{ty:"changes",ck:1,title:"Em7 and Cadd9",ch:["Em7","Cadd9"],secs:30,need:4,txt:"Switch between Em7 and Cadd9 for 30 seconds."}],
@@ -1073,6 +1167,7 @@ function previewC(c){needAc();const t=ac.currentTime+.05;
 let CK=null;
 function openCheck(id,j){const l=LB[id],c=Object.assign({},CHK[id][j]);
   if(c.voice){const b=S.range&&S.range.lo!=null?S.range.lo+1:57;c.seq=[0,2,4,5,7].map(x=>b+x)}
+  if(c.seq&&!c.voice&&TOFF)c.seq=c.seq.map(m=>m+TOFF);
   if(c.seq)c.names=c.seq.map(m=>NN[m%12]);
   CK={l,c,st:"ready"};drawCheck()}
 function nextChk(l){const chs=CHK[l.id]||[],a=S.chk[l.id]||[],j=chs.findIndex(c=>!(S.done[l.id]||a[c.ck]));return j>=0?j:0}
@@ -1085,7 +1180,7 @@ function drawCheck(){const o=$("#chk"),c=CK.c;o.classList.add("on");
   let h=`<div class="ct"><button data-x="close">✕</button><div><small>${CK.l.t}</small><h2>${c.title}</h2></div></div>`;
   if(CK.st==="ready")h+=`<div class="card">${targetHtml(c)}</div><p class="mute cp">${c.txt}</p>${CK.err?`<p class="err">${CK.err}</p>`:""}<div class="row2">${c.ty==="sustain"||c.ty==="record"?"":`<button data-x="hear">▶ Hear it</button>`}<button class="go" data-x="start">● ${c.ty==="record"?"Record":"Start"}</button></div><small class="lgd">Use headphones for the preview, then the mic hears only you.</small>`;
   else if(CK.st==="live")h+=`<div class="card live"><div class="lb2" id="lvb">Get ready…</div><div class="mute" id="lvs"></div></div><button class="go" data-x="stop" style="width:100%">■ Stop</button>`;
-  else{const r=CK.res;h+=`<div class="res ${r.pass||r.free||r.rec?"pass":"fail"}"><div class="rb">${r.pass?"✅ Correct. Well done!":(r.rec||r.free?"🎙 Recorded":"Not quite yet")}</div><ul>${r.lines.map(x=>`<li>${x}</li>`).join("")}</ul>${r.tip?`<p class="mute">${r.tip}</p>`:""}${r.pass&&c.ck!=null?`<p class="mute">Checkpoint ticked in your lesson.</p>`:""}</div>${CK.url?`<audio controls src="${CK.url}" style="width:100%;margin:8px 0"></audio>`:""}${CK.blob?`<button data-x="save" style="width:100%;margin-bottom:8px">💾 Save to my recordings</button>`:""}<div class="row2"><button data-x="again">Try again</button>${r.rec&&!r.pass?`<button class="go" data-x="heard">I listened back ✓</button>`:`<button class="go" data-x="done">${r.pass?"Done":"Close"}</button>`}</div>`}
+  else{const r=CK.res;h+=`<div class="res ${r.pass||r.free||r.rec?"pass":"fail"}"><div class="rb">${r.pass?"✅ Correct. Well done!":(r.rec||r.free?"🎙 Recorded":"Not quite yet")}</div><ul>${r.lines.map(x=>`<li>${x}</li>`).join("")}</ul>${r.tip?`<p class="mute">${r.tip}</p>`:""}${r.pass&&c.ck!=null?`<p class="mute">Checkpoint ticked in your lesson.</p>`:""}</div>${CK.url?`<audio controls src="${CK.url}" style="width:100%;margin:8px 0"></audio>`:""}${CK.blob?`<label class="field"><small>Name this take</small><input id="recname" value="${(CK.label||CK.l.t).replace(/"/g,"&quot;")}" maxlength="60" style="width:100%"></label><button data-x="save" style="width:100%;margin-bottom:8px">💾 Save to my recordings</button>`:""}<div class="row2"><button data-x="again">Try again</button>${r.rec&&!r.pass?`<button class="go" data-x="heard">I listened back ✓</button>`:`<button class="go" data-x="done">${r.pass?"Done":"Close"}</button>`}</div>`}
   o.innerHTML=h}
 async function startCheck(){const c=CK.c;
   try{needAc();const st=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});
@@ -1133,7 +1228,7 @@ function tickCheck(l,i){if(i==null)return;const a=S.chk[l.id]||l.c.map(()=>S.don
 function stopCheck(){if(!CK)return;clearInterval(CK.timer);try{CK.rec&&CK.rec.state!=="inactive"&&CK.rec.stop()}catch(e){}releaseMic();if(CK.url)try{URL.revokeObjectURL(CK.url)}catch(e){}}
 $("#chk").onclick=e=>{const b=e.target.closest("button");if(!b||!CK)return;const a=b.dataset.x;
   if(a==="close"||a==="done"){stopCheck();CK=null;$("#chk").classList.remove("on");return}
-  if(a==="save"){saveRec(CK.blob,CK.label||CK.l.t);return}
+  if(a==="save"){{const nm=$("#recname");saveRec(CK.blob,(nm&&nm.value.trim())||CK.label||CK.l.t);return}}
   if(a==="hear")previewC(CK.c);
   if(a==="start")startCheck();
   if(a==="stop")finishCheck();
@@ -1160,7 +1255,8 @@ $("#songs").onclick=e=>{const b=e.target.closest("button");if(!b)return;const d=
   if(b.id==="sgaddb"){addSong($("#sgt").value.trim(),$("#sgc").value.trim(),+$("#sgb").value||80);$("#sgt").value="";$("#sgc").value="";return}
   if(b.id==="recnew"){openRecord("Free take");return}
   if(d.sgq!=null){const q=STARTERS[+d.sgq];addSong(q[0],q[1],q[2]);return}
-  if(d.rm){IDB.del(+d.rm).then(renderRecs);return}
+  if(d.rm){if(confirm("Delete this recording?"))IDB.del(+d.rm).then(renderRecs);return}
+  if(d.rn){IDB.all().then(async l=>{const r=l.find(x=>x.id===+d.rn);if(!r)return;const n=prompt("Name this recording",r.label);if(n&&n.trim()){r.label=n.trim().slice(0,60);await IDB.put(r);renderRecs()}});return}
   if(d.sg){const p=d.sg.split("|"),s=S.songs.find(x=>x.id===p[1]);if(!s)return;
     if(p[0]==="play")playSong(s);else if(p[0]==="rec")openRecord(s.t);
     else if(p[0]==="st"){s.st=s.st==="ready"?"learning":"ready";save();renderSongs()}
@@ -1173,12 +1269,17 @@ const IDB={open(){return new Promise((res,rej)=>{try{const r=indexedDB.open("gc"
 let recUrls=[];
 async function saveRec(blob,label){if(!blob)return;const ok=await IDB.put({id:Date.now(),label,d:day(),blob});flash(ok?"Saved to recordings ✓":"Could not save recording")}
 async function renderRecs(){recUrls.forEach(u=>{try{URL.revokeObjectURL(u)}catch(e){}});recUrls=[];const list=(await IDB.all()).sort((a,b)=>b.id-a.id);
-  $("#reclist").innerHTML=list.length?list.map(r=>{let u="";try{u=URL.createObjectURL(r.blob);recUrls.push(u)}catch(e){}return `<div class="rec"><b>${r.label}</b> <small>${r.d}</small><audio controls src="${u}"></audio><button class="lnk" data-rm="${r.id}">Delete</button></div>`}).join("")+`<small class="lgd">Play your oldest and newest take of the same song to hear your progress.</small>`:`<p class="mute">No recordings yet. Record a take to track your progress.</p>`}
+  $("#reclist").innerHTML=list.length?list.map(r=>{let u="";try{u=URL.createObjectURL(r.blob);recUrls.push(u)}catch(e){}return `<div class="rec"><b>${r.label}</b> <small>${r.d}</small><audio controls src="${u}"></audio><div class="row2 sm2"><button data-rn="${r.id}">Rename</button><button data-rm="${r.id}">Delete</button></div></div>`}).join("")+`<small class="lgd">Play your oldest and newest take of the same song to hear your progress.</small>`:`<p class="mute">No recordings yet. Record a take to track your progress.</p>`}
 function openRecord(label){CK={l:{t:label,id:"free"},c:{ty:"record",free:true,title:"Record a take",txt:"Play or sing, then listen back. Save it to compare with later takes."},st:"ready",label};drawCheck()}
 /* ---------- tuner ---------- */
-const TUN={"Standard (E A D G B E)":[40,45,50,55,59,64],"Drop D":[38,45,50,55,59,64],"DADGAD":[38,45,50,55,57,62],"Open D":[38,45,50,54,57,62],"Half step down":[39,44,49,54,58,63]};
+const TUN={"Standard (E A D G B E)":[40,45,50,55,59,64],"Whole step down (D G C F A D)":[38,43,48,53,57,62],"1½ steps down (C# F# B E G# C#)":[37,42,47,52,56,61],"Two steps down (C F Bb Eb G C)":[36,41,46,51,55,60],"My own tuning":null,"Drop D":[38,45,50,55,59,64],"DADGAD":[38,45,50,55,57,62],"Open D":[38,45,50,54,57,62],"Half step down":[39,44,49,54,58,63]};
 let tm=null,tlock=null,A4=440;
-const tgt=()=>TUN[$("#tun").value]||TUN["Standard (E A D G B E)"];
+let TOFF=0;
+const tgt=()=>{const n=S.tn||"Standard (E A D G B E)";return n==="My own tuning"?(S.tcus&&S.tcus.length===6?S.tcus:STDM):(TUN[n]||STDM)};
+function applyTuning(){const m=tgt();for(let i=0;i<6;i++)OPENM[i]=m[i];TOFF=Math.round(m.reduce((a,x,i)=>a+x-STDM[i],0)/6)}
+const tuned=()=>tgt().some((x,i)=>x!==STDM[i]);
+const tuneName=()=>{const n=S.tn||"";return n==="My own tuning"?"your own tuning":n.replace(/ \(.*$/,"").toLowerCase()||"standard"};
+applyTuning();
 const nm2=m=>NN[m%12]+(Math.floor(m/12)-1);
 const fOfM=m=>A4*Math.pow(2,(m-69)/12),centsOf=(f,m)=>1200*Math.log2(f/fOfM(m));
 const TNF=16384,TPAD=32768,THANN=new Float64Array(TNF);for(let i=0;i<TNF;i++)THANN[i]=.5-.5*Math.cos(2*Math.PI*i/(TNF-1));
@@ -1200,9 +1301,13 @@ function drawStrs(on,ok){$("#tstr").innerHTML=tgt().map((m,i)=>`<button class="c
   $("#tmode").textContent=tlock==null?"Auto: pluck any string. Tap a note to hear it and lock to that string.":"Locked to "+nm2(tgt()[tlock])+". Tap it again to go back to auto."}
 $("#tun").innerHTML=Object.keys(TUN).map(k=>`<option>${k}</option>`).join("");
 $("#tref").innerHTML=[438,439,440,441,442,443,444].map(n=>`<option value="${n}" ${n===440?"selected":""}>A=${n}</option>`).join("");
-$("#tun").onchange=()=>{tlock=null;if(tm){tm.ok=[];tm.hist=[]}drawStrs()};
+$("#tun").value=S.tn&&TUN[S.tn]!==undefined?S.tn:"Standard (E A D G B E)";
+function drawCus(){const el=$("#tcus");if(!el)return;const on=S.tn==="My own tuning";el.hidden=!on;if(!on)return;const cur=tgt();
+  el.innerHTML=cur.map((m,i)=>`<label class="field"><small>String ${6-i}</small><select data-cus="${i}">${Array.from({length:13},(_,k)=>STDM[i]-8+k).map(x=>`<option value="${x}" ${x===m?"selected":""}>${nm2(x)}</option>`).join("")}</select></label>`).join("")}
+$("#tun").onchange=()=>{const v=$("#tun").value;S.tn=v;if(v==="My own tuning"&&!(S.tcus&&S.tcus.length===6))S.tcus=tgt().slice();applyTuning();save(true);tlock=null;if(tm){tm.ok=[];tm.hist=[]}drawCus();drawStrs();flash("Whole app now follows "+tuneName());renderToday()};
+if($("#tcus"))$("#tcus").onchange=e=>{const t=e.target;if(t.dataset.cus==null)return;S.tcus=(S.tcus||STDM.slice()).slice();S.tcus[+t.dataset.cus]=+t.value;applyTuning();save(true);tlock=null;if(tm){tm.ok=[];tm.hist=[]}drawStrs();renderToday()};
 $("#tref").onchange=()=>{A4=+$("#tref").value||440;if(tm)tm.hist=[];drawStrs()};
-function renderTuner(){drawStrs()}
+function renderTuner(){drawStrs();drawCus();$("#tnote2").textContent=tuned()?"The whole app now plays, listens and checks at this tuning. Chord shapes and pictures stay the same.":""}
 function refTone(f){needAc();plF(f,ac.currentTime+.02,.7,true)}
 $("#tstr").onclick=e=>{const b=e.target.closest("button");if(!b)return;const i=+b.dataset.ts;refTone(fOfM(tgt()[i]));tlock=tlock===i?null:i;if(tm){tm.hist=[];tm.si=-1;tm.mute=Date.now()+2200}drawStrs(tm?tm.si:null,tm?tm.ok:null)};
 async function startTuner(){if(tm){stopTuner();return}
@@ -1325,7 +1430,7 @@ async function startEar(){if(em){stopEar();return}
 function stopEar(){if(!em)return;clearInterval(em.t);try{em.st.getTracks().forEach(t=>t.stop())}catch(e){}em=null;$("#emic").textContent="Start listening"}
 function earTick(){em.an.getFloatTimeDomainData(em.td);let e=0;const N=em.td.length;for(let i=N-4096;i<N;i++)e+=em.td[i]*em.td[i];if(Math.sqrt(e/4096)<.005){em.cand=0;em.prev=null;return}
   em.an.getFloatFrequencyData(em.fd);const mag=new Float32Array(em.fd.length);for(let i=0;i<mag.length;i++)mag[i]=Math.pow(10,em.fd[i]/20);
-  const r=nameChord(chromaOf(mag,ac.sampleRate,16384)),lab=r.best?r.best.n:null;em.cand=lab===em.prev?em.cand+1:1;em.prev=lab;
+  const r=nameChord((cc=>TOFF?cc.map((_,i)=>cc[(i+TOFF+120)%12]):cc)(chromaOf(mag,ac.sampleRate,16384))),lab=r.best?r.best.n:null;em.cand=lab===em.prev?em.cand+1:1;em.prev=lab;
   if(lab&&em.cand>=4&&lab!==em.shown){em.shown=lab;$("#ename").textContent=lab;$("#ealt").textContent=r.second&&r.best.s-r.second.s<.06?"or "+r.second.n:"";
     $("#efig").innerHTML=CH[lab]?`<figure style="margin:0;text-align:center">${chordSvg(CH[lab])}</figure>`:"";
     if(lab!==em.last){em.last=lab;S.earlog=(S.earlog||[]).concat(lab).slice(-24);save(true);renderEarLog()}}}
@@ -1371,8 +1476,9 @@ function coachCard(){
 $("#cm").onclick=e=>{const b=e.target.closest("button");if(!b||!b.dataset.rate)return;const r=b.dataset.rate;
   S.rate=(S.rate||[]).concat({d:day(),r}).slice(-30);S.adj=Math.max(-20,Math.min(20,(S.adj||0)+(r==="easy"?5:r==="hard"?-5:0)));save();syncTempo();renderToday()};
 /* ---------- skip a challenge ---------- */
-function skipChallenge(pi){const p=PATH[pi];if(!p||!confirm("Mark every mission in "+p[0]+" as done?"))return;
-  coreOf(p).forEach(i=>{if(!S.done[i]){const l=LB[i];S.chk[i]=l.c.map(()=>1);S.done[i]=1;delete S.shaky[i]}});save();refreshLearn();renderToday()}
+function markSkipped(pi){const p=PATH[pi];if(!p)return;S.cskip=S.cskip||{};coreOf(p).forEach(i=>{if(!S.done[i]){const l=LB[i];S.chk[i]=l.c.map(()=>1);S.done[i]=1;delete S.shaky[i]}});if(!S.cdone[pi])S.cskip[pi]=1}
+function skipChallenge(pi){const p=PATH[pi];if(!p||!confirm("Mark every mission in "+p[0]+" as done? You will not earn its badge."))return;
+  markSkipped(pi);save();refreshLearn();renderToday()}
 /* ---------- chord change drill (tap to count) ---------- */
 const DSETS=[["Open chords",["G","C","D","Em","Am"]],["More open chords",["E","A","Dm","G","C"]],["Barre mix",["F","Bm","Am","C","G"]],["Colour chords",["Cadd9","Em7","Asus2","Dsus2","G"]]];
 const dsetList=()=>DSETS.concat(S.songs.map(s=>[s.t,[...new Set(s.c.split(/\s+/).filter(x=>CH[x]))]]).filter(x=>x[1].length>1));
@@ -1428,19 +1534,43 @@ function progPage(k,open){open=open||new Set();
   if(k==="week"){const w=weekData();return `<div class="lp"><h2>${fT(w.wk)}</h2><p class="mute">practised in the last 7 days</p><div class="card wk" style="margin-top:14px">${w.days.map(x=>`<div class="wb"><small>${x.m||""}</small><i class="${x.m?"on":""}" style="height:${Math.round(70*x.m/w.mx)+6}px"></i><small>${x.l}</small></div>`).join("")}</div></div>`}
   if(k==="ms"){return `<div class="lp"><div class="ach-g">${achList().map(a=>`<div class="ach${a[2]?" got":""}"><span>${a[2]?a[0]:"🔒"}</span>${a[1]}</div>`).join("")}</div></div>`}
   if(k==="tempo"){const t=tempoGains();return `<div class="lp">${t.length?t.map(id=>{const h=S.tempo[id];return `<div class="cpr"><b>${LB[id].t}</b> · ${h[0].b} → ${Math.max(...h.map(x=>x.b))} BPM</div>`}).join(""):`<p class="mute">Log your best clean tempo inside a lesson (Tempo log) and your gains appear here.</p>`}</div>`}
-  if(k==="set"){const rm=S.rm||{t:"18:00",days:[1,2,3,4,5]};return `<div class="lp"><label class="field" style="margin-top:4px"><small>Weekly practice goal</small><select id="wg" style="width:100%">${[2,3,4,5,6,7].map(n=>`<option value="${n}" ${n===(S.wgoal||4)?"selected":""}>${n} days a week</option>`).join("")}</select></label><label class="field" style="margin-top:4px"><small>Appearance</small><select id="theme" style="width:100%"><option value="light" ${(S.theme||"light")==="light"?"selected":""}>Light (bright)</option><option value="dark" ${S.theme==="dark"?"selected":""}>Dark</option><option value="auto" ${S.theme==="auto"?"selected":""}>Match my iPhone</option></select></label><label class="field"><small>Text size</small><select id="fs" style="width:100%">${[["n","Normal"],["l","Large"],["x","Larger"],["xx","Largest"]].map(o=>`<option value="${o[0]}" ${(S.fs||"n")===o[0]?"selected":""}>${o[1]}</option>`).join("")}</select></label><label class="field"><small>Practice sound</small><select id="snd" style="width:100%"><option value="nylon" ${S.snd!=="steel"?"selected":""}>Nylon-string guitar</option><option value="steel" ${S.snd==="steel"?"selected":""}>Steel-string guitar</option></select></label><div class="row2" style="margin-bottom:12px"><button data-hear="strum">▶ Strum G</button><button data-hear="pick">▶ Pick C</button></div><label class="tg2"><input type="checkbox" id="sing" ${singOn()?"checked":""}> Include singing challenges</label><label class="tg2"><input type="checkbox" id="lefty" ${S.lefty?"checked":""}> Left-handed chord diagrams</label>${fold("rm","⏰ Practice reminder",rm.t,`<p class="mute">iPhone web apps cannot send notifications, so this adds a repeating event with an alert to your Calendar.</p><label class="field" style="margin-top:8px"><small>Time</small><input type="time" id="rmt" value="${rm.t}" style="width:100%"></label><div class="tstr" style="grid-template-columns:repeat(7,1fr)">${["S","M","T","W","T","F","S"].map((n,i)=>`<button class="chp${rm.days.includes(i)?" on":""}" data-rd="${i}">${n}</button>`).join("")}</div><button class="go" data-rmadd="1" style="width:100%;margin-top:12px">Add to Calendar</button><small class="lgd" style="margin-top:8px">iPhone may open the file in Files first. Tap it, then Add All. If nothing happens in the Home Screen app, open this page in Safari and try again, or create the repeating event by hand in Calendar.</small>`,open)}</div>`}
+  if(k==="set"){const rm=S.rm||{t:"18:00",days:[1,2,3,4,5]};return `<div class="lp"><label class="field" style="margin-top:4px"><small>Weekly practice goal</small><select id="wg" style="width:100%">${[2,3,4,5,6,7].map(n=>`<option value="${n}" ${n===(S.wgoal||4)?"selected":""}>${n} days a week</option>`).join("")}</select></label><label class="field" style="margin-top:4px"><small>Appearance</small><select id="theme" style="width:100%"><option value="light" ${(S.theme||"light")==="light"?"selected":""}>Light (bright)</option><option value="dark" ${S.theme==="dark"?"selected":""}>Dark</option><option value="auto" ${S.theme==="auto"?"selected":""}>Match my iPhone</option></select></label><label class="field"><small>Text size</small><select id="fs" style="width:100%">${[["n","Normal"],["l","Large"],["x","Larger"],["xx","Largest"]].map(o=>`<option value="${o[0]}" ${(S.fs||"n")===o[0]?"selected":""}>${o[1]}</option>`).join("")}</select></label><label class="field"><small>Practice sound</small><select id="snd" style="width:100%"><option value="nylon" ${S.snd!=="steel"?"selected":""}>Nylon-string guitar</option><option value="steel" ${S.snd==="steel"?"selected":""}>Steel-string guitar</option></select></label><div class="row2" style="margin-bottom:12px"><button data-hear="strum">▶ Strum G</button><button data-hear="pick">▶ Pick C</button></div><label class="tg2"><input type="checkbox" id="sing" ${singOn()?"checked":""}> Include singing challenges</label><button class="lnk" data-welcome="1" style="margin:0 0 8px">Replay the welcome</button><label class="tg2"><input type="checkbox" id="lefty" ${S.lefty?"checked":""}> Left-handed chord diagrams</label>${fold("rm","⏰ Practice reminder",rm.t,`<p class="mute">iPhone web apps cannot send notifications, so this adds a repeating event with an alert to your Calendar.</p><label class="field" style="margin-top:8px"><small>Time</small><input type="time" id="rmt" value="${rm.t}" style="width:100%"></label><div class="tstr" style="grid-template-columns:repeat(7,1fr)">${["S","M","T","W","T","F","S"].map((n,i)=>`<button class="chp${rm.days.includes(i)?" on":""}" data-rd="${i}">${n}</button>`).join("")}</div><button class="go" data-rmadd="1" style="width:100%;margin-top:12px">Add to Calendar</button><small class="lgd" style="margin-top:8px">iPhone may open the file in Files first. Tap it, then Add All. If nothing happens in the Home Screen app, open this page in Safari and try again, or create the repeating event by hand in Calendar.</small>`,open)}</div>`}
   return `<div class="lp"><p class="mute">Everything saves automatically on this device. To move it to another phone, copy a backup and restore it there.</p><div class="row2 sm2"><button id="bcopy">Copy backup</button><button id="brest">Restore</button></div><textarea id="bk" placeholder="Paste a backup here to restore"></textarea><button class="lnk" id="reset">Reset all progress</button></div>`}
 function openProgPage(k){pgOpen({review:"Weekly review",week:"This week",ms:"Badges and milestones",tempo:"Tempo gains",set:"Settings",bk:"Backup and reset"}[k],o=>progPage(k,o))}
 $("#prog").onclick=pgClick;
 async function copyBackup(){const t=JSON.stringify(S);try{await navigator.clipboard.writeText(t);flash("Backup copied ✓")}catch(e){const k=$("#bk");if(k){k.value=t;k.select()}flash("Select and copy the text")}}
 function restoreBackup(){const k=$("#bk"),t=k?k.value.trim():"";if(!t){if(k)k.placeholder="Paste your backup here, then tap Restore again";return}
-  try{const o=JSON.parse(t);if(!Array.isArray(o.log))throw 0;S=Object.assign(DEF(),o);save();k.value="";renderProg();flash("Restored ✓")}catch(e){flash("That is not a valid backup")}}
+  try{const o=JSON.parse(t);if(!Array.isArray(o.log))throw 0;S=Object.assign(DEF(),o);migPv();save();k.value="";renderProg();renderToday();flash("Restored ✓")}catch(e){flash("That is not a valid backup")}}
 function resetAll(){if(confirm("Erase all progress on this device?")){S=DEF();save();pgClear();renderProg();renderToday();flash("Progress reset")}}
 
 $("#bm").onclick=()=>{const r=$("#bpm");r.value=Math.max(40,+r.value-5);$("#bpmv").textContent=r.value};
 $("#bp").onclick=()=>{const r=$("#bpm");r.value=Math.min(160,+r.value+5);$("#bpmv").textContent=r.value};
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
+/* ---------- welcome ---------- */
+const WLC=[["🎸","Practise a little, most days","Fifteen to 25 minutes, about four days a week, beats one long session. Pick a challenge, do one mission at a time. Everything saves by itself on this phone."],
+ ["🎚","Tune first","Tune before every session in Tools, then Tuner. Pluck one string and let it ring. Out-of-tune strings make good playing sound wrong."],
+ ["🧭","Five tabs","Overview shows today's practice. Learn holds the challenges. Songs, Tools and Progress do what they say."],
+ ["🎤","Why the microphone","Tuner and Check listen to your guitar to tell you if you played it right. Sound is analysed on your phone only. Nothing is uploaded, and recordings stay on this device."]];
+let WS={i:0,pick:-1,early:false};
+function wlClose(){$("#wl").hidden=true;S.welcomed=1;save(true);renderToday();renderLearn()}
+function wlOpen(i){WS.i=i;if(i===0){WS.pick=S.pin!=null?S.pin:-1;WS.early=false}const el=$("#wl"),n=WLC.length+1;
+  const dots=`<div class="wdots">${Array.from({length:n},(_,k)=>`<i class="${k===i?"on":""}"></i>`).join("")}</div>`;
+  if(i<WLC.length){const c=WLC[i];el.innerHTML=`<div class="wc"><div class="we">${c[0]}</div><h2>${c[1]}</h2><p>${c[2]}</p></div>${dots}<div class="wb"><button class="go" data-wn="1">${i===WLC.length-1?"Next":"Next"}</button><button class="lnk" data-wn="skip">Skip the intro</button></div>`}
+  else{const live=PATH.map((p,k)=>[p,k]).filter(x=>coreOf(x[0]).length);
+    el.innerHTML=`<div class="wc"><h2>What are you working on?</h2><p>Choose where to start. You can change this any time on the Learn tab.</p>`+
+     `<button class="wopt${WS.pick===-1?" on":""}" data-wp="-1"><span>🏁</span><span>Start from the beginning<small>Challenges in order</small></span></button>`+
+     live.map(x=>`<button class="wopt${WS.pick===x[1]?" on":""}" data-wp="${x[1]}"><span>${x[0][4]}</span><span>${x[0][0]}<small>${x[0][1]}</small></span></button>`).join("")+
+     (WS.pick>0?`<label class="tg2" style="margin-top:6px"><input type="checkbox" id="wearly" ${WS.early?"checked":""}> I have already done the challenges before this one</label>`:"")+
+     `</div>${dots}<div class="wb"><button class="go" data-wn="done">Start</button></div>`}
+  el.hidden=false;el.scrollTop=0}
+function wlDone(){if(WS.pick>=0){S.pin=WS.pick;S.cs[WS.pick]=S.cs[WS.pick]||day();if(WS.pick>0&&WS.early)for(let k=0;k<WS.pick;k++)markSkipped(k)}wlClose()}
+if($("#wl")){$("#wl").onclick=e=>{const b=e.target.closest("button");if(!b)return;const d=b.dataset;
+  if(d.wn==="skip"){wlClose();return}if(d.wn==="done"){wlDone();return}if(d.wn){wlOpen(WS.i+1);return}
+  if(d.wp!=null){WS.pick=+d.wp;wlOpen(WS.i)}};
+ $("#wl").onchange=e=>{if(e.target.id==="wearly")WS.early=e.target.checked}}
+function maybeWelcome(){if(S.welcomed!==undefined)return;if(!S.log.length&&!Object.keys(S.done).length)wlOpen(0);else{S.welcomed=1;save(true)}}
 /* ---------- icon + offline ---------- */
+try{maybeWelcome()}catch(e){}
 (function(){try{const c=document.createElement("canvas");c.width=c.height=180;const x=c.getContext("2d");
   x.fillStyle="#1b1410";x.fillRect(0,0,180,180);x.strokeStyle="#d4a94f";x.lineWidth=5;
   for(let i=0;i<6;i++){x.beginPath();x.moveTo(40+i*20,25);x.lineTo(40+i*20,155);x.stroke()}
