@@ -466,7 +466,7 @@ function renderHub(){$("#thubm").innerHTML=TGRP.map(g=>`<h3 class="tgh">${g[0]}<
 $("#thubm").onclick=e=>{const b=e.target.closest("button");if(b)show(b.dataset.t)};
 $("#nav").innerHTML=tabs.map(t=>`<button role="tab" aria-selected="false" data-t="${t[0]}"><span class="ti" aria-hidden="true">${t[1]}</span>${t[2]}</button>`).join("");
 let tab="coach",lastTool="rhythm";
-function show(id){pgClear();if(id==="tools")id="thub";if(isTool(id))lastTool=id;tab=id;
+function show(id){pgClear();if(isTool(id)&&id!=="tuner"){S.rt=[id].concat((S.rt||[]).filter(x=>x!==id)).slice(0,6);save(true)}if(id==="tools")id="thub";if(isTool(id))lastTool=id;tab=id;
   document.querySelectorAll("section").forEach(s=>s.classList.toggle("on",s.id===id));
   const nb=(isTool(id)||id==="thub")?"tools":id;document.querySelectorAll("nav button").forEach(b=>{b.classList.toggle("on",b.dataset.t===nb);b.setAttribute("aria-selected",String(b.dataset.t===nb))});
   $("#tbar").hidden=!isTool(id);if(isTool(id)){const T=TOOLS.find(t=>t[0]===id);$("#tbar").innerHTML=`<button data-t="tools" class="back">‹ All tools</button><span>${T[1]} ${T[2]}</span>`}
@@ -519,7 +519,9 @@ function renderToday(){
    `<div class="seg" style="margin-top:14px">${[5,15,25,40,60].map(m=>`<button data-m="${m}" class="${m===lenMin?"on":""}">${m}</button>`).join("")}<span>min</span></div>
    <button class="go" id="start">${tm>=lenMin?"▶  Practise more":"▶  Start "+lenMin+"-minute practice"}</button>${p?`<button class="lnk" data-open="chal">View challenge ›</button>`:""}${restBtn()}${tuned()?`<small class="lgd" style="display:block;margin-top:8px">🎚 Tuning: ${tuneName()}. Chord shapes stay the same.</small>`:""}</div>`;
   $("#week").innerHTML=`<div class="wcard"><div class="wh"><b>This week</b><small>${wk} of ${wg} practice days</small></div><div class="wdots">${w.days.map((x,i)=>`<div class="wd${x.m?" on":""}${x.r?" rest":""}${i===6?" now":""}"><i>${x.m?"✓":x.r?"☾":""}</i><small>${x.l}</small></div>`).join("")}</div><div class="pbar"><i style="width:${Math.min(100,100*wk/wg)}%"></i></div><small>Today: ${tm} of ${lenMin} min</small></div>`;
-  $("#quick").innerHTML=[["tuner","🎚","Tune"],["rhythm","🥁","Rhythm"],["backing","🎶","Backing"],["songs","🎵","Songs"]].map(q=>`<button data-q="${q[0]}"><span>${q[1]}</span>${q[2]}</button>`).join("");
+  const QN={rhythm:"Rhythm",fret:"Notes",voice:"Voice",backing:"Backing",capo:"Capo",ear:"Finder",trainer:"Trainer",drill:"Drill",metro:"Metronome"},QI=Object.fromEntries(TOOLS.map(t=>[t[0],t[1]]));
+  const qr=(S.rt||[]).filter(x=>QN[x]),qd=["metro","trainer","backing","ear","drill"].filter(x=>!qr.includes(x));
+  $("#quick").innerHTML=[["tuner","🎚","Tune"],...qr.concat(qd).slice(0,3).map(x=>[x,QI[x],QN[x]])].map(q=>`<button data-q="${q[0]}"><span>${q[1]}</span>${q[2]}</button>`).join("");
 }
 $("#quick").onclick=e=>{const b=e.target.closest("button");if(b&&b.dataset.q)show(b.dataset.q)};
 $("#hero").onclick=e=>{const b=e.target.closest("button");if(!b)return;
