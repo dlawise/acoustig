@@ -159,7 +159,13 @@ details.card summary span{color:var(--mute);font-size:20px}
 .live{text-align:center}.lb2{font:700 56px/1.1 var(--rd);margin:10px 0}
 .res{background:var(--s1);border-radius:20px;padding:16px;margin-bottom:12px;border-left:6px solid var(--bad)}.res.pass{border-color:var(--ok)}.rb{font:700 22px var(--rd);margin-bottom:8px}.res ul{margin:0 0 8px;padding-left:18px}
 .str .now{background:var(--hi);border-radius:8px;color:#1d1611}.str .now small{color:#1d1611}
-#tbar{display:flex;gap:6px;overflow-x:auto;margin-bottom:14px;padding-bottom:2px}#tbar button{flex:none;min-height:40px;padding:8px 14px;font-size:14px}#tbar button.on{background:var(--hi);color:#1d1611}
+#tbar{display:flex;align-items:center;gap:12px;margin-bottom:6px}#tbar button{flex:none;min-height:40px;padding:8px 14px;font-size:14px}#tbar span{font:600 14px var(--rd);color:var(--mute)}
+.tgh{margin:18px 2px 8px;font:700 13px var(--rd);letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}.tgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tcard{display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;padding:14px;min-height:112px;background:var(--s1);border-radius:18px;border:0;color:inherit;box-shadow:0 1px 0 rgba(0,0,0,.06)}.tcard:active{transform:scale(.98)}
+.tci{font-size:26px;line-height:1}.tcard b{font:700 16px var(--rd)}.tcard small{font-size:13px;color:var(--mute);line-height:1.3}
+.lvh{display:flex;align-items:center;gap:10px;margin:22px 2px 8px}.lvh:first-child{margin-top:8px}.lvh b{font:700 17px var(--rd)}.lvh small{color:var(--mute)}.lvh .pbar{flex:1;margin:0;--c:var(--brass)}
+.lad{display:flex;gap:8px;margin-bottom:2px}.lad button{flex:1;background:var(--s1);border-radius:14px;padding:8px 6px;border:0;color:inherit;text-align:center}.lad button b{display:block;font:700 12px var(--rd)}.lad button small{font-size:11px;color:var(--mute)}
+.pc .pt small:nth-of-type(1){white-space:normal}
 .sgc{background:var(--s1);border-radius:18px;padding:14px;margin-bottom:10px}.sgc summary b{font:700 17px var(--rd)}
 .chs{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.chs i{font:700 14px var(--rd);font-style:normal;background:var(--s2);border-radius:8px;padding:4px 10px}
 .stt{font-size:12px;font-weight:700;border-radius:999px;padding:3px 10px;background:var(--s2);margin-left:6px}.stt.ready{background:var(--ok);color:#1d1611}
@@ -253,7 +259,10 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,su
 .tcg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.tcb{position:relative;background:var(--s2);border-radius:14px;padding:8px 4px;text-align:center;min-height:0;display:flex;flex-direction:column;align-items:center;gap:2px}.tcb b{font:700 15px var(--rd)}.tcb small{color:var(--mute);font-size:11px;line-height:1.2}.tcs{display:block;color:var(--ink)}.tcd{position:absolute;top:6px;right:8px;color:var(--ok);font-style:normal;font-weight:800}
 .tqo{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}.tqo.f7{grid-template-columns:repeat(4,1fr)}.tqo button.ok{background:var(--ok);color:#10210c}.tqo button.bad{background:#e0584f;color:#fff}.tqw{margin:6px 0 10px;font-size:15px;line-height:1.45}
 .tcat{display:flex;gap:6px;overflow-x:auto;padding:2px 0 10px}.tcat button{flex:none;width:auto;padding:8px 12px;border-radius:999px;background:var(--s2);font-weight:600;min-height:0}.tcat button small{display:block;font-size:10px;font-weight:500;color:var(--mute)}.tcat button.on{background:var(--go);color:#1d1611}.tcat button.on small{color:#3a2c1c}
-</style>
+.vxr{display:grid;grid-template-columns:1fr auto;gap:2px 10px;margin:12px 0}.vxr b small{font-size:12px}.vxr .up{color:#4a9a4a}.vxr .dn{color:#c0563f}.vxr .pbar{margin:2px 0 0;--c:var(--go)}
+.vxbig{text-align:center;margin:16px 0}.vxbig b,.vxbig>span{display:block;font:800 54px var(--rd)}.vxbig small{color:var(--mute)}.vxl{margin:8px 0 14px;padding-left:20px}.vxh{display:flex;gap:8px}.vxh div{flex:1;background:var(--s1);border-radius:12px;padding:8px;text-align:center}.vxh b{display:block;font:700 18px var(--rd)}
+.vxdots{display:flex;gap:6px;margin:4px 0}.vxdots i{flex:1;height:6px;border-radius:3px;background:var(--s2,#e5dcc8)}.vxdots i.d{background:var(--go)}.vxdots i.n{background:var(--brass)}.vxs{padding-left:20px}.vxtk{margin:8px 0}.vxau{width:100%;margin-top:4px}
+#vxcard .lrow{margin:6px 0;box-shadow:none}#pgb .lp>p{margin:10px 0}</style>
 </head>
 <body>
 <div id="sb"></div>
@@ -272,6 +281,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,su
   <div id="run"></div>
 </section>
 
+<section id="thub"><h1>🧰 Tools</h1><div id="thubm"></div></section>
 <section id="learn"><h1>🏆 Challenges</h1><div id="lessons"></div></section>
 
 <section id="rhythm">
@@ -307,6 +317,12 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,su
     <div class="row2 sm2"><button id="lo">Save lowest</button><button id="hi">Save highest</button></div>
     <small id="rng" style="display:block;margin-top:10px"></small>
   </div>
+  <div class="card" id="vxcard"><h3>Clear voice lab</h3><p class="mute" style="margin:0 0 8px">Sound clearer, not only in tune. The tests listen through the microphone and show what to work on.</p>
+    <button class="lrow" data-vx="open" data-v="warm"><span class="li">🔥</span><span class="lt2"><b>Guided warm-up</b><small>7 steps with timers</small></span><span class="chev">›</span></button>
+    <button class="lrow" data-vx="open" data-v="steady"><span class="li">🎯</span><span class="lt2"><b>Steady note test</b><small>Clarity, breath support, steadiness</small></span><span class="chev">›</span></button>
+    <button class="lrow" data-vx="open" data-v="phrase"><span class="li">📜</span><span class="lt2"><b>Sing a phrase</b><small>Starts, endings and volume</small></span><span class="chev">›</span></button>
+    <button class="lrow" data-vx="open" data-v="words"><span class="li">🗣</span><span class="lt2"><b>Clear words</b><small>Vowels, consonants, endings</small></span><span class="chev">›</span></button>
+    <button class="lrow" data-vx="open" data-v="take"><span class="li">📼</span><span class="lt2"><b>Weekly voice take</b><small>Record and compare over time</small></span><span class="chev">›</span></button></div>
   <div class="card"><h3>Hear a note</h3><div class="row2 sm2"><select id="pnotes"></select><button id="pplay">▶ Play</button></div></div>
   <details class="card"><summary><h3>5-minute warm-up</h3><span>＋</span></summary>
     <ol><li>Breathe in for 4, out on a steady 'sss' for 10.</li><li>Lip trills, sliding gently up and down.</li><li>Hum a five-note scale, up a semitone each time.</li><li>Sing 'ah' on the same scale, then back down.</li><li>Sing a verse of a song quietly.</li></ol></details>
@@ -419,7 +435,7 @@ let S;
 try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
 S=Object.assign(DEF(),S||{});
 function migPv(){const mv=(from,withSkip)=>{const sh=o=>{const n={};for(const k in (o||{})){const i=+k;n[i>=from?i+1:i]=o[k]}return n};S.cs=sh(S.cs);S.cdone=sh(S.cdone);if(withSkip)S.cskip=sh(S.cskip);if(S.pin!=null&&S.pin>=from)S.pin++};
-  if(!(S.pv>=2))mv(1,false);if(!(S.pv>=3))mv(6,true);if(!(S.pv>=4))mv(8,true);S.pv=4}
+  if(!(S.pv>=2))mv(1,false);if(!(S.pv>=3))mv(6,true);if(!(S.pv>=4))mv(8,true);if(!(S.pv>=5))mv(9,true);S.pv=5}
 migPv();
 S.log=S.log.filter(l=>l.m>0);
 const MIG={0:"clean",1:"strum",2:"color",3:"capo",4:"fmaj",5:"eshape",6:"ashape",7:"rhythm16",8:"palm",9:"notes",10:"pent",11:"legato",12:"bends",13:"caged",14:"arp",15:"travis",16:"perc",17:"invert",18:"ext",19:"tunings",20:"improv",21:"arrange",22:"vcare",23:"breath",24:"warmup",25:"pitch",26:"range",27:"singstrum",28:"tone",29:"phrasing"};
@@ -442,13 +458,19 @@ applyTheme();
 /* ---------- tabs ---------- */
 const tabs=[["coach","🏠","Overview"],["learn","🏆","Learn"],["songs","🎵","Songs"],["tools","🧰","Tools"],["prog","📈","Progress"]];
 const TOOLS=[["rhythm","🥁","Rhythm"],["fret","🎼","Notes"],["voice","🎤","Voice"],["tuner","🎚","Tuner"],["backing","🎶","Backing"],["capo","🧮","Capo"],["ear","👂","Chords"],["trainer","🧩","Trainer"],["drill","🔁","Drill"],["metro","⏱","Click"]];
+const TGRP=[["Practise",[["rhythm","🥁","Rhythm gym","Strumming patterns to play along with"],["drill","🔁","Change drill","Switch between two chords, faster and cleaner"],["metro","⏱","Metronome","A steady click at any speed"],["backing","🎶","Backing tracks","Play or solo over a chord loop"]]],
+ ["Learn the guitar",[["trainer","🧩","Chord trainer","Major, minor, 7th, sus and barre chords"],["fret","🎼","Fretboard","Find every note on the neck"],["ear","👂","Chord finder","Play a chord and see its name"],["capo","🧮","Capo and key","Make songs easier to play"]]],
+ ["Voice and tuning",[["tuner","🎚","Tuner","Tune to your own tuning"],["voice","🎤","Voice coach","Find your range and sing on pitch"]]]];
 const isTool=id=>TOOLS.some(t=>t[0]===id);
+function renderHub(){$("#thubm").innerHTML=TGRP.map(g=>`<h3 class="tgh">${g[0]}</h3><div class="tgrid">`+g[1].map(t=>`<button class="tcard" data-t="${t[0]}"><span class="tci">${t[1]}</span><b>${t[2]}</b><small>${t[3]}</small></button>`).join("")+`</div>`).join("")}
+$("#thubm").onclick=e=>{const b=e.target.closest("button");if(b)show(b.dataset.t)};
 $("#nav").innerHTML=tabs.map(t=>`<button role="tab" aria-selected="false" data-t="${t[0]}"><span class="ti" aria-hidden="true">${t[1]}</span>${t[2]}</button>`).join("");
 let tab="coach",lastTool="rhythm";
-function show(id){pgClear();if(id==="tools")id=lastTool;if(isTool(id))lastTool=id;tab=id;
+function show(id){pgClear();if(id==="tools")id="thub";if(isTool(id))lastTool=id;tab=id;
   document.querySelectorAll("section").forEach(s=>s.classList.toggle("on",s.id===id));
-  const nb=isTool(id)?"tools":id;document.querySelectorAll("nav button").forEach(b=>{b.classList.toggle("on",b.dataset.t===nb);b.setAttribute("aria-selected",String(b.dataset.t===nb))});
-  $("#tbar").hidden=!isTool(id);if(isTool(id))$("#tbar").innerHTML=TOOLS.map(t=>`<button data-t="${t[0]}" class="${t[0]===id?"on":""}">${t[1]} ${t[2]}</button>`).join("");
+  const nb=(isTool(id)||id==="thub")?"tools":id;document.querySelectorAll("nav button").forEach(b=>{b.classList.toggle("on",b.dataset.t===nb);b.setAttribute("aria-selected",String(b.dataset.t===nb))});
+  $("#tbar").hidden=!isTool(id);if(isTool(id)){const T=TOOLS.find(t=>t[0]===id);$("#tbar").innerHTML=`<button data-t="tools" class="back">‹ All tools</button><span>${T[1]} ${T[2]}</span>`}
+  if(id==="thub")renderHub();
   if(id!=="rhythm")stop(); if(id!=="voice")stopMic(); if(id!=="tuner")stopTuner(); if(id!=="backing")stopBacking(); if(id!=="fret")stopHunt(); if(id!=="ear")stopEar(); if(id!=="metro")stopMetro(); if(id!=="drill")drillStop();
   if(id==="voice")rangeTxt(); if(id==="prog")renderProg(); if(id==="learn")renderLearn(true); if(id==="coach")renderToday();
   if(id==="songs")renderSongs(); if(id==="backing")renderBacking(); if(id==="tuner")renderTuner(); if(id==="ear")renderEar(); if(id==="trainer")renderTrainer(); if(id==="drill")renderDrill(); if(["rhythm","backing","metro"].includes(id))syncTempo();
@@ -857,12 +879,48 @@ Z("proj5","project","Milestone: sing a full song","Sing a complete song with you
  [[10,"Warm up and sing it once through."],[10,"Record two takes."],[10,"Fix one weak spot and record again."]],
  [["Forgetting words","Write the lyrics out, then sing with the sheet in view."],["Nerves","Record privately first, then play it for one person."]],
  ["Brown Eyed Girl","Knockin' on Heaven's Door"],
- ["The full song from start to finish","In tune on the key notes","Recorded and reviewed"],"sing and play guitar full song")
+ ["The full song from start to finish","In tune on the key notes","Recorded and reviewed"],"sing and play guitar full song"),
+Z("hlfeel","tech","Feel the highlife pulse","Tap and strum the relaxed, swaying four-beat feel with the lift on the offbeats.","Highlife lives in its groove: a steady beat underneath and a bright lift between the beats. Feel it in your body before your fingers.",
+ ["Set the metronome to about 90 BPM and tap your foot on every beat.","Clap on the 'and' between the beats: 1 and 2 and 3 and 4 and.","Rest your fingers lightly on the strings of a C chord so it is muted. Strum only upstrokes on the 'ands', and let your hand swing down on the beats without touching the strings.","Add a soft downstroke on beats 1 and 3."],
+ [[5,"Foot on the beat, clap the offbeats, one minute at 90 BPM."],[5,"Muted upstroke on every 'and' on C, 90 BPM."],[5,"Add a soft downstroke on beats 1 and 3, 100 BPM."]],
+ [["The chop lands on the beat","Say 'and' out loud. The upstroke is the 'and', between your foot taps."],["Stiff strumming arm","Let the wrist swing loosely, and keep the arm moving down and up even on the beats you do not hit."]],
+ ["Sweet Mother (listen for the offbeat guitar)","Yaa Amponsah (listen for the swing)"],
+ ["Offbeat chop steady for 4 bars","Foot steady the whole time","Relaxed wrist at 100 BPM"],"highlife guitar rhythm feel beginner"),
+Z("hlchop","tech","Rhythm guitar: the bright chop","Play short, light chords on the offbeats with only the top strings, as highlife rhythm guitar does.","The bright chop is what makes a highlife band sparkle, and it leaves room for the bass and the lead.",
+ ["Play an open C on strings 3, 2 and 1 only. Keep it small and light.","Strike with a quick upstroke on each 'and', then relax your fretting fingers a little so the chord stops short.","Do the same with G (strings 3, 2 and 1) and D (strings 3, 2 and 1).","Chop through G, C, D, C, four beats each, at 90 BPM."],
+ [[5,"C chop, strings 3 to 1, 90 BPM."],[5,"G and C chop, change every 4 beats."],[5,"G, C, D, C loop at 100 BPM."]],
+ [["The sound is harsh","Use only the top three strings and strike lightly with the pad of your fingers or a soft pick."],["The chord rings too long","Release the fretting pressure straight after each strum, without lifting off the strings."]],
+ [],
+ ["Light upstroke chop on C","Chop through G, C, D","Steady at 100 BPM"],"highlife guitar rhythm chop lesson"),
+Z("hlthumb","tech","Palm-wine thumb and fingers","Your thumb walks between two bass notes while your fingers play small answers on the top strings.","This is the classic palm-wine sound behind much early highlife: a steady bass with a bouncing melody above it. It builds on your PIMA and Travis work.",
+ ["Hold G. Your thumb alternates strings 6 and 4, one note per beat.","Add your index finger on string 3 between the thumb notes, so it goes bass, chord note, bass, chord note.","Change to C (thumb on strings 5 and 6) and D (thumb on strings 4 and 5) and keep the same pattern.","Play G, C, D, C, four beats each, slowly."],
+ [[5,"G, thumb alone on strings 6 and 4 at 70 BPM."],[5,"Add the index finger between the thumb notes."],[5,"G, C, D, C at 80 BPM."]],
+ [["Thumb and finger land together","Practise the thumb alone first. Then the finger enters after the thumb, never with it."],["Thumb gets uneven","Count 1, 2, 3, 4 aloud. The thumb sets the speed."]],
+ ["Yaa Amponsah (palm-wine style arrangements)"],
+ ["Even thumb on G","Index finger between the thumb notes","G, C, D, C without stopping"],"palm wine guitar style lesson fingerstyle"),
+Z("hlthirds","tech","Sweet lead: thirds","Play the bright two-note lines in thirds that give highlife lead guitar its sweetness.","Parallel thirds are a signature of highlife melodies. They sound rich and need only two strings.",
+ ["Play these pairs of notes together on strings 3 and 2 (string 3 fret / string 2 fret): 0/0, 2/1, 4/3, 5/5, 7/6, 9/8. That is the C major scale in thirds.","Play them slowly, one pair at a time. Both notes should ring clearly.","Slide into each pair from one fret below, as a lead guitarist would.","Play the pairs as a little melody: 0/0, 2/1, 4/3, 2/1, 0/0."],
+ [[5,"The six pairs up and down, 60 BPM."],[5,"Slide into each pair from one fret below."],[5,"Play the five-pair melody over a C chord loop at 70 BPM."]],
+ [["The notes sound muddy","Fret each note just behind the fret wire and keep your fingers arched."],["The pair is out of tune","Check each note alone first, then together."]],
+ [],
+ ["All six pairs ring clearly","Slides land cleanly","The short melody at 70 BPM"],"highlife guitar lead thirds sixths lesson"),
+Z("hlprog","theory","Highlife chord progressions","Play the common highlife progressions and hear how they move.","Highlife is mostly bright, happy chords in simple loops. Knowing the loops lets you follow along with songs fast.",
+ ["Learn the I, IV, V, IV loop in G: G, C, D, C, one bar each.","Learn the I, vi, ii, V loop in C: C, Am, Dm, G7, one bar each.","Add colour by turning C into Cmaj7 in the second loop.","Play both loops with the chop from the earlier mission."],
+ [[5,"G, C, D, C, with the chop."],[5,"C, Am, Dm, G7, with the chop."],[5,"Swap between the two loops after eight bars."]],
+ [["Changes are late","Practise the hardest change slowly, then add it back into the loop."],["Loops feel boring","Play them with different rhythms. Chop, thumb pattern, then strum."]],
+ ["Sweet Mother","Osondi Owendi"],
+ ["G, C, D, C smooth","C, Am, Dm, G7 smooth","Both loops with the chop"],"highlife chord progressions guitar"),
+Z("projhl","project","Milestone: play a highlife groove","Play sixteen bars of a highlife groove: chop, palm-wine bass and a lead line.","This pulls the style together as one groove you can perform.",
+ ["Choose the G, C, D, C loop.","Play eight bars with the offbeat chop.","Play eight bars with the thumb-and-fingers pattern.","Add the thirds line over the last four bars if you can.","Record your take and listen back."],
+ [[10,"Chop for eight bars, then thumb pattern for eight."],[10,"Whole groove at 90 BPM."],[10,"Record your best take."]],
+ [["Losing the pulse","Keep your foot tapping on every beat."],["Switching feel is hard","Play four bars of each first, then lengthen."]],
+ ["Sweet Mother","Yaa Amponsah"],
+ ["Sixteen bars without stopping","Both feels played steadily","Recorded and reviewed"],"highlife guitar groove lesson")
 ];
 const LB={};FLAT.forEach(l=>LB[l.id]=l);
 const LV=["Foundations","Core skills","Applied","Advanced"];
 const TY={tech:["🎸","Technique"],theory:["🧠","Theory"],voice:["🎤","Voice"],project:["⭐","Milestone"]};
-const TOOL={fsbass:"metro",fsarp:"metro",fstrav:"metro",fsmel:"metro",projfs:"metro",pima2:"metro",pima3:"metro",pima4:"metro",projp:"metro",findep:"metro",projf:"metro",fclean:"ear",clean:"drill",strum:"rhythm",rhythm16:"rhythm",palm:"rhythm",singstrum:"rhythm",notes:"fret",pent:"fret",caged:"fret",warmup:"voice",pitch:"voice",range:"voice"};
+const TOOL={hlfeel:"rhythm",hlchop:"rhythm",hlthumb:"metro",hlthirds:"metro",hlprog:"drill",projhl:"metro",fsbass:"metro",fsarp:"metro",fstrav:"metro",fsmel:"metro",projfs:"metro",pima2:"metro",pima3:"metro",pima4:"metro",projp:"metro",findep:"metro",projf:"metro",fclean:"ear",clean:"drill",strum:"rhythm",rhythm16:"rhythm",palm:"rhythm",singstrum:"rhythm",notes:"fret",pent:"fret",caged:"fret",warmup:"voice",pitch:"voice",range:"voice"};
 const TL={metro:["metro","Metronome"],ear:["ear","Chord finder"],drill:["drill","Change drill"],rhythm:["rhythm","Rhythm gym"],fret:["fret","Fretboard"],voice:["voice","Voice coach"]};
 const PATH=[
  ["First Song","Play a whole song with open chords",1,["clean","strum","color","capo","proj1"],"🎸",14,70],
@@ -874,13 +932,14 @@ const PATH=[
  ["PIMA Fingerstyle","Play steady arpeggio patterns with p, i, m and a",3,["pima1","pima2","pima3","pima4","projp"],"🎻",14,60],
  ["Fingerstyle Flow","Play a 16-bar fingerstyle piece",3,["arp","travis","perc","proj4"],"🤲",14,60],
  ["Fingerstyle Songbook","Accompany a whole song fingerstyle with a steady thumb and fitting patterns",3,["fsbass","fsarp","fstrav","fsmel","fsstyle","projfs"],"📖",21,60],
+ ["Highlife Guitar","Play a bright highlife groove: chop, palm-wine bass and sweet lead lines",3,["hlfeel","hlchop","hlthumb","hlthirds","hlprog","projhl"],"🌴",21,80],
  ["First Solo","Improvise, then play a solo you wrote",3,["caged","improv","proj3"],"🔥",10,70],
  ["Expression","Sing and play with feeling",3,["tone","phrasing"],"✨",7,70],
  ["Colour and Craft","Reharmonise a song with richer chords",4,["ext","invert","tunings"],"🎨",10,70],
  ["Showtime","Arrange and perform a full song",4,["arrange"],"🏆",7,80]
 ];
 const BONUS=new Set(["perc","caged","invert","tunings"]);
-const STRAND={};[["chords",["fpost","fstretch","findep","fclean","projf","clean","strum","color","capo","proj1","fmaj","eshape","ashape","rhythm16","palm","proj2","ext","invert","tunings","arrange"]],["lead",["notes","pent","legato","bends","caged","improv","proj3"]],["finger",["fsbass","fsarp","fstrav","fsmel","fsstyle","projfs","pima1","pima2","pima3","pima4","projp","arp","travis","perc","proj4"]],["voice",["vcare","breath","warmup","pitch","range","singstrum","tone","phrasing","proj5"]]].forEach(x=>x[1].forEach(i=>STRAND[i]=x[0]));
+const STRAND={};[["chords",["hlfeel","hlchop","hlprog","fpost","fstretch","findep","fclean","projf","clean","strum","color","capo","proj1","fmaj","eshape","ashape","rhythm16","palm","proj2","ext","invert","tunings","arrange"]],["lead",["notes","pent","legato","bends","caged","improv","proj3"]],["finger",["hlthumb","hlthirds","projhl","fsbass","fsarp","fstrav","fsmel","fsstyle","projfs","pima1","pima2","pima3","pima4","projp","arp","travis","perc","proj4"]],["voice",["vcare","breath","warmup","pitch","range","singstrum","tone","phrasing","proj5"]]].forEach(x=>x[1].forEach(i=>STRAND[i]=x[0]));
 const LC=["#f0b84a","#59c2b5","#a994e6","#f08fb0"];
 const singOn=()=>S.sing!==false;
 const enabled=id=>singOn()||STRAND[id]!=="voice";
@@ -899,7 +958,7 @@ function completeLesson(l){S.chk[l.id]=l.c.map(()=>1);S.done[l.id]=1;delete S.sh
 const VIDEOS={clean:"qXK_If0QzDM",strum:"CjM5fyXoV8w",capo:"Y22MT3etzwM",fmaj:"4cR1sa1_d_8",eshape:"IxXG5S8vSd8",palm:"5H7Q6dSxuQc",notes:"nXN7hYNMfhA",pent:"eEJpypexUDg",legato:"dYaeIXXyy1Y",travis:"K2Z3RZc5t-A",warmup:"rYsuVwyGe-4",breath:"98Gk-OsMblM"};
 /* ---------- pictures ---------- */
 const CH={"C":"x32010","G":"320003","D":"xx0232","A":"x02220","E":"022100","Am":"x02210","Em":"022000","Dm":"xx0231","A7":"x02020","D7":"xx0212","E7":"020100","G7":"320001","Asus2":"x02200","Dsus2":"xx0230","Em7":"020000","Cadd9":"x32030","F easy":"xx3211","F full":"133211","F (fret 1)":"133211","G (fret 3)":"355433","A (fret 5)":"577655","Bm (fret 2)":"x24432","C (fret 3)":"x35553","Cmaj7":"x32000","Am7":"x02010","Dm7":"xx0211","Cmaj9":"x32430","E5":"022xxx","A5":"x022xx","D5":"xx023x","F":"xx3211","Bm":"x24432","F#m":"244222","Bb":"x13331","B":"x24442","Cm":"x35543","Gm":"355333","Fm":"133111","C7":"x32310","B7":"x21202","Asus4":"x02230","Dsus4":"xx0233","Esus4":"022200","Fmaj7":"xx3210"};
-const PICS={clean:["C","G","D","A","E","Am","Em","Dm"],color:["E7","A7","Em7","Asus2","Cadd9","G7","D7","Dsus2"],fmaj:["F easy","F full"],eshape:["F (fret 1)","G (fret 3)","A (fret 5)"],ashape:["Bm (fret 2)","C (fret 3)"],ext:["Cmaj7","Am7","Dm7","G7","Cmaj9"],palm:["E5","A5","D5"],fclean:["C","G","Am","Em"]};
+const PICS={hlprog:["G","C","D","Am","Dm","G7"],hlchop:["G","C","D"],clean:["C","G","D","A","E","Am","Em","Dm"],color:["E7","A7","Em7","Asus2","Cadd9","G7","D7","Dsus2"],fmaj:["F easy","F full"],eshape:["F (fret 1)","G (fret 3)","A (fret 5)"],ashape:["Bm (fret 2)","C (fret 3)"],ext:["Cmaj7","Am7","Dm7","G7","Cmaj9"],palm:["E5","A5","D5"],fclean:["C","G","Am","Em"]};
 const STR={strum:["D - D U - U D U",2],rhythm16:["X - D U X U D U",2]};
 const SCL={pent:{base:5,notes:[[0,5],[0,8],[1,5],[1,7],[2,5],[2,7],[3,5],[3,7],[4,5],[4,8],[5,5],[5,8]],roots:[[0,5],[2,7],[5,5]]}};
 function chordSvg(f){const a=f.split("").map(c=>c==="x"?-1:+c),fr=a.filter(v=>v>0),mf=Math.min(...fr),M=Math.max(...fr),base=M>4?mf:1,X=i=>10+(S.lefty?5-i:i)*9;let g="";
@@ -958,11 +1017,14 @@ function renderLearn(){
   ensureRows();
   const path=pathL(),cur=nextL(),pd=path.filter(l=>S.done[l.id]).length,cpi=cur?phaseOf(cur.id):-1,live=PATH.filter(p=>coreOf(p).length),cdn=live.filter(p=>coreOf(p).every(i=>S.done[i])).length,days=live.reduce((a,p)=>a+p[5],0);
   let h=cur?`<div class="up" style="--c:${phColor(cur.id)}"><small>${PATH[cpi][4]} Current challenge</small><b>${PATH[cpi][0]}</b><p class="mute" style="margin:0 0 12px">Next mission: ${cur.t}</p><div class="row2"><button class="go" data-les="${cur.id}">Continue</button><button data-ph="${cpi}">View challenge</button></div></div>`:`<div class="up" style="--c:#8fd17a"><b>🎉 Every challenge complete</b></div>`;
-  h+=`<div class="sl"><b>${cdn} of ${live.length}</b> challenges · ${pd} of ${path.length} missions · about ${Math.round(days/30)} months at a steady pace</div><div class="lad">`+[1,2,3,4].map(n=>{const li=[].concat(...PATH.filter(p=>p[2]===n).map(coreOf));if(!li.length)return "";const d=li.filter(i=>S.done[i]).length;return `<div class="lvl"><small>Level ${n}</small><b>${LV[n-1]}</b><div class="pbar"><i style="width:${100*d/li.length}%"></i></div></div>`}).join("")+`</div>`;
+  h+=`<div class="sl"><b>${cdn} of ${live.length}</b> challenges · ${pd} of ${path.length} missions · about ${Math.round(days/30)} months at a steady pace</div><div class="lad">`+[1,2,3,4].map(n=>{const li=[].concat(...PATH.filter(p=>p[2]===n).map(coreOf));if(!li.length)return "";const d=li.filter(i=>S.done[i]).length;return `<button data-lv="${n}"><b>Level ${n}</b><small>${d}/${li.length}</small></button>`}).join("")+`</div>`;
+  let lastLv=0;
   PATH.forEach((p,pi)=>{const core=coreOf(p);if(!core.length)return;const d=core.filter(i=>S.done[i]).length,c=LC[p[2]-1],full=d===core.length;
+    if(p[2]!==lastLv){lastLv=p[2];const li=[].concat(...PATH.filter(q=>q[2]===p[2]).map(coreOf)),dd=li.filter(i=>S.done[i]).length;h+=`<div class="lvh" id="lv${p[2]}"><div><b>Level ${p[2]} · ${LV[p[2]-1]}</b><br><small>${dd} of ${li.length} missions</small></div><span class="pbar"><i style="width:${100*dd/li.length}%"></i></span></div>`}
     h+=`<button class="pc${pi===cpi?" cur":""}${full?" done":""}" data-ph="${pi}" style="--c:${c}"><span class="pn2">${full?"✓":p[4]}</span><span class="pt"><b>${p[0]}</b><small>${p[1]}</small><span class="pbar"><i style="width:${100*d/core.length}%"></i></span><small>${d} of ${core.length} missions · about ${p[5]} days</small></span>${pi===cpi?`<em class="tg focus">${S.pin===pi?"📌 Focus":"Now"}</em>`:""}<span class="chev">›</span></button>`});
   if(!singOn())h+=`<button class="lrow" data-pgk="set"><span class="li">🎤</span><span class="lt2"><b>Singing challenges are off</b><small>Turn them on in Settings</small></span><span class="chev">›</span></button>`;
   $("#lessons").innerHTML=h}
+$("#lessons").addEventListener("click",e=>{const b=e.target.closest("[data-lv]");if(b){const t=$("#lv"+b.dataset.lv);if(t)t.scrollIntoView({behavior:"smooth",block:"start"})}});
 function chalPage(pi){ensureRows();const p=PATH[pi],all=p[3].filter(enabled),ids=pathIds(),cur=nextL(),core=coreOf(p),d=core.filter(i=>S.done[i]).length,c=LC[p[2]-1],st=S.cs[pi],fin=S.cdone[pi],last=core[core.length-1];
   const dayN=st?Math.max(1,Math.floor((new Date(day())-new Date(st))/864e5)+1):0;
   return `<div class="lp" style="--c:${c}"><div class="lchips"><span>Level ${p[2]} · ${LV[p[2]-1]}</span><span>about ${p[5]} days</span>${fin?`<span class="dn">Completed ✓</span>`:""}</div><h2>${p[4]} ${p[0]}</h2>
@@ -1006,6 +1068,7 @@ function pgClick(e){const b=e.target.closest("button");if(!b)return;const d=b.da
   if(d.welcome){wlOpen(0);return}
   if(d.dt!=null){const e=$("#dtip");if(e)e.textContent=d.dt;return}
   if(d.tr!=null){trAct(d);return}
+  if(d.vx!=null){vxAct(d,true);return}
   if(d.recl){openRecord(LB[d.recl].t);return}
   if(d.cstart!=null){S.cs[d.cstart]=day();save();pgRefresh();return}
   if(d.pgk){const k=d.pgk;if(k==="songs"){show("songs");return}openProgPage(k);return}
@@ -1045,7 +1108,9 @@ const PATS=[
  ["5. Muted chop",2,"X - D U X U D U"],
  ["6. Accented eighths",2,"D u d u D u d u"],
  ["7. Sixteenths",4,"D U D U D U D U D U D U D U D U"],
- ["8. Sixteenth funk",4,"D - D U - U D U D - D U - U D U"]
+ ["8. Sixteenth funk",4,"D - D U - U D U D - D U - U D U"],
+ ["9. Highlife chop",2,"- U - U - U - U"],
+ ["10. Highlife bounce",2,"D - X U D - X U"]
 ];
 $("#pat").innerHTML=PATS.map((p,i)=>`<option value="${i}">${p[0]}</option>`).join("");
 let ac,timer,running=false,step=0,nextT=0,cur=PATS[0];
@@ -1156,6 +1221,12 @@ const QP=["D - D - D - D -",2],P3=["D - D U - U D U",2];
 const PENT=[[0,5],[0,8],[1,5],[1,7],[2,5],[2,7],[3,5],[3,7],[4,5],[4,8],[5,5],[5,8]].map(x=>OPENM[x[0]]+x[1]);
 const SIX=[].concat(...OPENM.map(o=>[1,2,3,4].map(f=>o+f)));
 const CHK={
+ hlfeel:[{ty:"rhythm",ck:0,title:"Offbeat chop on C",pat:"- U - U - U - U",sub:2,bpm:90,bars:4,ch:"C",txt:"Strum only on the 'and' of each beat, four bars at 90 BPM."}],
+ hlchop:[{ty:"changes",ck:1,title:"G, C and D",ch:["G","C","D"],secs:40,need:3,txt:"Chop through G, then C, then D, letting each stop short."}],
+ hlthumb:[{ty:"notes",ck:0,title:"Thumb on G then C",seq:[43,50,43,50,43,50,43,50,48,43,48,43,48,43,48,43],min:3,txt:"Hold G and alternate strings 6 and 4, then hold C and alternate strings 5 and 6, one note per beat."}],
+ hlthirds:[{ty:"notes",ck:0,title:"Lower notes of the pairs",seq:[55,57,59,60,62,64],min:3,txt:"Play only the lower note of each pair, string 3 frets 0, 2, 4, 5, 7, 9, one at a time."}],
+ hlprog:[{ty:"changes",ck:0,title:"G, C, D, C",ch:["G","C","D"],secs:40,need:3,txt:"Play G, C and D in a loop."},{ty:"changes",ck:1,title:"C, Am, Dm, G7",ch:["C","Am","Dm","G7"],secs:40,need:3,txt:"Play C, Am, Dm and G7 in a loop."}],
+ projhl:[{ty:"record",ck:2,title:"Record your groove",txt:"Play the groove once through, then listen back."}],
  fsbass:[{ty:"notes",ck:0,title:"Alternating bass on C",seq:[48,43,48,43,48,43,48,43],min:3,txt:"Hold C. Alternate the thumb between string 5 (C) and string 6 (G), one note per beat."}],
  fsarp:[{ty:"changes",ck:2,title:"Am, C and G pattern",ch:["Am","C","G"],secs:40,need:3,txt:"Play your pattern over Am, then C, then G, letting each ring."}],
  fsmel:[{ty:"notes",ck:0,title:"Melody up and down",seq:[60,62,64,65,67,65,64,62,60],min:3,txt:"Play C D E F G and back down on strings 2 and 1, one note at a time."}],
@@ -1349,6 +1420,131 @@ async function saveRec(blob,label){if(!blob)return;const ok=await IDB.put({id:Da
 async function renderRecs(){recUrls.forEach(u=>{try{URL.revokeObjectURL(u)}catch(e){}});recUrls=[];const list=(await IDB.all()).sort((a,b)=>b.id-a.id);
   $("#reclist").innerHTML=list.length?list.map(r=>{let u="";try{u=URL.createObjectURL(r.blob);recUrls.push(u)}catch(e){}return `<div class="rec"><b>${r.label}</b> <small>${r.d}</small><audio controls src="${u}"></audio><div class="row2 sm2"><button data-rn="${r.id}">Rename</button><button data-rm="${r.id}">Delete</button></div></div>`}).join("")+`<small class="lgd">Play your oldest and newest take of the same song to hear your progress.</small>`:`<p class="mute">No recordings yet. Record a take to track your progress.</p>`}
 function openRecord(label){CK={l:{t:label,id:"free"},c:{ty:"record",free:true,title:"Record a take",txt:"Play or sing, then listen back. Save it to compare with later takes."},st:"ready",label};drawCheck()}
+/* ---------- clear voice lab ---------- */
+const VX={ph:"idle",pg:null,k:null,fr:[],res:null,wu:null,cn:0},vxUrls=[];
+const vxAvg=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:0,vxMed=a=>{if(!a.length)return 0;const s=a.slice().sort((x,y)=>x-y);return s[s.length>>1]};
+const vxSd=a=>{const m=vxAvg(a);return Math.sqrt(vxAvg(a.map(x=>(x-m)*(x-m))))},vxCl=(x,a=0,b=100)=>Math.max(a,Math.min(b,x));
+function vxFrame(m,t){const b=m.buf,N=b.length,sr=ac.sampleRate;m.an.getFloatTimeDomainData(b);
+  const cs=new Float64Array(N+1);for(let i=0;i<N;i++)cs[i+1]=cs[i]+b[i]*b[i];const rms=Math.sqrt(cs[N]/N);
+  let f=0,per=0;
+  if(rms>.008){const min=Math.floor(sr/1000),max=Math.min(Math.floor(sr/70),N>>1),c=new Float32Array(max+2);let mx=0;
+    for(let l=min;l<=max+1;l++){let s=0;for(let i=0;i<N-l;i++)s+=b[i]*b[i+l];const e1=cs[N-l],e2=cs[N]-cs[l];c[l]=e1*e2>0?s/Math.sqrt(e1*e2):0;if(l<=max&&c[l]>mx)mx=c[l]}
+    if(mx>.3)for(let l=min+1;l<=max;l++)if(c[l]>c[l-1]&&c[l]>=c[l+1]&&c[l]>.9*mx){f=sr/l;per=c[l];break}}
+  m.an2.getFloatFrequencyData(m.fb);const df=sr/2048;let tot=0,fw=0;
+  for(let k=Math.ceil(80/df);k<=Math.min(1023,Math.floor(5000/df));k++){const p=Math.pow(10,m.fb[k]/10);tot+=p;if(k*df>=2000&&k*df<=4000)fw+=p}
+  return {t,rms,db:20*Math.log10(rms+1e-6),f,per,v:rms>.01&&per>.45&&f>0,fw:tot>0&&fw>0?10*Math.log10(fw/tot):-40}}
+function vxKill(){if(VX.m){clearInterval(VX.m.t);try{VX.m.st.getTracks().forEach(t=>t.stop())}catch(e){}VX.m=null}clearInterval(VX.cti);clearInterval(VX.wti);VX.cti=VX.wti=null}
+function vxCount(k){stopMic();vxKill();VX.k=k;VX.ph="count";VX.cn=3;pgRefresh();
+  VX.cti=setInterval(()=>{if(!$("#vxcn")){vxKill();return}VX.cn--;if(VX.cn<=0){clearInterval(VX.cti);VX.cti=null;vxStart(k)}else $("#vxcn").textContent=VX.cn},1000)}
+async function vxStart(k){try{const st=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});
+    ac=ac||new (window.AudioContext||window.webkitAudioContext)();await ac.resume();
+    const an=ac.createAnalyser();an.fftSize=2048;const an2=ac.createAnalyser();an2.fftSize=2048;an2.smoothingTimeConstant=0;const g=micIn(st,an);g.connect(an2);
+    VX.m={st,an,an2,buf:new Float32Array(2048),fb:new Float32Array(1024)};VX.fr=[];VX.t0=performance.now();VX.ph="rec";VX.k=k;pgRefresh();
+    VX.m.t=setInterval(vxTick,50)}
+  catch(e){VX.ph="denied";pgRefresh()}}
+function vxTick(){if(!VX.m)return;if(!$("#vxlv")){vxKill();return}
+  const t=(performance.now()-VX.t0)/1000,x=vxFrame(VX.m,t);VX.fr.push(x);
+  $("#vxlv").style.width=vxCl((x.db+60)*2.2)+"%";$("#vxt").textContent=t.toFixed(0)+" s";
+  const vv=VX.fr.filter(y=>y.v);$("#vxn").textContent=x.v?mname(Math.round(69+12*Math.log2(x.f/440))):"–";
+  vxDraw();
+  const lastV=vv.length?vv[vv.length-1].t:0;
+  if(VX.k==="steady"){if(vv.length>=200||(vv.length>=20&&t-lastV>1.6)||t>24)vxStop()}
+  else if(t>30||(vv.length>=40&&t-lastV>5))vxStop()}
+function vxDraw(){const c=$("#vxc");if(!c)return;const g=c.getContext("2d"),W=c.width,H=c.height;g.clearRect(0,0,W,H);
+  const fr=VX.fr.slice(-200);if(fr.length<2)return;g.lineWidth=2;g.strokeStyle="#d98a1f";g.beginPath();let first=true;
+  if(VX.k==="steady"){const v=fr.filter(x=>x.v);if(v.length<3)return;const md=vxMed(v.map(x=>x.f));g.fillStyle="rgba(120,180,120,.18)";g.fillRect(0,H*.5-H*.18,W,H*.36);
+    fr.forEach((x,i)=>{if(!x.v){first=true;return}const cn=vxCl(1200*Math.log2(x.f/md),-100,100),px=i/200*W,py=H/2-cn/100*H/2;first?g.moveTo(px,py):g.lineTo(px,py);first=false})}
+  else fr.forEach((x,i)=>{const px=i/200*W,py=H-vxCl((x.db+60)/60)*H;i?g.lineTo(px,py):g.moveTo(px,py)});
+  g.stroke()}
+function vxStop(){const k=VX.k,fr=VX.fr;vxKill();const r=k==="steady"?vxSteady(fr):vxPhrase(fr);VX.res=r;VX.ph="res";
+  if(r&&!r.err){const h=(S.vx=S.vx||[]);r.prev=h.filter(e=>e.k===k).pop()||null;h.push({d:day(),k,m:r.m});if(h.length>60)h.splice(0,h.length-60);save(true)}pgRefresh()}
+function vxScores(v){const clar=vxMed(v.map(x=>x.per)),br=vxMed(v.map(x=>x.fw));return {clar:Math.round(vxCl((clar-.6)/.38*100)),bri:Math.round(vxCl((br+30)*100/22))}}
+function vxSteady(fr){const v=fr.filter(x=>x.v);if(v.length<20)return {err:"I could not hear a steady voiced note. Move the phone closer, sing 'ah' a bit louder, and try again."};
+  const t0=v[0].t;let body=v.filter(x=>x.t-t0>.5);if(body.length<15)body=v;
+  const md=vxMed(body.map(x=>x.f));body=body.filter(x=>Math.abs(1200*Math.log2(x.f/md))<200);
+  const wob=Math.sqrt(vxAvg(body.map(x=>{const c=1200*Math.log2(x.f/md);return c*c}))),sd=vxSd(body.map(x=>x.db)),sc=vxScores(body),held=v.length*.05;
+  return {k:"steady",m:{clar:sc.clar,bri:sc.bri,stead:Math.round(vxCl(100-wob*3.5)),loud:Math.round(vxCl(100-sd*18)),held:+held.toFixed(1),wob:Math.round(wob)}}}
+function vxPhrase(fr){const runs=[];let cur=null;fr.forEach((x,i)=>{if(x.v){if(cur&&i-cur.e<=6)cur.e=i;else{cur={s:i,e:i};runs.push(cur)}cur.e=i}});
+  const ph=runs.filter(r=>r.e-r.s>=16).map(r=>fr.slice(r.s,r.e+1).filter(x=>x.v));
+  if(!ph.length)return {err:"I could not hear a sung line. Move the phone closer, sing a little louder, and try again."};
+  let cleanS=0,heldE=0,lv=[],used=0;
+  ph.forEach(p=>{if(p.length<14)return;used++;const md=vxMed(p.map(x=>x.f)),cn=x=>1200*Math.log2(x.f/md),body=p.slice(5,-5),st=p.slice(1,5),en=p.slice(-5);
+    const bm=vxMed(body.map(cn)),scoop=vxMed(st.map(cn))-bm<-40,fade=vxMed(body.map(x=>x.db))-vxMed(en.map(x=>x.db))>9,sag=vxMed(en.map(cn))-bm<-40;
+    if(!scoop)cleanS++;if(!fade&&!sag)heldE++;lv.push(vxMed(p.map(x=>x.db)))});
+  if(used<1)return {err:"The phrases were very short. Sing a longer line, with small pauses between phrases."};
+  const all=[].concat(...ph),sc=vxScores(all);
+  return {k:"phrase",m:{clar:sc.clar,bri:sc.bri,n:used,starts:Math.round(100*cleanS/used),ends:Math.round(100*heldE/used),loud:Math.round(vxCl(100-vxSd(lv)*12))}}}
+const VXB=(l,v,pv)=>`<div class="vxr"><span>${l}</span><b>${v}${pv!=null&&pv!==v?` <small class="${v>pv?"up":"dn"}">${v>pv?"+":""}${v-pv}</small>`:""}</b><span class="pbar" style="grid-column:1/3"><i style="width:${v}%"></i></span></div>`;
+function vxVerdict(r){const m=r.m,t=[];
+  if(r.k==="steady"){
+    t.push(m.clar>=85?["Clear, focused tone.","Keep that feeling."]:m.clar>=65?["A little airy.","Sing 'ah' as if you are about to laugh softly, so the cords meet. Less air, more tone."]:["Airy or breathy: more air than tone.","Try a gentle 'ng' hum, then open to 'ah' without pushing more air."]);
+    t.push(m.stead>=80?["Steady pitch.","Your breath support is doing its job."]:m.stead>=60?["Slight pitch wobble.","Think of a long, even stream of air, as with the 'sss' exercise."]:["The pitch wanders.","Sing quieter and slower in the first seconds, and keep the ribs open as the note goes on."]);
+    t.push(m.loud>=80?["Even volume.",""]:["The volume rises and falls.","Aim for the same loudness from the first second to the last."]);
+    t.push(m.held>=8?["You held it for "+m.held+" s.",""]:["You held it for "+m.held+" s.","Aim for 10. Breathe low and let the air go slowly, as in the 'sss' step."])
+  }else{
+    t.push(m.starts>=80?["Clean starts.","You land on the note."]:["Some notes slide up from below.","Think the note before you sing it, and start right on it."]);
+    t.push(m.ends>=80?["Phrases finish with support.",""]:["Phrase ends fade or sag.","Breathe earlier, a little deeper, and keep the last word as strong as the first."]);
+    t.push(m.loud>=75?["Steady volume across the line.",""]:["Volume jumps between phrases.","Try keeping the same effort in each phrase, then add dynamics on purpose."]);
+    t.push(m.clar>=85?["Clear, focused tone.",""]:["A little airy.","Keep the vowels tall and round, with a relaxed jaw."])}
+  return t.map(x=>`<p><b>${x[0]}</b> ${x[1]}</p>`).join("")}
+function vxHist(k){const h=(S.vx||[]).filter(e=>e.k===k).slice(-6);if(h.length<2)return "";return `<h3 style="margin:16px 0 6px">Your last ${h.length} tries</h3><div class="vxh">`+h.map(e=>`<div><small>${e.d.slice(5)}</small><b>${e.m.clar}</b></div>`).join("")+`</div><small class="mute">Clarity score for each try. Higher is clearer.</small>`}
+const VXT={steady:["Steady note test","Sing a long 'ah' on one comfortable note for about 10 seconds. Same note, same loudness, as long as you can."],phrase:["Sing a phrase","Sing a line of a song you know, two or three phrases with a breath between each. It stops by itself."]};
+function vxTest(k){const T=VXT[k],R=VX.res;
+  if(VX.ph==="count")return `<div class="vxbig"><span id="vxcn">${VX.cn}</span><small>Take a low breath. ${k==="steady"?"Then sing 'ah'.":"Then sing your line."}</small></div>`;
+  if(VX.ph==="denied")return `<p class="mute">The microphone is blocked. Allow it in your browser settings for this site, then try again.</p><button class="go" data-vx="again" style="width:100%">Try again</button>`;
+  if(VX.ph==="rec")return `<div class="vxbig"><b id="vxn">–</b><small id="vxt">0 s</small></div><div class="track vxlv"><b id="vxlv" style="width:0;left:0;position:relative;display:block;height:100%;background:var(--go);border-radius:6px"></b></div><canvas id="vxc" width="340" height="90" style="width:100%;margin:10px 0 4px"></canvas><small class="mute">${k==="steady"?"The green band is your steady zone. A flatter line is a steadier note.":"The line is your volume. Look for runs of air at the ends of phrases."}</small><button class="go" data-vx="stop" style="width:100%;margin-top:10px">Stop</button>`;
+  if(VX.ph==="res"&&R){if(R.err)return `<p class="mute">${R.err}</p><button class="go" data-vx="again" style="width:100%">Try again</button>`;const m=R.m,p=R.prev&&R.prev.m;
+    return VXB("Clarity",m.clar,p&&p.clar)+VXB("Brightness",m.bri,p&&p.bri)+(k==="steady"?VXB("Pitch steadiness",m.stead,p&&p.stead)+VXB("Volume steadiness",m.loud,p&&p.loud):VXB("Clean starts",m.starts,p&&p.starts)+VXB("Supported endings",m.ends,p&&p.ends)+VXB("Volume across phrases",m.loud,p&&p.loud))+vxVerdict(R)+`<button class="go" data-vx="go" data-v="${k}" style="width:100%;margin-top:12px">Try again</button>`+vxHist(k)+`<small class="mute" style="display:block;margin-top:12px">These are rough guides from the microphone, best used to compare one try with the next. Brightness is not good or bad, it just shows how forward the sound is. Your ear and a teacher come first.</small>`}
+  return `<p class="mute">${T[1]}</p><ul class="vxl"><li>Quiet room, phone about an arm's length away.</li><li>Headphones off, no backing track.</li></ul><button class="go" data-vx="go" data-v="${k}" style="width:100%">Start</button>`+vxHist(k)}
+/* warm-up */
+const VXW=[["Release",30,"Roll your shoulders back. Open your jaw as if to yawn, then let it hang loose. Rest the tip of your tongue behind your lower teeth.",0],
+ ["Breath",70,"In through the nose for 4, low into the belly. Out on a steady 'sss' for 10. Repeat.","breath"],
+ ["Lip trills",60,"Blow air through loose lips so they buzz. Slide gently up and down on a comfortable pitch.",0],
+ ["Hum and 'ng'",45,"Hum on 'mm', then 'ng' as in 'sing'. Feel the buzz in your face, not your throat. Slide up and down.",0],
+ ["'Ah' slides",45,"Slide up and down on 'ah', softly. Keep the jaw loose and the sound easy.",0],
+ ["Clean vowels",45,"Sing ee, eh, ah, oh, oo on one note. Keep the same tall mouth, only the lips and tongue change.",0],
+ ["Sing a verse",60,"Sing a verse of a song quietly, with the same relaxed feeling. Finish each phrase with the vowel, not the consonant.",0]];
+function vxWu(){const w=VX.wu;if(!w)return `<p class="mute">About ${Math.round(VXW.reduce((a,s)=>a+s[1],0)/60)} minutes. Seven short steps with timers. Stand up if you can.</p><ol class="vxs">${VXW.map(s=>`<li><b>${s[0]}</b> <small>${s[1]} s</small></li>`).join("")}</ol><button class="go" data-vx="wu" data-v="start" style="width:100%">Start warm-up</button>${S.vwu?`<small class="mute" style="display:block;margin-top:8px">Done ${S.vwu} time${S.vwu===1?"":"s"} so far.</small>`:""}`;
+  if(w.done)return `<div class="vxbig"><span>✓</span><small>Warm-up complete. Your voice is ready. Try the steady note test now.</small></div><button class="go" data-vx="open" data-v="steady" style="width:100%">Steady note test</button>`;
+  const s=VXW[w.i];return `<div class="vxdots">${VXW.map((x,i)=>`<i class="${i<w.i?"d":i===w.i?"n":""}"></i>`).join("")}</div><small class="mute">Step ${w.i+1} of ${VXW.length}</small><h3 style="margin:2px 0 6px">${s[0]}</h3><p>${s[2]}</p><div class="vxbig"><b id="vxwt">${fmt(Math.ceil(w.t))}</b><small id="vxcue">${s[3]?"":" "}</small></div><div class="pbar"><i id="vxwb" style="width:${100*(1-w.t/s[1])}%"></i></div><div class="row2 sm2" style="margin-top:12px"><button data-vx="wu" data-v="prev">‹ Back</button><button data-vx="wu" data-v="pause">${w.p?"▶ Resume":"⏸ Pause"}</button><button data-vx="wu" data-v="next">Skip ›</button></div>`}
+function vxWuStep(i){const w=VX.wu;w.i=i;w.t=VXW[i][1];pgRefresh()}
+function vxWuTick(){const w=VX.wu;if(!w||!$("#vxwb")){clearInterval(VX.wti);VX.wti=null;return}if(w.p)return;
+  w.t-=.25;w.el=(w.el||0)+.25;const s=VXW[w.i];
+  if(w.t<=0){beep();if(w.i>=VXW.length-1){clearInterval(VX.wti);VX.wti=null;w.done=true;const mn=Math.max(1,Math.round(w.el/60));S.log.push({d:day(),m:mn});S.vwu=(S.vwu||0)+1;save(true);pgRefresh();return}vxWuStep(w.i+1);return}
+  $("#vxwt").textContent=fmt(Math.ceil(w.t));$("#vxwb").style.width=100*(1-w.t/s[1])+"%";
+  if(s[3]==="breath"){const c=(s[1]-w.t)%14;$("#vxcue").textContent=c<4?"In... low and slow":"Out on 'sss'"}}
+/* words + take */
+const VXWORDS=`<h3>1 · Vowels</h3><p>Sing ee, eh, ah, oh, oo on one note, four beats each. The mouth shape should settle at the start of the vowel, and stay there. Keep the jaw loose and the tongue tip behind the lower teeth.</p>
+<h3>2 · Consonants</h3><p>Say each line slowly three times, then sing it on one note. Make the consonants quick and light, and the vowels long.</p><ul><li>Red leather, yellow leather</li><li>Unique New York</li><li>Betty Botter bought some butter</li><li>She sells sea shells by the sea shore</li></ul>
+<h3>3 · Phrase endings</h3><p>Choose a line you sing. Hold the last vowel for its full length and add the final consonant at the very end, quickly. For 'love', hold 'luh...' then close with a quick 'v'.</p>
+<h3>4 · Mumbling check</h3><p>Record yourself singing a verse and listen back. Mark any word you cannot understand. Sing just those words again, slower and bigger, then put the line back together.</p><button class="go" data-vx="take" style="width:100%;margin-top:6px">● Record a take</button>`;
+const VXTAKE=`<p class="mute">Record the same line once a week, at about the same distance from the phone and at the same time of day. After a few weeks, play the first take and the latest back to back.</p><button class="go" data-vx="take" style="width:100%">● Record this week's take</button><div id="vxrl" style="margin-top:14px"><small class="mute">Loading takes...</small></div>`;
+async function vxFillTakes(){const e=$("#vxrl");if(!e)return;vxUrls.forEach(u=>{try{URL.revokeObjectURL(u)}catch(x){}});vxUrls.length=0;
+  let l=[];try{l=(await IDB.all()).filter(r=>/voice/i.test(r.label)).sort((a,b)=>a.id-b.id)}catch(x){}
+  if(!$("#vxrl"))return;if(!l.length){$("#vxrl").innerHTML=`<small class="mute">No voice takes yet. Name them with "Voice" in the title to see them here. Takes you record here are named "Voice take".</small>`;return}
+  $("#vxrl").innerHTML=(l.length>1?`<button data-vx="hear" style="width:100%;margin-bottom:10px">▶ Hear the first, then the latest</button>`:"")+l.slice().reverse().map(r=>{const u=URL.createObjectURL(r.blob);vxUrls.push(u);return `<div class="vxtk"><small>${r.d} · ${r.label}</small><audio controls preload="none" src="${u}" class="vxau"></audio></div>`}).join("")}
+function vxHear(){const a=[...document.querySelectorAll(".vxau")];if(a.length<2)return;a.forEach(x=>{x.pause();x.currentTime=0});const first=a[a.length-1],last=a[0];first.onended=()=>{last.play()};first.play()}
+function vxPage(k){if(VX.pg!==k){VX.pg=k;VX.ph="idle";VX.res=null}
+  if(k==="steady"||k==="phrase")return `<div class="lp">${vxTest(k)}</div>`;
+  if(k==="warm")return `<div class="lp">${vxWu()}</div>`;
+  if(k==="words")return `<div class="lp">${VXWORDS}</div>`;
+  setTimeout(vxFillTakes,30);return `<div class="lp">${VXTAKE}</div>`}
+function vxAct(d,inpg){
+  if(d.vx==="open"){const T={steady:"Steady note",phrase:"Sing a phrase",warm:"Guided warm-up",words:"Clear words",take:"Weekly voice take"};
+    vxKill();VX.pg=null;VX.wu=null;
+    if(inpg){const top=PGS[PGS.length-1];top.t=T[d.v];top.r=()=>vxPage(d.v);$("#pgt").textContent=T[d.v];pgRefresh()}else pgOpen(T[d.v],()=>vxPage(d.v));return}
+  if(d.vx==="go"){VX.pg=d.v;vxCount(d.v);return}
+  if(d.vx==="stop"){vxStop();return}
+  if(d.vx==="again"){VX.ph="idle";VX.res=null;pgRefresh();return}
+  if(d.vx==="take"){openRecord("Voice take");return}
+  if(d.vx==="hear"){vxHear();return}
+  if(d.vx==="wu"){const w=VX.wu;
+    if(d.v==="start"){VX.wu={i:0,t:VXW[0][1],p:false,el:0};clearInterval(VX.wti);pgRefresh();VX.wti=setInterval(vxWuTick,250);return}
+    if(!w)return;if(d.v==="pause"){w.p=!w.p;pgRefresh();return}
+    if(d.v==="next"){if(w.i<VXW.length-1)vxWuStep(w.i+1);else{w.i=VXW.length-1;w.t=.1}return}
+    if(d.v==="prev"){vxWuStep(Math.max(0,w.i-1));return}}}
+$("#vxcard").onclick=e=>{const b=e.target.closest("[data-vx]");if(b)vxAct(b.dataset)};
+
 /* ---------- tuner ---------- */
 const TUN={"Standard (E A D G B E)":[40,45,50,55,59,64],"Whole step down (D G C F A D)":[38,43,48,53,57,62],"1½ steps down (C# F# B E G# C#)":[37,42,47,52,56,61],"Two steps down (C F Bb Eb G C)":[36,41,46,51,55,60],"My own tuning":null,"Drop D":[38,45,50,55,59,64],"DADGAD":[38,45,50,55,57,62],"Open D":[38,45,50,54,57,62],"Half step down":[39,44,49,54,58,63]};
 let tm=null,tlock=null,A4=440;
@@ -1466,7 +1662,7 @@ function capoOpts(){const raw=$("#cpin").value.trim().split(/\s+/).filter(Boolea
   $("#cpout").innerHTML=h}
 $("#cpgo").onclick=capoOpts;
 /* ---------- tempo log and settings ---------- */
-const TEMPOS=["clean","strum","rhythm16","palm","arp","travis","legato","pent"];
+const TEMPOS=["hlchop","hlthumb","hlthirds","clean","strum","rhythm16","palm","arp","travis","legato","pent"];
 function tempoBlock(l){if(!TEMPOS.includes(l.id))return "";const h=S.tempo[l.id]||[],best=h.length?Math.max(...h.map(x=>x.b)):0;
   return `<div class="blk"><h4>🎚 Tempo log</h4><p class="mute">${best?`Best clean tempo: <b>${best} BPM</b>${best>h[0].b?` · +${best-h[0].b} since you started`:""}`:"Log the fastest tempo you can play this cleanly."}</p><div class="row2"><input id="tb${l.id}" type="number" inputmode="numeric" placeholder="BPM"><button data-tlog="${l.id}" style="flex:none">Log</button></div>${h.length?`<small>${h.slice(-6).map(x=>x.b).join(" → ")} BPM</small>`:""}</div>`}
 function tempoInner(l){const h=S.tempo[l.id]||[],best=h.length?Math.max(...h.map(x=>x.b)):0;
